@@ -9,7 +9,7 @@ class IngredientStorage(Base):
     id = Column(Integer, primary_key=True)
     id_ingredient = Column(Integer, ForeignKey("ingredient.id"), nullable=False)        # Id ингредиента
     delivery_date = Column(Date, nullable=False)                                        # Когда пришел на склад
-    id_request = Column(Integer, ForeignKey("requisition_list.id"), nullable=False)        # Id заявки
+    id_request = Column(Integer, ForeignKey("requisition_list.id"), nullable=False)     # Id заявки
     valid_until = Column(Date)                                                          # Годен до:
     weight = Column(Float)                                                              # Вес
     quantity = Column(Integer, nullable=False)                                          # Количество на складе

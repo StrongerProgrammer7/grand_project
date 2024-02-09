@@ -23,18 +23,20 @@ def create_database():
     Base.metadata.create_all(engine)
 
 
-"""
-manager = JobRole(
-    name='Менеджер',
-    min_salary=27000,
-    max_salary=34000
-)
-Дата в таком формате: datetime(2023, 2, 14)
-"""
-
-
 # TODO: Добавить запросы в БД
 def add_one_in_table(row):
+    """
+    Способ работы:
+
+    manager = JobRole(
+        name='Менеджер',
+        min_salary=27000,
+        max_salary=34000
+    )
+    # Дата в таком формате: datetime(2023, 2, 14)
+
+    add_one_in_table(manager)
+    """
     ses = Session()
     ses.add(row)
     ses.commit()
@@ -42,11 +44,9 @@ def add_one_in_table(row):
 
 
 # TODO: Разбить данные в data файлах, чтобы можно было брать из них части так, чтобы не создавать много json'ов
-def add_from_file_in_table(table, strategy='JSON'):
+def add_from_file_in_table(model, strategy='JSON'):
     """
-    Пример использования: add_from_file_in_table(Ingredient)
-
-    :param table: класс из models.py, экземпляр которого создастся и запишется в БД
+    :param model: класс из models.py, экземпляр которого создастся и запишется в БД
     :param strategy: тип файла из которого беруться данные таблицы. 'JSON', 'YAML'
     :return: None
     """
@@ -60,9 +60,27 @@ def add_from_file_in_table(table, strategy='JSON'):
 
     ses = Session()
     for row in data:
-        table_name = table(**row)
+        table_name = model(**row)
         ses.add(table_name)
     ses.commit()
     ses.close()
+
+
+def select_one_from_table(model):
+    """
+    :param model: класс из models.py, экземпляр которого создастся и запишется в БД
+    :return: row
+    """
+    ses = Session()
+    return ses.query(model).first()
+
+
+def select_all_from_table(model):
+    """
+    :param model: класс из models.py, экземпляр которого создастся и запишется в БД
+    :return: table
+    """
+    ses = Session()
+    return ses.query(model).all()
 
 

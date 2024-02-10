@@ -5,7 +5,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv').config();
-//const pages = require('./routers/..');
+const pages = require('./routers/router');
 //const controller = require('./controller/auth');
 
 const PORT = process.env.PORT || 3000;
@@ -16,12 +16,14 @@ app.use(express.json());
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/images', express.static(__dirname + '/public/images'));
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(fileUpload());
 
 app.engine('ejs', require('ejs-mate'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-//app.use('/', pages);
+app.use('/', pages);
 //app.use('/api',controller)
 
 const optionHTTPS = 
@@ -35,7 +37,6 @@ const startServer = async function ()
 {
     try
     {
-        //DB
         https.createServer(optionHTTPS, app)
             .listen(PORT, () =>
             {

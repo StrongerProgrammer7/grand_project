@@ -1,3 +1,8 @@
+cx-Logging==3.1.0
+cx_Freeze==6.15.15
 SQLAlchemy==2.0.25
 psycopg2==2.9.9
 PyYAML==6.0.1
+PySide6==6.6.1
+PySide6-Addons==6.6.1
+PySide6-Essentials==6.6.1

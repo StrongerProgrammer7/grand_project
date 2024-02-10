@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv').config();
 const pages = require('./routers/router');
-//const controller = require('./controller/auth');
+const controller = require('./controller/controller');
 
 const PORT = process.env.PORT || 3000;
 const urlencodedParser = express.urlencoded({ extended: true });
@@ -24,7 +24,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.use('/', pages);
-//app.use('/api',controller)
+app.use('/api',controller)
 
 const optionHTTPS = 
 {

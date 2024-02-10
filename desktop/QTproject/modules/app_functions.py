@@ -1,6 +1,5 @@
 # ///////////////////////////////////////////////////////////////
 #
-# BY: WANDERSON M.PIMENTA
 # PROJECT MADE WITH: Qt Designer and PySide6
 # V: 1.0.0
 #
@@ -16,7 +15,8 @@
 
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
-from main import *
+from ..main import *
+
 
 # WITH ACCESS TO MAIN WINDOW WIDGETS
 # ///////////////////////////////////////////////////////////////
@@ -33,8 +33,10 @@ class AppFunctions(MainWindow):
         self.ui.lineEdit.setStyleSheet("background-color: #6272a4;")
         self.ui.pushButton.setStyleSheet("background-color: #6272a4;")
         self.ui.plainTextEdit.setStyleSheet("background-color: #6272a4;")
-        self.ui.tableWidget.setStyleSheet("QScrollBar:vertical { background: #6272a4; } QScrollBar:horizontal { background: #6272a4; }")
-        self.ui.scrollArea.setStyleSheet("QScrollBar:vertical { background: #6272a4; } QScrollBar:horizontal { background: #6272a4; }")
+        self.ui.tableWidget.setStyleSheet(
+            "QScrollBar:vertical { background: #6272a4; } QScrollBar:horizontal { background: #6272a4; }")
+        self.ui.scrollArea.setStyleSheet(
+            "QScrollBar:vertical { background: #6272a4; } QScrollBar:horizontal { background: #6272a4; }")
         self.ui.comboBox.setStyleSheet("background-color: #6272a4;")
         self.ui.horizontalScrollBar.setStyleSheet("background-color: #6272a4;")
         self.ui.verticalScrollBar.setStyleSheet("background-color: #6272a4;")

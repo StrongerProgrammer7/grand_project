@@ -1,6 +1,5 @@
 const https = require('https');
 const express = require('express');
-//This DB
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');

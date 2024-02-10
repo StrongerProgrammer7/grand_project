@@ -4,9 +4,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from file_manager.manager import YAML_work, JSON_work
 from desktop.database.config import DATABASE_URI
-from models import Base, Ingredient
+from file_manager.manager import YAML_work, JSON_work
+from models import Base
 
 # Дает возможность создавать таблицы
 engine = create_engine(DATABASE_URI, connect_args={'client_encoding': 'utf8'})

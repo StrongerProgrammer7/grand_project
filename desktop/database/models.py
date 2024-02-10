@@ -82,6 +82,7 @@ class Worker(Base):
     phone = Column(String)
     salary = Column(Float, nullable=False)
     job_rate = Column(Float)
+    # Последнее изменение
 
     def __repr__(self):
         return ("<Worker(job_role={}, surname={}, first_name={},"

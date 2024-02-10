@@ -1,0 +1,61 @@
+"/api/get_booked_tables_on_date":
+  post:
+    tags:
+      - Table
+    summary: Get list all booked tables by date
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              date:
+                type: Date
+            required:
+              - date
+          example:
+            date: "2024-03-23"
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/TablesBooked"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "id": 1,
+                      "human_slots": 4,
+                      "desired_booking_date": "2024-03-23T13:00:00.000Z",
+                      "booking_interval": { "hours": 2 },
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    TablesBooked:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          human_slots:
+            type: integer
+          desired_booking_date:
+            type: string
+          booking_interval:
+            type: object
+            properties:
+              hours:
+                type: integer

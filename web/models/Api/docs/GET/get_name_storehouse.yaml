@@ -1,0 +1,32 @@
+"/api/get_name_storehouse":
+  get:
+    tags:
+      - Storehouse
+    summary: Get list name of storehouses
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/NameStorehouses"
+                message:
+                  type: string
+              example:
+                data: [{ "name": name }]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    NameStorehouses:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string

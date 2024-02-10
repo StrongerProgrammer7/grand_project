@@ -1,0 +1,1040 @@
+/* --------------- reset.css --------------- */
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, em, img, strong, sub, sup, b, u, i,  dl, dt, dd, ol, ul, li, fieldset, form, label, table, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video 
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;                               /* обнуляем отступы и убираем бордюры */
+	vertical-align: baseline;          /* приводим все к одной базовой линии */
+	background: transparent;      /* чтобы не проскакивали левые фоны, установленные по умолчанию */
+	font-size: 100%;                     /* размер шрифта всем одинаковый */
+}
+a 
+{                                      	     /* ссылка не в общем списке чтобы не сбрасывать outline по умолчанию */
+	margin:0;
+	padding:0;
+	font-size:100%;
+	vertical-align:baseline;
+	background:transparent;
+	outline:none;
+    transition: color 0.075s;
+}
+table 
+{						/* устраняем отступы между ячейками таблицы */
+	border-collapse: collapse; 
+	border-spacing: 0;
+}
+td, td img 
+{
+	vertical-align: top;			/* возвращаем привычное вертикальное выравнивание */
+} 
+input, select, button, textarea 
+{
+	margin: 0; 				/* убираем отступы по умолчанию для элементов форм (в частности для checkbox и radio) */
+	font-size: 100%; 			/* делаем размер шрифтов везде одинаковым */
+	outline: none;
+}
+input[type="password"], textarea 
+{
+	padding: 0; 				/* убираем внутренние отступы для текстовых полей */
+}
+input[type="checkbox"] 
+{ 		/* вертикальное выравнивание чекбоксов и радиобатонов относительно меток */
+	vertical-align: bottom;
+}
+input[type="radio"] 
+{
+	vertical-align: text-bottom;
+}
+sub {
+	vertical-align: sub;
+	font-size: smaller;
+}
+sup 
+{
+	vertical-align: super;
+	font-size: smaller;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section 
+{
+	display:block;
+}
+nav ul 
+{
+	 list-style:none;
+}
+/* --------------- /reset.css --------------- */
+
+/* --------------- базовые настройки ---------*/
+html 
+{
+	min-height:100%; /* всегда показываем вертикальную полосу прокрутки  */
+
+}
+body 
+{
+	color: #7e7f84;
+	text-align: left;
+	font-size: 1em; /* используем безопасные шрифтовые CSS стеки */
+	min-height:100%;
+  font-family: 'Open Sans', sans-serif;
+  /*overflow-x: hidden;*/
+
+}
+a, a:visited 
+{ /* порядок правил для ссылок имеет значение */
+	
+	text-decoration: underline;
+    color: black;
+}
+a:hover 
+{
+	color: #9daeb6;
+	text-decoration:none;
+}
+a:focus, a:active 
+{
+	text-decoration: none;
+}
+h1, h2, h3, h4, h5, h6
+{
+	font-weight:normal;
+}
+
+.clr
+{
+	clear:both;
+}
+.clearfix:after 
+{
+    clear: both;
+    content: "";
+    display: table;
+}
+
+
+  
+/* --------------- /базовые настройки ---------*/
+
+
+
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    
+    font-style: normal;
+    color: black;
+    
+    font-size: 16px;
+
+    
+
+
+}
+
+a { 
+    text-decoration: none; 
+   } 
+
+.overflow {
+    overflow-x: hidden;
+    
+}
+
+.bodyContent {
+    overflow-x: hidden;
+}
+
+.shit-wrapper {
+    position: absolute;
+    z-index: -100;
+    
+    
+}
+
+.shit {
+    opacity: 0;
+    position: relative;
+    z-index: -100;
+    
+}
+
+.shit svg {
+    z-index: -100;
+    position: absolute;
+    overflow-x: hidden;
+}
+
+
+.header {
+    
+    padding-top: 30px;
+    padding-bottom: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: auto;
+    margin-right: auto;
+
+    max-width: 1337px;
+    z-index: 1000;
+
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 15px;
+
+    padding-left: 30px;
+    padding-right: 30px;
+    
+
+
+}
+
+.booking-header {
+    padding-top: 30px;
+    padding-bottom: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 1337px;
+    z-index: 1000;
+
+
+    align-content: center;
+    gap: 15px;
+
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.sticky {
+    position: sticky;
+    top: 0px;
+}
+
+.left-header {
+
+    display: flex;
+    flex-direction: row;
+    gap: 11px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    cursor: pointer;
+    height: 60px;
+
+}
+
+.left-header span {
+    font-size: 27px;
+    font-weight: bold;
+    color: rgba(16, 26, 36, 1);
+    align-self: end;
+    height: 33px;
+    margin-bottom: 4px;
+    user-select: none;
+    -webkit-user-select: none;
+
+
+}
+
+.right-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    z-index: 5;
+    
+    align-items: center;
+    font-size: 16px;
+    gap: 15px;
+
+
+
+}
+
+.right-header a:nth-child(-n+2) {
+
+    cursor: pointer;
+    
+
+    border-radius: 50px;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.75);
+
+    font-weight: 600;
+
+}
+
+
+
+.dark {
+    background-color: rgba(16, 26, 36, 1);
+}
+
+.orange {
+    background-color: rgba(234, 109, 39, 1);
+}
+
+
+
+.button {
+    user-select: none;
+    transition: all 0.1s;
+    cursor: pointer;
+    font-weight: 500;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 20px;
+    padding: 18px 8px;
+    opacity: 0.9;
+    min-width: 96px;
+    text-align: center;
+    z-index: 500;
+    color: white;
+    border-radius: 25px 8px 25px 8px;
+    border: none;
+
+    -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+}
+
+.black {
+    color: black;
+}
+
+.button:hover {
+    /* transform: scale(1.01);
+    opacity: 0.975; */
+    opacity: 1;
+}
+
+.button:active {
+    /* transform: scale(1.02);
+    opacity: 0.95; */
+    opacity: 0.8;
+}
+
+/* .right-header div:last-child {
+    font-weight: 500;
+    font-style: normal;
+    font-size: 20px;
+    padding: 18px 8px;
+
+    background-color: rgba(234, 109, 39, 1);
+    color: white;
+    border-radius: 15px 4px 15px 4px;
+
+    -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+
+} */
+
+
+
+.logo {
+    position: relative;
+    width: 48px;
+    height: 54px;
+
+
+}
+
+.logo svg:first-child {
+    position: absolute;
+    bottom: 0;
+    z-index: 5;
+
+}
+
+.logo svg:nth-child(2) {
+    position: absolute;
+    bottom: 15px;
+    left: 4px;
+}
+
+.logo svg:nth-child(3) {
+    position: absolute;
+    bottom: 29px;
+    left: 30px
+
+}
+
+.logo svg:nth-child(4) {
+    position: absolute;
+    top: 0;
+    left: 22px
+
+}
+
+.main {
+    z-index: 1;
+    max-width: 1328px;
+    margin: auto;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 163px;
+    row-gap: 40px;
+
+    padding-left: 30px;
+    padding-right: 30px;
+    justify-content: center;
+
+    margin-bottom: 60px;
+
+
+
+
+}
+
+.main .info {
+    max-width: 499px;
+    width: 100%;
+    /*align-self: start;*/
+    /*margin-top: 102px;*/
+}
+
+.main .image {
+    max-width: 666px;
+    position: relative;
+    z-index: -500;
+
+
+
+}
+
+.main .image img:last-child {
+    max-width: 666px;
+    width: 100%;
+    overflow-x: hidden;
+    
+}
+
+.main .image .background:first-child {
+    position: absolute;
+    top: -80px;
+    left: -160px;
+    z-index: -5;
+    overflow-x: hidden;
+}
+
+.main .image .background:nth-child(2){
+    position: absolute;
+    top: -110px;
+    right: -120px;
+    z-index: -5;
+    overflow-x: hidden;
+}
+
+.main .image .background:nth-child(3){
+    position: absolute;
+    bottom: 100px;
+    right: -180px;
+    z-index: -5;
+    overflow-x: hidden;
+}
+
+.main .info h1 {
+    font-size: 70px;
+    font-weight: bold;
+    line-height: 72px;
+    margin-bottom: 22px;
+    margin-top: 0;
+    
+    
+}
+
+.h1-block {
+    font-size: 70px;
+    font-weight: bold;
+    line-height: 72px;
+    margin-bottom: 22px;
+    margin-top: 0;
+}
+
+.p-block {
+    line-height: 29px;
+    margin-top: 0;  
+}
+
+.main .info p {
+    max-width: 382px;
+    line-height: 29px;
+    margin-bottom: 40px;
+    margin-top: 0;
+    
+
+}
+
+
+.main .info .button-bar {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    z-index: 5;
+    flex-wrap: wrap;
+    row-gap: 15px;
+}
+
+
+.main.wrap + .info {
+    margin-top: 0;
+}
+
+@media only screen and (max-width: 320px) {
+
+    .main .info h1 { 
+       font-size: 50px; 
+       line-height: 51px;
+    }
+
+    .h1-block {
+        font-size: 50px;
+        line-height: 51px;
+    }
+
+    .menu .button {
+        font-size: 13px;
+        padding: 12px 5px;
+        min-width: 64px;
+    }
+ 
+ }
+
+ @media only screen and (max-width: 532px) {
+    .header {
+        flex-direction: column;
+    }
+    
+ 
+ }
+
+ .about {
+
+    z-index: 10;
+    margin: auto;
+    column-gap: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding-left: 30px;
+    padding-right: 30px;
+    max-width: 1328px;
+    margin: auto;
+    row-gap: 30px;
+    justify-content: center;
+    margin-bottom: 30px;
+    
+ }
+
+
+ .about p {
+    max-width: 382px;
+ }
+
+.about div {
+    max-width: 542px;
+    width: 100%;
+    
+}
+
+
+.about-footer {
+
+    padding-left: 30px;
+    padding-right: 30px;
+    max-width: 1328px;
+    margin: auto;
+    margin-bottom: 45px;
+}
+
+.about-footer div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 10px;
+    padding-bottom: 15px;
+    
+}
+
+.about-footer svg {
+    width: 30px;
+}
+
+.about-footer b{
+    max-width: 195px;
+}
+
+
+.menu {
+    max-width: 810px;
+    display: flex;
+    column-gap: 40px;
+    row-gap: 38px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-bottom: 60px;
+    row-gap: 15px;
+    column-gap: 20px;
+    
+}
+
+
+.tables {
+
+    width: 1331px;
+    background-color: white;
+    
+    margin: auto;
+    
+    height: 880px;
+    
+    position: relative;
+    padding-left: 30px;
+    padding-right: 30px;
+
+    transition: filter 0.15s;
+    
+    
+    
+}
+
+.tables svg:nth-child(1) {
+    position: absolute;
+    top: 0;
+}
+
+.tables svg:nth-child(2) {
+    position: absolute;
+    left: 30px;
+    top: 0;
+}
+
+.tables svg:nth-child(3) {
+    position: absolute;
+    right: 30px;
+    top: 0;
+}
+
+.tables svg:nth-child(4) {
+    position: absolute;
+    bottom: 75px;
+}
+
+.tables svg:nth-child(5) {
+    position: absolute;
+    bottom: 75px;
+    right: 30px; 
+}
+
+.tables svg:nth-child(6) {
+    position: absolute;
+    bottom: 0;
+    left: 654px;
+}
+
+.tables svg:nth-child(7) {
+    position: absolute;
+    top: 0;
+    left: 399px;
+}
+
+.tables svg:nth-child(8) {
+    position: absolute;
+    top: 0;
+    left: 881px;
+}
+
+.tables svg:nth-child(9) {
+    position: absolute;
+    top: 200px;
+    left: 881px;
+}
+
+.tables svg:nth-child(10) {
+    position: absolute;
+    top: 31px;
+    left: 1046px;
+    
+}
+
+.tables svg:nth-child(11) {
+    position: absolute;
+    bottom: 78px;
+    left: 400px;
+    
+}
+
+.tables svg:nth-child(12) {
+    position: absolute;
+    bottom: 78px;
+    left: 881px;
+    
+}
+
+.seats {
+    
+    width: 100%;
+    height: 100%;
+    position: relative;
+   
+
+}
+
+#seat-1 {
+    position: absolute;
+    top:8px;
+    left: 9px;
+}
+
+#seat-2 {
+    top:103px;
+    left: 9px;
+    position: absolute;
+}
+
+#seat-3 {
+    top:198px;
+    left: 9px;
+    position: absolute;
+}
+
+#seat-4 {
+    top:486px;
+    left: 9px;
+    position: absolute;
+}
+
+#seat-5 {
+    top:586px;
+    left: 9px;
+    position: absolute;
+}
+
+#seat-6{
+    top:692px;
+    left: 9px;
+    position: absolute;
+}
+
+#seat-7{
+    top:8px;
+    left: 269px;
+    position: absolute;
+}
+
+#seat-8{
+    top:103px;
+    left: 269px;
+    position: absolute;
+}
+
+#seat-9{
+    top:586px;
+    left: 269px;
+    position: absolute;
+}
+
+#seat-10{
+    top:692px;
+    left: 269px;
+    position: absolute;
+}
+
+#seat-11{
+    top:8px;
+    left: 380px;
+    position: absolute;
+}
+
+#seat-12{
+    top:103px;
+    left: 380px;
+    position: absolute;
+}
+
+#seat-13{
+    top:586px;
+    left: 380px;
+    position: absolute;
+}
+
+#seat-14{
+    top:692px;
+    left: 380px;
+    position: absolute;
+}
+
+#seat-15{
+    top:8px;
+    left: 589px;
+    position: absolute;
+}
+
+#seat-16{
+    top:586px;
+    left: 860px;
+    position: absolute;
+}
+
+#seat-17{
+    top:692px;
+    left: 860px;
+    position: absolute;
+}
+
+#seat-18{
+    top:400px;
+    left: 1218px;
+    position: absolute;
+}
+
+#seat-19{
+    top:586px;
+    left: 1218px;
+    position: absolute;
+}
+
+#seat-20{
+    top:692px;
+    left: 1218px;
+    position: absolute;
+}
+
+.booking {
+    width: 1391px;
+    z-index: -500;
+    margin: auto;
+    margin-bottom: 60px;
+
+    transform-origin: top left;
+
+}
+
+.booking .button {
+    width: 174px;
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.nonclickable {
+    cursor:initial;
+}
+
+.nonclickable:hover {
+    transform: scale(1);
+    opacity: 0.9;
+}
+
+.nonclickable:active {
+    transform: scale(1);
+    opacity: 0.9;
+}
+
+.popup {
+    max-width: 400px;
+    width: 50%;
+    padding: 30px 60px;
+    background-color: #EA6D27;
+    border-radius: 50px;
+    -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    color: black;
+    background-color: white;
+
+    z-index: 1000;
+
+}
+
+.Absolute-Center {
+    /* margin: auto; */
+    position: absolute;
+    /* left: 0; right: 0;
+    top: 300px; */
+
+    transform: translate(-50%,-50%);
+    left: 50%;
+    top: 50%;
+
+    
+ 
+
+
+}
+
+.clickable {
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.clickable:hover {
+    transform: scale(1.1);
+    opacity: 0.95;
+}
+
+.clickable:active {
+    transform: scale(1.2);
+    opacity: 0.90;
+}
+
+.nonvisible {
+    display: none;
+}
+
+.dishes {
+
+    padding-left: 30px;
+    padding-right: 30px;
+    
+    margin: auto;
+    margin-bottom: 60px;
+    max-width: 880px;
+
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dish {
+    box-sizing: border-box;
+    max-width: 214px;
+    width: 100%;
+    background-color: #f8f7f5;
+    border-radius: 24px;
+    padding: 16px 12px;
+}
+
+.dish img {
+    background-color: white;
+    display: block;
+    max-width: 100%;
+    height: 214px;
+    margin-bottom: 4px;
+    border-radius: 24px;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: cover;
+    object-position: 50% 50%;
+
+    
+
+}
+
+.dish div {
+    margin-bottom: 4px;
+}
+
+.dish div:nth-child(2) {
+    font-weight: bold;
+}
+
+.dish div:nth-child(3) {
+    font-size: 20px;
+    color: rgb(252, 82, 48);
+}
+
+.dish div:nth-child(4) {
+    color: rgb(158, 155, 152);
+}
+
+.date {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.date input {
+    background-color: rgba(234, 109, 39, 1);
+    padding: 15px;
+    color: white;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    
+    border-radius: 25px 8px 25px 8px;
+
+    -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+}
+
+.blured {
+    filter: blur(4px);
+}
+
+.popup h1 {
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.popup div, .popup h1, .popup p {
+    margin-bottom: 15px;
+}
+
+.popup div:last-child, h1:last-child {
+    margin-bottom: 0;
+}
+
+.right {
+    display: block;
+    max-width: 172px;
+    margin-left: auto;
+}
+
+.booked {
+   
+    text-align: center;
+    font-weight: bold;
+}
+
+.chosen {
+    display: block;
+    margin-bottom: 15px;
+
+    padding: 15px;
+    color: black;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: rgb(248, 247, 245);
+    border-radius: 24px;
+
+}
+
+.chosen:last-child {
+    margin-bottom: 0;
+}
+
+.popup form {
+    margin-top: 30px;
+}
+
+.popup .button {
+    margin-top: 30px;
+}
+
+.center-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+
+    transition: all 0.5s;
+  }

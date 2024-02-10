@@ -1,0 +1,15 @@
+@baseUrl = https://localhost:443
+###
+GET {{baseUrl}}
+###
+
+POST {{baseUrl}}/api/test
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+{
+    "name": "name"
+}
+
+###
+GET https://grandproject.k-lab.su/

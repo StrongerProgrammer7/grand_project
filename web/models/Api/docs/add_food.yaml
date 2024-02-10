@@ -1,0 +1,39 @@
+"/api/add_food":
+  post:
+    tags:
+      - Food
+    summary: adding a dish
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              food_type:
+                type: string
+              name:
+                type: string
+              unit_of_measurement:
+                type: string
+              price:
+                type: double
+              weight:
+                type: double
+            required:
+              - food_type
+              - name
+              - price
+              - weight
+            example:
+              food_type: Салаты
+              name: Бурбон
+              unit_of_measurement: Грамм
+              price: 10.0
+              weight: 200.0
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

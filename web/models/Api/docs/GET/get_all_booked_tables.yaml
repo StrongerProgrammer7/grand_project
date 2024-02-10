@@ -1,0 +1,55 @@
+"/api/get_all_booked_tables":
+  get:
+    tags:
+      - Table
+    summary: Get all booked tables list
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/AllBookedTables"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "table_id": 1,
+                      "booking_date": "2024-03-04T10:11:31.718Z",
+                      "worker_id": 3,
+                      "client_number": "+79389513658",
+                      "start_date": "2024-03-04T10:11:31.718Z",
+                      "end_date": "2024-03-04T10:11:31.718Z",
+                      "interval": "3 hours",
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    AllBookedTables:
+      type: array
+      items:
+        type: object
+        properties:
+          table_id:
+            type: integer
+          booking_date:
+            type: string
+          worker_id:
+            type: integer
+          client_number:
+            type: string
+          start_date:
+            type: string
+          end_date:
+            type: string
+          interval:
+            type: string

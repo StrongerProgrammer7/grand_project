@@ -1,0 +1,38 @@
+components:
+  responses:
+    201Success:
+      description: Success!
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+              message:
+                type: string
+            example:
+              data: {}
+              message: Success!
+    404NotCorrectData:
+      description: Data is empty or not correct
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            example:
+              message: Request body is empty! | Don't correct data!
+    500InternalError:
+      description: "Error: Internal Server Error"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            example:
+              message: Sorry, server is problem! try again later.

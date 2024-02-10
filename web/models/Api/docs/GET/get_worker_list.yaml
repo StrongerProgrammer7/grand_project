@@ -1,0 +1,52 @@
+"/api/get_worker_list":
+  get:
+    tags:
+      - Worker
+    summary: Get info about all workers order by job role
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/AllInfoWorker"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "job_role": "Manager",
+                      "surname": "surname",
+                      "first_name": "first name",
+                      "patronymic": "lastnmae",
+                      "phone": "75684564612",
+                      "salary": 24341,
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    AllInfoWorker:
+      type: array
+      items:
+        type: object
+        properties:
+          job_role:
+            type: string
+          surname:
+            type: string
+          first_name:
+            type: string
+          patronymic:
+            type: string
+          phone:
+            type: string
+          salary:
+            type: integer

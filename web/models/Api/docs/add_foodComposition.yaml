@@ -1,0 +1,44 @@
+"/api/add_food_composition":
+  post:
+    tags:
+      - Food
+    summary: Add food composition
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              food_name:
+                type: string
+              ingredient_name:
+                type: string
+              ingredient_weight:
+                type: double
+            required:
+              - food_name
+              - ingredient_name
+              - ingredient_weight
+          examples:
+            Add:
+              value:
+                food_name: Борщанский
+                ingredient_name: Помидоры
+                ingredient_weight: 100.0
+            NotExists:
+              value:
+                food_name: Кириешки
+                ingredient_name: Помидоры
+                ingredient_weight: 100.0
+            AlreadyExists:
+              value:
+                food_name: Бурбон
+                ingredient_name: Помидоры
+                ingredient_weight: 300.0
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

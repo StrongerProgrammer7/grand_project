@@ -1,0 +1,52 @@
+"/api/get_menu_sorted_by_type":
+  get:
+    tags:
+      - Food
+    summary: Get list all menu sorting by type
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/MenuSortdByType"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "food_id": 1,
+                      "food_type": "Напитки",
+                      "food_name": "Бурбон",
+                      "weight": 200,
+                      "unit_of_measurement": "Грамм",
+                      "price": 300,
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    MenuSortdByType:
+      type: array
+      items:
+        type: object
+        properties:
+          food_id:
+            type: integer
+          food_type:
+            type: string
+          food_name:
+            type: string
+          weight:
+            type: integer
+          unit_of_measurement:
+            type: string
+          price:
+            type: integer

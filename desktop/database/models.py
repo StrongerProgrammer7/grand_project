@@ -1,5 +1,7 @@
+import datetime
+
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Boolean, DateTime
 
 Base = declarative_base()  # базовый класс из SQA, от которого наследуются наши модели
 
@@ -8,9 +10,9 @@ class IngredientStorage(Base):                                                  
     __tablename__ = 'ingredient_storage'
     id = Column(Integer, primary_key=True, autoincrement=True)
     id_ingredient = Column(Integer, ForeignKey("ingredient.id"), nullable=False)        # Id ингредиента
-    delivery_date = Column(Date, nullable=False)                                        # Когда пришел на склад
+    delivery_date = Column(DateTime(timezone=True), nullable=False)                                        # Когда пришел на склад
     id_request = Column(Integer, ForeignKey("requisition_list.id"), nullable=False)     # Id заявки
-    valid_until = Column(Date)                                                          # Годен до:
+    valid_until = Column(DateTime(timezone=True), nullable=False)                                                          # Годен до:
     weight = Column(Float)                                                              # Вес
     quantity = Column(Integer, nullable=False)                                          # Количество на складе
 
@@ -24,8 +26,8 @@ class IngredientStorage(Base):                                                  
 class Ingredient(Base):                                                                 # Ингредиент
     __tablename__ = 'ingredient'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    measurement = Column(String)                                                        # Единица измерения
+    name = Column(String(50), nullable=False)
+    measurement = Column(String(20), nullable=False)                                                        # Единица измерения
     price = Column(Float)
     critical_rate = Column(Integer, nullable=False)                                     # Мало товара -> надо пополнить
 
@@ -36,11 +38,11 @@ class Ingredient(Base):                                                         
 
 class RequisitionList(Base):                                                            # Список заявок
     __tablename__ = 'requisition_list'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     id_worker = Column(Integer, ForeignKey("worker.id"), nullable=False)
-    storage_name = Column(String, ForeignKey("storage.name"), nullable=False)
-    date = Column(Date)
-    status = Column(String)
+    storage_name = Column(String(50), ForeignKey("storage.name"), nullable=False)
+    date = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow())
+    status = Column(String(30), nullable=False)
 
     def __repr__(self):
         return "<RequisitionList(id_worker={}, storage_name='{}', date={}, status='{}')>" \
@@ -63,9 +65,9 @@ class Requisition(Base):                                                        
 
 class Storage(Base):                                                                    # Оптовый склад
     __tablename__ = 'storage'
-    name = Column(String, primary_key=True)
-    address = Column(String)
-    phone = Column(String)
+    name = Column(String(50), primary_key=True)
+    address = Column(String(255), nullable=False)
+    phone = Column(String(20), nullable=False)
 
     def __repr__(self):
         return "<Storage(address='{}', phone='{}')>" \
@@ -74,13 +76,13 @@ class Storage(Base):                                                            
 
 class Worker(Base):                                                                     # Работник
     __tablename__ = 'worker'
-    id = Column(Integer, primary_key=True)
-    job_role = Column(Integer, ForeignKey("job_role.name"), nullable=False)
-    surname = Column(String, nullable=False)
-    first_name = Column(String, nullable=False)
-    patronymic = Column(String)
-    email = Column(String)
-    phone = Column(String)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    job_role = Column(String, ForeignKey("job_role.name"), nullable=False)
+    surname = Column(String(50), nullable=False)
+    first_name = Column(String(50), nullable=False)
+    patronymic = Column(String(50))
+    email = Column(String(255))
+    phone = Column(String(20))
     salary = Column(Float, nullable=False)
     job_rate = Column(Float)
 
@@ -93,7 +95,7 @@ class Worker(Base):                                                             
 
 class JobRole(Base):                                                                    # Должность
     __tablename__ = 'job_role'
-    name = Column(Integer, primary_key=True)
+    name = Column(String(50), primary_key=True)
     min_salary = Column(Float, nullable=False)
     max_salary = Column(Float, nullable=False)
 
@@ -101,20 +103,19 @@ class JobRole(Base):                                                            
         return "<JobRole(min_salaty='{}', max_salaty='{}')>" \
             .format(self.min_salary, self.max_salaty)
 
-# Повторение данных???
 class WorkerHistory(Base):                                                              # История работника
     __tablename__ = 'worker_history'
     id_worker = Column(Integer, ForeignKey("worker.id"), primary_key=True)
-    start_date = Column(Date, primary_key=True)                                         # Дата начала работы
-    end_date = Column(Date)                                                             # Дата окончания работы
-    id_job_role = Column(Integer, ForeignKey("job_role.name"), nullable=False)          # id должности
-    surname = Column(String)
-    name = Column(String)
-    patronymic = Column(String)
-    email = Column(String)
-    phone = Column(String)
+    start_date = Column(DateTime(timezone=True), primary_key=True)                                         # Дата начала работы
+    end_date = Column(DateTime(timezone=True), nullable=False)                                                             # Дата окончания работы
+    id_job_role = Column(String(50), ForeignKey("job_role.name"), nullable=False)       # id должности
+    surname = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False)
+    patronymic = Column(String(50))
+    email = Column(String(255))
+    phone = Column(String(20), nullable=False)
     salary = Column(Float, nullable=False)
-    last_changes = Column(Date)                                                         # Запись даты последних изменений ?
+    last_changes = Column(String)                                                       # Запись последних изменений
 
     def __repr__(self):
         return ("<WorkerHistory(start_date='{}', end_date='{}', id_job_role='{}',"
@@ -125,7 +126,7 @@ class WorkerHistory(Base):                                                      
 
 class FoodComposition(Base):                                                            # Cостав
     __tablename__ = 'food_composition'
-    id_food = Column(Integer, ForeignKey("food.id") ,primary_key=True)                  # id блюда
+    id_food = Column(Integer, ForeignKey("food.id"), primary_key=True)                  # id блюда
     id_ingredient = Column(Integer, ForeignKey("ingredient.id"), primary_key=True)      # id ингредиента
     weight = Column(Float)                                                              # Объем/масса
 
@@ -136,7 +137,7 @@ class FoodComposition(Base):                                                    
 
 class FoodType(Base):                                                                   # Тип блюда
     __tablename__ = 'food_type'
-    type = Column(String, primary_key=True, nullable=False)                             # id блюда
+    type = Column(String(50), primary_key=True)                                         # id блюда
 
     def __repr__(self):
         return ("<FoodType(type='{}')>") \
@@ -163,9 +164,9 @@ class OrderDirectory(Base):                                                     
     id_worker = Column(Integer, ForeignKey("worker.id"), nullable=False)
     phone_client = Column(String(32), ForeignKey("client.phone"), nullable=False)                # ????
     id_food = Column(Integer, ForeignKey("food.id"), nullable=False)
-    formation_date = Column(Date, nullable=False)                                       # Дата формирования
-    giving_date = Column(Date, nullable=False)                                          # Дата выдачи
-    status = Column(Boolean, default=True)
+    formation_date = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow())                                       # Дата формирования
+    giving_date = Column(DateTime(timezone=True), nullable=False)                                          # Дата выдачи
+    status = Column(String(50), default=True)
     num_of_food = Column(Integer, nullable=False)
 
     def __repr__(self):
@@ -179,8 +180,8 @@ class OrderDirectory(Base):                                                     
 class Client(Base):
     __tablename__ = 'client'
     phone = Column(String(32), primary_key=True)
-    contact = Column(String(255), nullable=False)
-    last_contact_date = Column(Date, nullable=False)
+    contact = Column(String(255), nullable=False)                                       # Как обращаться
+    last_contact_date = Column(DateTime(timezone=True), nullable=False)                                    # Дата последнего обращения
 
     def __repr__(self):
         return ("<Client(phone='{}', contact='{}',"
@@ -191,8 +192,8 @@ class ClientTable(Base):
     __tablename__ = 'client_table'
     id_table = Column(Integer, ForeignKey("table.id"), primary_key=True)
     phone_client = Column(String(32), ForeignKey("client.phone"), primary_key=True)
-    order_date = Column(Date, nullable=False)
-    desired_booking_date = Column(Date, nullable=False)
+    order_date = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow())
+    desired_booking_date = Column(DateTime(timezone=True), nullable=False)
 
     def __repr__(self):
         return ("<ClientTable(id_table='{}', phone_client='{}',"
@@ -201,7 +202,7 @@ class ClientTable(Base):
 
 class Table(Base):
     __tablename__ = 'table'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     human_slots = Column(Integer, nullable=False)
 
     def __repr__(self):

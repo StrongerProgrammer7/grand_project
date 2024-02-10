@@ -188,7 +188,7 @@ class Client(Base):
                 "last_contact_date='{}')>") \
             .format(self.phone, self.contact, self.last_contact_date)
 
-class ClientTable(Base):
+class TableClient(Base):
     __tablename__ = 'client_table'
     id_table = Column(Integer, ForeignKey("table.id"), primary_key=True)
     phone_client = Column(String(32), ForeignKey("client.phone"), primary_key=True)

@@ -207,3 +207,4 @@ class Table(Base):
     def __repr__(self):
         return ("<Table(human_slots='{}')>") \
             .format(self.human_slots)
+

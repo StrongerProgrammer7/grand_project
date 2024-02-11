@@ -92,6 +92,7 @@ class Worker(Base):                                                             
     phone = Column(String(20))
     salary = Column(Float, nullable=False)
     job_rate = Column(Float)
+    # Последнее изменение
 
     __table_args__ = (                                                                  # Валидация
         CheckConstraint(

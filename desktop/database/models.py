@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Boolean, DateTime, CheckConstraint
 
 Base = declarative_base()  # базовый класс из SQA, от которого наследуются наши модели
 
@@ -10,9 +10,9 @@ class IngredientStorage(Base):                                                  
     __tablename__ = 'ingredient_storage'
     id = Column(Integer, primary_key=True, autoincrement=True)
     id_ingredient = Column(Integer, ForeignKey("ingredient.id"), nullable=False)        # Id ингредиента
-    delivery_date = Column(DateTime(timezone=True), nullable=False)                                        # Когда пришел на склад
+    delivery_date = Column(DateTime(timezone=True), nullable=False)                     # Когда пришел на склад
     id_request = Column(Integer, ForeignKey("requisition_list.id"), nullable=False)     # Id заявки
-    valid_until = Column(DateTime(timezone=True), nullable=False)                                                          # Годен до:
+    valid_until = Column(DateTime(timezone=True), nullable=False)                       # Годен до:
     weight = Column(Float)                                                              # Вес
     quantity = Column(Integer, nullable=False)                                          # Количество на складе
 
@@ -27,7 +27,7 @@ class Ingredient(Base):                                                         
     __tablename__ = 'ingredient'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-    measurement = Column(String(20), nullable=False)                                                        # Единица измерения
+    measurement = Column(String(20), nullable=False)                                    # Единица измерения
     price = Column(Float)
     critical_rate = Column(Integer, nullable=False)                                     # Мало товара -> надо пополнить
 
@@ -69,6 +69,13 @@ class Storage(Base):                                                            
     address = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=False)
 
+    __table_args__ = (
+        CheckConstraint(
+            "(phone ~* '^[\+]?[0-9]+$' AND LENGTH(phone) >= 11) OR (phone ~* '^[0-9]+$' AND LENGTH(phone) >= 10)",
+            name='valid_phone_format'
+        ),
+    )
+
     def __repr__(self):
         return "<Storage(address='{}', phone='{}')>" \
             .format(self.address, self.phone)
@@ -85,6 +92,17 @@ class Worker(Base):                                                             
     phone = Column(String(20))
     salary = Column(Float, nullable=False)
     job_rate = Column(Float)
+
+    __table_args__ = (                                                                  # Валидация
+        CheckConstraint(
+            "(phone ~* '^[\+]?[0-9]+$' AND LENGTH(phone) >= 11) OR (phone ~* '^[0-9]+$' AND LENGTH(phone) >= 10)",
+            name='valid_phone_format'
+        ),
+        CheckConstraint(
+            "email ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'",
+            name='valid_email_format'
+        ),
+    )
 
     def __repr__(self):
         return ("<Worker(job_role={}, surname={}, first_name={},"
@@ -106,8 +124,8 @@ class JobRole(Base):                                                            
 class WorkerHistory(Base):                                                              # История работника
     __tablename__ = 'worker_history'
     id_worker = Column(Integer, ForeignKey("worker.id"), primary_key=True)
-    start_date = Column(DateTime(timezone=True), primary_key=True)                                         # Дата начала работы
-    end_date = Column(DateTime(timezone=True), nullable=False)                                                             # Дата окончания работы
+    start_date = Column(DateTime(timezone=True), primary_key=True)                      # Дата начала работы
+    end_date = Column(DateTime(timezone=True), nullable=False)                          # Дата окончания работы
     id_job_role = Column(String(50), ForeignKey("job_role.name"), nullable=False)       # id должности
     surname = Column(String(50), nullable=False)
     name = Column(String(50), nullable=False)
@@ -116,6 +134,17 @@ class WorkerHistory(Base):                                                      
     phone = Column(String(20), nullable=False)
     salary = Column(Float, nullable=False)
     last_changes = Column(String)                                                       # Запись последних изменений
+
+    __table_args__ = (
+        CheckConstraint(
+            "(phone ~* '^[\+]?[0-9]+$' AND LENGTH(phone) >= 11) OR (phone ~* '^[0-9]+$' AND LENGTH(phone) >= 10)",
+            name='valid_phone_format'
+        ),
+        CheckConstraint(
+            "email ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'",
+            name='valid_email_format'
+        ),
+    )
 
     def __repr__(self):
         return ("<WorkerHistory(start_date='{}', end_date='{}', id_job_role='{}',"
@@ -162,10 +191,10 @@ class OrderDirectory(Base):                                                     
     __tablename__ = 'order_directory'
     id = Column(Integer, primary_key=True, autoincrement=True)
     id_worker = Column(Integer, ForeignKey("worker.id"), nullable=False)
-    phone_client = Column(String(32), ForeignKey("client.phone"), nullable=False)                # ????
+    phone_client = Column(String(32), ForeignKey("client.phone"), nullable=False)
     id_food = Column(Integer, ForeignKey("food.id"), nullable=False)
-    formation_date = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow())                                       # Дата формирования
-    giving_date = Column(DateTime(timezone=True), nullable=False)                                          # Дата выдачи
+    formation_date = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow())
+    giving_date = Column(DateTime(timezone=True), nullable=False)                       # Дата выдачи
     status = Column(String(50), default=True)
     num_of_food = Column(Integer, nullable=False)
 
@@ -181,7 +210,14 @@ class Client(Base):
     __tablename__ = 'client'
     phone = Column(String(32), primary_key=True)
     contact = Column(String(255), nullable=False)                                       # Как обращаться
-    last_contact_date = Column(DateTime(timezone=True), nullable=False)                                    # Дата последнего обращения
+    last_contact_date = Column(DateTime(timezone=True), nullable=False)                 # Дата последнего обращения
+
+    __table_args__ = (
+        CheckConstraint(
+            "(phone ~* '^[\+]?[0-9]+$' AND LENGTH(phone) >= 11) OR (phone ~* '^[0-9]+$' AND LENGTH(phone) >= 10)",
+            name='valid_phone_format'
+        ),
+    )
 
     def __repr__(self):
         return ("<Client(phone='{}', contact='{}',"
@@ -194,6 +230,13 @@ class TableClient(Base):
     phone_client = Column(String(32), ForeignKey("client.phone"), primary_key=True)
     order_date = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow())
     desired_booking_date = Column(DateTime(timezone=True), nullable=False)
+
+    __table_args__ = (
+        CheckConstraint(
+            "(phone_client ~* '^[\+]?[0-9]+$' AND LENGTH(phone_client) >= 11) OR (phone_client ~* '^[0-9]+$' AND LENGTH(phone_client) >= 10)",
+            name='valid_phone_client_format'
+        ),
+    )
 
     def __repr__(self):
         return ("<ClientTable(id_table='{}', phone_client='{}',"
@@ -208,4 +251,3 @@ class Table(Base):
     def __repr__(self):
         return ("<Table(human_slots='{}')>") \
             .format(self.human_slots)
-

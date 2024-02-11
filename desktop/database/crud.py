@@ -95,18 +95,18 @@ def insert_test_data():
     table3 = models.Table(human_slots=2)
     table4 = models.Table(human_slots=5)
 
-    client1 = models.Client(phone="89389513658", contact="Константин", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
-    client2 = models.Client(phone="89637259702", contact="Валентин", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
-    client3 = models.Client(phone="89848718618", contact="Анатолий", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
-    client4 = models.Client(phone="89330339678", contact="Глеб", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
+    client1 = models.Client(phone="+79389513658", contact="Константин", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
+    client2 = models.Client(phone="+79637259702", contact="Валентин", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
+    client3 = models.Client(phone="+79848718618", contact="Анатолий", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
+    client4 = models.Client(phone="+79330339678", contact="Глеб", last_contact_date=datetime.datetime.utcnow().replace(microsecond=0))
 
-    tableclient1 = models.TableClient(id_table=1, phone_client="89389513658", order_date=datetime.datetime.utcnow().replace(microsecond=0),
+    tableclient1 = models.TableClient(id_table=1, phone_client="+79389513658", order_date=datetime.datetime.utcnow().replace(microsecond=0),
                                       desired_booking_date=datetime.datetime.utcnow().replace(microsecond=0))
-    tableclient2 = models.TableClient(id_table=2, phone_client="89637259702", order_date=datetime.datetime.utcnow().replace(microsecond=0),
+    tableclient2 = models.TableClient(id_table=2, phone_client="+79637259702", order_date=datetime.datetime.utcnow().replace(microsecond=0),
                                       desired_booking_date=datetime.datetime.utcnow().replace(microsecond=0))
-    tableclient3 = models.TableClient(id_table=3, phone_client="89848718618", order_date=datetime.datetime.utcnow().replace(microsecond=0),
+    tableclient3 = models.TableClient(id_table=3, phone_client="+79848718618", order_date=datetime.datetime.utcnow().replace(microsecond=0),
                                       desired_booking_date=datetime.datetime.utcnow().replace(microsecond=0))
-    tableclient4 = models.TableClient(id_table=4, phone_client="89330339678", order_date=datetime.datetime.utcnow().replace(microsecond=0),
+    tableclient4 = models.TableClient(id_table=4, phone_client="+79330339678", order_date=datetime.datetime.utcnow().replace(microsecond=0),
                                       desired_booking_date=datetime.datetime.utcnow().replace(microsecond=0))
 
     job_role1 = models.JobRole(name="Старший Повар" ,min_salary=70000 ,max_salary=80000)
@@ -115,20 +115,20 @@ def insert_test_data():
     job_role4 = models.JobRole(name="Официант" ,min_salary=30000 ,max_salary=40000)
 
     worker1 = models.Worker(job_role="Старший Повар",surname="Прохвостин", first_name="Михаил", patronymic="",
-                            email="",phone="89028759088",salary=50000)
+                            phone="+79028759088",salary=50000)
     worker2 = models.Worker(job_role="Младший Повар",surname="Александров", first_name="Олег", patronymic="",
-                            email="",phone="89028759088",salary=50000)
+                            phone="+79028759088",salary=50000)
     worker3 = models.Worker(job_role="Шеф-Повар",surname="Васильев", first_name="Михаил", patronymic="",
-                            email="",phone="89028759088",salary=50000)
+                            phone="+79028759088",salary=50000)
     worker4 = models.Worker(job_role="Официант",surname="Иванов", first_name="Олег", patronymic="",
-                            email="",phone="89028759088",salary=50000)
+                            phone="+79028759088",salary=50000)
 
     worker_history1 = models.WorkerHistory(id_worker=1,start_date=datetime.datetime.utcnow().replace(microsecond=0), end_date=datetime.datetime.utcnow().replace(microsecond=0),
-                                           id_job_role="Шеф-Повар", surname="Александров",name="Олег",phone="89637259702",salary=50000)
+                                           id_job_role="Шеф-Повар", surname="Александров",name="Олег",phone="+79637259702",salary=50000)
     worker_history2 = models.WorkerHistory(id_worker=2,start_date=datetime.datetime.utcnow().replace(microsecond=0), end_date=datetime.datetime.utcnow().replace(microsecond=0),
-                                           id_job_role="Младший Повар", surname="Васильев",name="Олег",phone="89637259702",salary=30000)
+                                           id_job_role="Младший Повар", surname="Васильев",name="Олег",phone="+79637259702",salary=30000)
     worker_history3 = models.WorkerHistory(id_worker=3,start_date=datetime.datetime.utcnow().replace(microsecond=0), end_date=datetime.datetime.utcnow().replace(microsecond=0),
-                                           id_job_role="Младший Повар", surname="Иванов",name="Михаил",phone="89637259702",salary=60000)
+                                           id_job_role="Младший Повар", surname="Иванов",name="Михаил",phone="+79637259702",salary=60000)
 
     food_type1 = models.FoodType(type="Пицца")
     food_type2 = models.FoodType(type="Суши")
@@ -139,11 +139,11 @@ def insert_test_data():
     food2 = models.Food(type="Пицца", name="Карбонара", weight=800, unit_of_measurement="Грамм", price=800)
     food3 = models.Food(type="Салаты", name="Цезарь", weight=400, unit_of_measurement="Грамм", price=600)
 
-    order_directory1 = models.OrderDirectory(id_worker=1,phone_client="89389513658", id_food=1, formation_date=datetime.datetime.utcnow().replace(microsecond=0),
+    order_directory1 = models.OrderDirectory(id_worker=1,phone_client="+79389513658", id_food=1, formation_date=datetime.datetime.utcnow().replace(microsecond=0),
                                              giving_date=datetime.datetime.utcnow().replace(microsecond=0),status="Готовится",num_of_food=2)
-    order_directory2 = models.OrderDirectory(id_worker=2,phone_client="89637259702", id_food=2, formation_date=datetime.datetime.utcnow().replace(microsecond=0),
+    order_directory2 = models.OrderDirectory(id_worker=2,phone_client="+79637259702", id_food=2, formation_date=datetime.datetime.utcnow().replace(microsecond=0),
                                              giving_date=datetime.datetime.utcnow().replace(microsecond=0),status="Подано",num_of_food=1)
-    order_directory3 = models.OrderDirectory(id_worker=3,phone_client="89848718618", id_food=3, formation_date=datetime.datetime.utcnow().replace(microsecond=0),
+    order_directory3 = models.OrderDirectory(id_worker=3,phone_client="+79848718618", id_food=3, formation_date=datetime.datetime.utcnow().replace(microsecond=0),
                                              giving_date=datetime.datetime.utcnow().replace(microsecond=0),status="Готовится",num_of_food=4)
 
     ingredient1 = models.Ingredient(name="Помидоры",measurement="кг", price=200, critical_rate=5)
@@ -154,9 +154,9 @@ def insert_test_data():
     food_composition2 = models.FoodComposition(id_food=2,id_ingredient=3, weight=500)
     food_composition3 = models.FoodComposition(id_food=3,id_ingredient=1, weight=700)
 
-    storage1 = models.Storage(name="Сундук" ,address="Краснодар" , phone="89057474162")
-    storage2 = models.Storage(name="Рундук" ,address="Ростов" , phone="89943211287")
-    storage3 = models.Storage(name="Ларец" ,address="Москва" , phone="89279675440")
+    storage1 = models.Storage(name="Сундук" ,address="Краснодар" , phone="+79057474162")
+    storage2 = models.Storage(name="Рундук" ,address="Ростов" , phone="+79943211287")
+    storage3 = models.Storage(name="Ларец" ,address="Москва" , phone="+79279675440")
 
     requisition_list1 = models.RequisitionList(id_worker=1,storage_name="Сундук", date=datetime.datetime.utcnow().replace(microsecond=0), status="В процессе")
     requisition_list2 = models.RequisitionList(id_worker=2,storage_name="Рундук", date=datetime.datetime.utcnow().replace(microsecond=0), status="Выполнено")

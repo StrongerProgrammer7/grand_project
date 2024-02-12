@@ -1,23 +1,10 @@
-# ///////////////////////////////////////////////////////////////
-#
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# ///////////////////////////////////////////////////////////////
-
-import sys
 import os
-import platform
+import sys
 
-# IMPORT / GUI AND MODULES AND WIDGETS
-# ///////////////////////////////////////////////////////////////
 from modules import *
-from widgets import *
 
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 
-# SET AS GLOBAL WIDGETS
-# ///////////////////////////////////////////////////////////////
 widgets = None
 
 

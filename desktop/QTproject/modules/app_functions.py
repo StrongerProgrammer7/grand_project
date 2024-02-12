@@ -15,7 +15,7 @@
 
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
-from ..main import *
+from desktop.QTproject.main import *
 
 
 # WITH ACCESS TO MAIN WINDOW WIDGETS

@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/images', express.static(__dirname + '/public/images'));
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 
 app.engine('ejs', require('ejs-mate'));
@@ -24,9 +24,9 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.use('/', pages);
-app.use('/api',controller)
+app.use('/api', controller)
 
-const optionHTTPS = 
+const optionHTTPS =
 {
     key: fs.readFileSync('./certificate/key.pem'),
     cert: fs.readFileSync('./certificate/cert.pem')

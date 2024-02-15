@@ -1,0 +1,12 @@
+###
+GET https://localhost:5000
+###
+
+POST https://localhost:5000/api/test
+Content-Type: application/json
+{
+    "name":"Name"
+}
+
+###
+GET http://grandproject.k-lab.su/

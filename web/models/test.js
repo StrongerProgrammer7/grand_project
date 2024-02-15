@@ -6,3 +6,5 @@ const test = async (req, res,next) =>
         return next(ApiError.badRequest("Request body is empty! But Api work!"));
     return res.status(201).json({ message: "Api work!" });
 }
+
+module.exports = test;

@@ -1,19 +1,37 @@
 const https = require('https');
 const express = require('express');
+const expressWinston = require('express-winston');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv').config();
+const { transports, format } = require('winston');
+
 const pages = require('./routers/router');
 const controller = require('./controller/controller');
 const errorHandler = require('./middleware/ErrorHadnlingMiddleware');
+const logger = require('./logger/logger');
+const loggerInernalError = require('./logger/loggerInernalError');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 443;
 const urlencodedParser = express.urlencoded({ extended: true });
 const app = express();
 
+
+app.use(expressWinston.logger(
+    {
+        winstonInstance: logger,
+        statusLevels: true
+    }
+));
+
+app.use(expressWinston.errorLogger(
+    {
+        winstonInstance:loggerInernalError
+    }
+))
 // app.all('*',function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
 //   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

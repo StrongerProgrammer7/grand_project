@@ -1,11 +1,14 @@
+@baseUrl = https://localhost:5000
 ###
-GET https://localhost:443
+GET {{baseUrl}}
 ###
 
-POST https://localhost:443/api/test
-Content-Type: application/json
+POST {{baseUrl}}/api/test
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
 {
-    "name":"Name"
+    "name": "name"
 }
 
 ###

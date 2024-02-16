@@ -1,7 +1,7 @@
 const Router = require('express');
 const router = new Router();
 const fs = require('fs');
-
+const logger = require('../logger/logger');
 const cookierParser = require('cookie-parser');
 const session = require('express-session');
 router.use(cookierParser());
@@ -16,6 +16,7 @@ router.use(session(
 
 router.get('/', (req, res,next) =>
 {
+    logger.info('THIS MESSAGE');
     res.render('pages/index', { title: 'Resturant' });
 })
 

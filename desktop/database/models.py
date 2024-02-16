@@ -1,7 +1,7 @@
 import datetime
 
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, CheckConstraint
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, Boolean, DateTime, CheckConstraint
 
 Base = declarative_base()  # базовый класс из SQA, от которого наследуются наши модели
 

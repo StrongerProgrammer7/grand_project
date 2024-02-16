@@ -70,7 +70,7 @@ app.use(errorHandler);
 
 const optionHTTPS =
 {
-    key: fs.readFileSync('./certificate/key.pem'),
+    key: fs.readFileSync('./certificate/cert-key.pem'),
     cert: fs.readFileSync('./certificate/cert.pem')
 }
 

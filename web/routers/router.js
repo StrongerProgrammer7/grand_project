@@ -14,13 +14,13 @@ router.use(session(
     }
 ));
 
-router.get('/', (req, res) =>
+router.get('/', (req, res,next) =>
 {
     res.render('pages/index', { title: 'Resturant' });
 })
 
 
-router.get('/registration', (req, res) =>
+router.get('/registration', (req, res,next) =>
 {
     /*
     res.writeHead(200,{'Content-Type':'text/html; charset=utf8'});

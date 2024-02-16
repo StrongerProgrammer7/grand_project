@@ -14,6 +14,13 @@ const PORT = process.env.PORT || 3000;
 const urlencodedParser = express.urlencoded({ extended: true });
 const app = express();
 
+// app.all('*',function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
+
+
 app.use(express.json());
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/js', express.static(__dirname + '/public/js'));
@@ -26,14 +33,14 @@ app.engine('ejs', require('ejs-mate'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: 'http://localhost:5000'/*['http://localhost:3000','http://localhost:8080']*/, credentials: true }));
 app.use(function (req, res, next)
 {
-    res.header('Content-Type', 'application/json;charset=UTF-8');
+    //res.header('Content-Type', 'application/json;charset=UTF-8');
     res.header('Access-Control-Allow-Credentias', true);
     res.header(
         'Access-Control-Allow-Headers',
-        'Origin, X-Requeste-With, Content-Type, Accept'
+        'Origin, X-Requested-With, Content-Type, Accept'
     );
     next();
 });

@@ -7,15 +7,11 @@
 # respective credits only in the Python scripts, any information in the visual
 # interface (GUI) can be modified without any implication.
 #
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
 
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from desktop.QTproject.main import *
+from desktop.QTproject.modules import Settings
 
 
 # WITH ACCESS TO MAIN WINDOW WIDGETS

@@ -50,6 +50,7 @@ After expoting in .py and change the line "import resources_rc" to "from. Resouc
 
 > **images/**: put all your images and icons here before converting to Python (resources_re.py) ```pyside6-rcc resources.qrc -o resources_rc.py```.
 
+https://doc.qt.io/qtforpython/licenses.html
 
 
 

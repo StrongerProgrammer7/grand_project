@@ -18,8 +18,9 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+
 class CustomGrip(QWidget):
-    def __init__(self, parent, position, disable_color = False):
+    def __init__(self, parent, position, disable_color=False):
 
         # SETUP UI
         QWidget.__init__(self)
@@ -45,6 +46,7 @@ class CustomGrip(QWidget):
                 geo.setTop(geo.bottom() - height)
                 self.parent.setGeometry(geo)
                 event.accept()
+
             self.wi.top.mouseMoveEvent = resize_top
 
             # ENABLE COLOR
@@ -69,6 +71,7 @@ class CustomGrip(QWidget):
                 height = max(self.parent.minimumHeight(), self.parent.height() + delta.y())
                 self.parent.resize(self.parent.width(), height)
                 event.accept()
+
             self.wi.bottom.mouseMoveEvent = resize_bottom
 
             # ENABLE COLOR
@@ -91,6 +94,7 @@ class CustomGrip(QWidget):
                 geo.setLeft(geo.right() - width)
                 self.parent.setGeometry(geo)
                 event.accept()
+
             self.wi.leftgrip.mouseMoveEvent = resize_left
 
             # ENABLE COLOR
@@ -108,12 +112,12 @@ class CustomGrip(QWidget):
                 width = max(self.parent.minimumWidth(), self.parent.width() + delta.x())
                 self.parent.resize(width, self.parent.height())
                 event.accept()
+
             self.wi.rightgrip.mouseMoveEvent = resize_right
 
             # ENABLE COLOR
             if disable_color:
                 self.wi.rightgrip.setStyleSheet("background: transparent")
-
 
     def mouseReleaseEvent(self, event):
         self.mousePos = None
@@ -130,6 +134,7 @@ class CustomGrip(QWidget):
 
         elif hasattr(self.wi, 'rightgrip'):
             self.wi.rightgrip.setGeometry(0, 0, 10, self.height() - 20)
+
 
 class Widgets(object):
     def top(self, Form):

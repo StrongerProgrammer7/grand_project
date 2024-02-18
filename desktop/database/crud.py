@@ -1,17 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from models import *
-from desktop.database.config import DATABASE_URI
 from file_manager.manager import YAML_work, JSON_work
-
-engine = create_engine(DATABASE_URI,
-                       connect_args={'client_encoding': 'utf8'},
-                       pool_size=10,
-                       max_overflow=20,
-                       pool_pre_ping=True,
-                       pool_recycle=3600, )
-Session = sessionmaker(bind=engine, autocommit=False)
+from models import *
+from session import *
 
 
 def recreate_database(db: Session):
@@ -97,12 +86,8 @@ def update_row(model: Base, id: int, updated_item: Base, db: Session):
         print(f"{model.__tablename__} not found")
 
 
+# TODO: Переделать метод
 def add_from_file_in_table(model, strategy='JSON'):
-    """
-    :param model: класс из models.py, экземпляр которого создастся и запишется в БД
-    :param strategy: тип файла из которого беруться данные таблицы. 'JSON', 'YAML'
-    :return: None
-    """
     if strategy == 'JSON':
         data = JSON_work.read()
     elif strategy == 'YAML':

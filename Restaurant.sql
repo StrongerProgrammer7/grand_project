@@ -5,7 +5,31 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-02-18 06:14:52
+-- Started on 2024-02-20 05:43:21
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE "Restaurant";
+--
+-- TOC entry 4939 (class 1262 OID 24576)
+-- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
+
+
+ALTER DATABASE "Restaurant" OWNER TO postgres;
+
+\connect "Restaurant"
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -101,7 +125,7 @@ CREATE SEQUENCE public.food_id_seq
 ALTER SEQUENCE public.food_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4939 (class 0 OID 0)
+-- TOC entry 4940 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: food_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -154,7 +178,7 @@ CREATE SEQUENCE public.ingredient_id_seq
 ALTER SEQUENCE public.ingredient_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4940 (class 0 OID 0)
+-- TOC entry 4941 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: ingredient_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -197,7 +221,7 @@ CREATE SEQUENCE public.ingredient_storage_id_seq
 ALTER SEQUENCE public.ingredient_storage_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4941 (class 0 OID 0)
+-- TOC entry 4942 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: ingredient_storage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -255,7 +279,7 @@ CREATE SEQUENCE public.order_directory_id_seq
 ALTER SEQUENCE public.order_directory_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4942 (class 0 OID 0)
+-- TOC entry 4943 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: order_directory_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -311,7 +335,7 @@ CREATE SEQUENCE public.requisition_list_id_seq
 ALTER SEQUENCE public.requisition_list_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4943 (class 0 OID 0)
+-- TOC entry 4944 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: requisition_list_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -364,7 +388,7 @@ CREATE SEQUENCE public.table_id_seq
 ALTER SEQUENCE public.table_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4944 (class 0 OID 0)
+-- TOC entry 4945 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -402,7 +426,7 @@ CREATE SEQUENCE public.tables_id_seq
 ALTER SEQUENCE public.tables_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4945 (class 0 OID 0)
+-- TOC entry 4946 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: tables_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -476,7 +500,7 @@ CREATE SEQUENCE public.worker_id_seq
 ALTER SEQUENCE public.worker_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4946 (class 0 OID 0)
+-- TOC entry 4947 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: worker_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -732,7 +756,7 @@ INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role,
 
 
 --
--- TOC entry 4947 (class 0 OID 0)
+-- TOC entry 4948 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: food_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -741,7 +765,7 @@ SELECT pg_catalog.setval('public.food_id_seq', 3, true);
 
 
 --
--- TOC entry 4948 (class 0 OID 0)
+-- TOC entry 4949 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: ingredient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -750,7 +774,7 @@ SELECT pg_catalog.setval('public.ingredient_id_seq', 3, true);
 
 
 --
--- TOC entry 4949 (class 0 OID 0)
+-- TOC entry 4950 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: ingredient_storage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -759,7 +783,7 @@ SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 3, true);
 
 
 --
--- TOC entry 4950 (class 0 OID 0)
+-- TOC entry 4951 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: order_directory_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -768,7 +792,7 @@ SELECT pg_catalog.setval('public.order_directory_id_seq', 3, true);
 
 
 --
--- TOC entry 4951 (class 0 OID 0)
+-- TOC entry 4952 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: requisition_list_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -777,7 +801,7 @@ SELECT pg_catalog.setval('public.requisition_list_id_seq', 3, true);
 
 
 --
--- TOC entry 4952 (class 0 OID 0)
+-- TOC entry 4953 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -786,7 +810,7 @@ SELECT pg_catalog.setval('public.table_id_seq', 4, true);
 
 
 --
--- TOC entry 4953 (class 0 OID 0)
+-- TOC entry 4954 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: tables_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -795,7 +819,7 @@ SELECT pg_catalog.setval('public.tables_id_seq', 4, true);
 
 
 --
--- TOC entry 4954 (class 0 OID 0)
+-- TOC entry 4955 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: worker_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1109,7 +1133,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-02-18 06:14:52
+-- Completed on 2024-02-20 05:43:21
 
 --
 -- PostgreSQL database dump complete

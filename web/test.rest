@@ -1,0 +1,15 @@
+@baseUrl = https://localhost:5000
+###
+GET {{baseUrl}}
+###
+
+POST {{baseUrl}}/api/test
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+{
+    "name": "name"
+}
+
+###
+GET http://grandproject.k-lab.su/

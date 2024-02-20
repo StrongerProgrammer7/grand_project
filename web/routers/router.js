@@ -1,7 +1,7 @@
 const Router = require('express');
 const router = new Router();
 const fs = require('fs');
-
+const logger = require('../logger/logger');
 const cookierParser = require('cookie-parser');
 const session = require('express-session');
 router.use(cookierParser());
@@ -14,13 +14,14 @@ router.use(session(
     }
 ));
 
-router.get('/', (req, res) =>
+router.get('/', (req, res,next) =>
 {
+    logger.info('THIS MESSAGE');
     res.render('pages/index', { title: 'Resturant' });
 })
 
 
-router.get('/registration', (req, res) =>
+router.get('/registration', (req, res,next) =>
 {
     /*
     res.writeHead(200,{'Content-Type':'text/html; charset=utf8'});

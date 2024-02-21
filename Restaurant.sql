@@ -18,7 +18,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-DROP DATABASE "Restaurant";
+DROP DATABASE IF EXISTS "Restaurant";
 --
 -- TOC entry 4939 (class 1262 OID 24576)
 -- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const https = require('https');
 const express = require('express');
 const expressWinston = require('express-winston');
@@ -28,7 +29,7 @@ app.use(expressWinston.logger(
 
 app.use(expressWinston.errorLogger(
     {
-        winstonInstance:loggerInernalError
+        winstonInstance: loggerInernalError
     }
 ))
 // app.all('*',function(req, res, next) {
@@ -73,13 +74,14 @@ const optionHTTPS =
     cert: fs.readFileSync('./certificate/cert.pem')
 }
 
+const HOST = "0.0.0.0";
 
 const startServer = async function ()
 {
     try
     {
         https.createServer(optionHTTPS, app)
-            .listen(PORT, () =>
+            .listen(PORT, HOST, () =>
             {
                 console.log(`Server has been started on the port ${ PORT } and HTTPS. Env=${ process.env.NODE_ENV }`);
             })

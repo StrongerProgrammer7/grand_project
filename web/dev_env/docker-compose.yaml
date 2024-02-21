@@ -3,26 +3,26 @@ version: '3.8'
 services:
   db:
     image: postgres:latest
+    container_name: db
     restart: always
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=Restaurant
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    #network_mode: 'host'
     ports:
       - '4321:5432'
   node-server-app:
     depends_on:
       - db
-    image: node-server:latest
-    restart: always
+    build: .. #image: node-server:latest
+    container_name: node-server-app
+    restart: on-failure
     environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=root
-      - DB_NAME=postgres
+      - DATABASE_URL=postgres://postgres:root@db/Restaurant
     ports:
       - '443:5000'
 volumes:

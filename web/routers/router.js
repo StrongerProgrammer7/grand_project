@@ -16,7 +16,7 @@ router.use(session(
 
 router.get('/', (req, res,next) =>
 {
-    logger.info('THIS MESSAGE');
+    //logger.info('THIS MESSAGE');
     res.render('pages/index', { title: 'Resturant' });
 })
 

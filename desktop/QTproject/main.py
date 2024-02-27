@@ -60,10 +60,10 @@ class MainWindow(QMainWindow):
         widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
-        def openCloseRightBox():
-            UIFunctions.toggleRightBox(self, True)
+#       def openCloseRightBox():
+#            UIFunctions.toggleRightBox(self, True)
 
-        widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
+#        widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
@@ -72,12 +72,15 @@ class MainWindow(QMainWindow):
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         useCustomTheme = True
-        themeFile = "themes/py_dracula_light.qss"
-
+        self.themeFile = "themes/py_dracula_dark.qss"
         # SET THEME AND HACKS
         if useCustomTheme:
             # LOAD AND APPLY STYLE
-            UIFunctions.theme(self, themeFile, True)
+            UIFunctions.theme(self, self.themeFile, True)
+
+            widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
+
+
 
             # SET HACKS
             AppFunctions.setThemeHack(self)

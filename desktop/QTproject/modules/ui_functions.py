@@ -8,6 +8,7 @@ GLOBAL_TITLE_BAR = True
 
 
 class UIFunctions(MainWindow):
+
     # MAXIMIZE/RESTORE
     # ///////////////////////////////////////////////////////////////
     def maximize_restore(self):
@@ -102,7 +103,7 @@ class UIFunctions(MainWindow):
 
     # TOGGLE RIGHT BOX
     # ///////////////////////////////////////////////////////////////
-    def toggleRightBox(self, enable):
+    '''def toggleRightBox(self, enable):
         if enable:
             # GET WIDTH
             width = self.ui.extraRightBox.width()
@@ -128,6 +129,7 @@ class UIFunctions(MainWindow):
                 self.ui.settingsTopBtn.setStyleSheet(style.replace(color, ''))
 
             UIFunctions.start_box_animation(self, widthLeftBox, width, "right")
+    '''
 
     def start_box_animation(self, left_box_width, right_box_width, direction):
         right_width = 0
@@ -194,6 +196,17 @@ class UIFunctions(MainWindow):
         if useCustomTheme:
             str = open(file, 'r').read()
             self.ui.styleSheet.setStyleSheet(str)
+
+    def toggle_theme(self):
+        current_stylesheet = open(self.themeFile, 'r').read()
+        dark_stylesheet = open("themes/py_dracula_dark.qss", 'r').read()
+        light_stylesheet = open("themes/py_dracula_light.qss", 'r').read()
+        if current_stylesheet == dark_stylesheet:
+            self.ui.styleSheet.setStyleSheet(light_stylesheet)
+            self.themeFile = "themes/py_dracula_light.qss"
+        else:
+            self.ui.styleSheet.setStyleSheet(dark_stylesheet)
+            self.themeFile = "themes/py_dracula_dark.qss"
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

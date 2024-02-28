@@ -103,7 +103,7 @@ class UIFunctions(MainWindow):
 
     # TOGGLE RIGHT BOX
     # ///////////////////////////////////////////////////////////////
-    '''def toggleRightBox(self, enable):
+    def toggleRightBox(self, enable):
         if enable:
             # GET WIDTH
             width = self.ui.extraRightBox.width()
@@ -129,7 +129,7 @@ class UIFunctions(MainWindow):
                 self.ui.settingsTopBtn.setStyleSheet(style.replace(color, ''))
 
             UIFunctions.start_box_animation(self, widthLeftBox, width, "right")
-    '''
+
 
     def start_box_animation(self, left_box_width, right_box_width, direction):
         right_width = 0
@@ -201,13 +201,15 @@ class UIFunctions(MainWindow):
         current_stylesheet = open(self.themeFile, 'r').read()
         dark_stylesheet = open("themes/py_dracula_dark.qss", 'r').read()
         light_stylesheet = open("themes/py_dracula_light.qss", 'r').read()
+
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
+            self.ui.btn_message.setStyleSheet("background-image: url(images/icons/sun.png)")
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
             self.themeFile = "themes/py_dracula_dark.qss"
-
+            self.ui.btn_message.setStyleSheet("background-image: url(images/icons/moon.png)")
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////
     def uiDefinitions(self):

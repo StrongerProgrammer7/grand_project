@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>940</width>
-    <height>560</height>
+    <width>1565</width>
+    <height>634</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -866,7 +866,7 @@ Button */
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-home.png);</string>
+                   <string notr="true">background-image: url(:/icons/images/icons/cil-bell.png);</string>
                   </property>
                   <property name="text">
                    <string>Home</string>
@@ -981,42 +981,6 @@ Button */
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QPushButton" name="btn_exit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>45</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>Segoe UI</family>
-                    <pointsize>10</pointsize>
-                    <italic>false</italic>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-x.png);</string>
-                  </property>
-                  <property name="text">
-                   <string>Exit</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </widget>
              </item>
@@ -1073,7 +1037,7 @@ Button */
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/icon_settings.png);</string>
+                   <string notr="true">background-image: url(:/icons/images/icons/cil-user.png);</string>
                   </property>
                   <property name="text">
                    <string>Left Box</string>

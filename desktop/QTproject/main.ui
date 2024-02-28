@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1565</width>
-    <height>634</height>
+    <width>940</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -869,7 +869,7 @@ Button */
                    <string notr="true">background-image: url(:/icons/images/icons/cil-bell.png);</string>
                   </property>
                   <property name="text">
-                   <string>Home</string>
+                   <string>Notification</string>
                   </property>
                  </widget>
                 </item>
@@ -902,10 +902,10 @@ Button */
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-gamepad.png);</string>
+                   <string notr="true">background-image: url(:/icons/images/icons/reservation.png);</string>
                   </property>
                   <property name="text">
-                   <string>Widgets</string>
+                   <string>Reservation</string>
                   </property>
                  </widget>
                 </item>
@@ -938,10 +938,11 @@ Button */
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-file.png);</string>
+                   <string notr="true">background-image: url(:/icons/images/icons/ingredients.png);
+</string>
                   </property>
                   <property name="text">
-                   <string>New</string>
+                   <string>Ingredients</string>
                   </property>
                  </widget>
                 </item>
@@ -974,10 +975,10 @@ Button */
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/cil-save.png)</string>
+                   <string notr="true">background-image: url(:/icons/images/icons/cil-notes.png);</string>
                   </property>
                   <property name="text">
-                   <string>Save</string>
+                   <string>Order</string>
                   </property>
                  </widget>
                 </item>
@@ -1040,7 +1041,7 @@ Button */
                    <string notr="true">background-image: url(:/icons/images/icons/cil-user.png);</string>
                   </property>
                   <property name="text">
-                   <string>Left Box</string>
+                   <string>Account</string>
                   </property>
                  </widget>
                 </item>
@@ -1826,7 +1827,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                       <string notr="true">background: transparent;</string>
                      </property>
                      <property name="currentIndex">
-                      <number>0</number>
+                      <number>1</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2823,10 +2824,10 @@ background-repeat: no-repeat;</string>
                             <enum>Qt::LeftToRight</enum>
                            </property>
                            <property name="styleSheet">
-                            <string notr="true">background-image: url(:/icons/images/icons/cil-envelope-open.png);</string>
+                            <string notr="true"/>
                            </property>
                            <property name="text">
-                            <string>Message</string>
+                            <string>Theme</string>
                            </property>
                           </widget>
                          </item>

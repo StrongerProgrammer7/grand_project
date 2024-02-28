@@ -4,6 +4,7 @@
     <file>images/images/PyDracula_vertical.png</file>
   </qresource>
   <qresource prefix="icons">
+    <file>images/icons/ingredients.png</file>
     <file>images/icons/cil-3d.png</file>
     <file>images/icons/cil-4k.png</file>
     <file>images/icons/cil-account-logout.png</file>
@@ -259,5 +260,8 @@
     <file>images/icons/icon_minimize.png</file>
     <file>images/icons/icon_restore.png</file>
     <file>images/icons/icon_settings.png</file>
+    <file>images/icons/moon.png</file>
+    <file>images/icons/reservation.png</file>
+    <file>images/icons/sun.png</file>
   </qresource>
 </RCC>

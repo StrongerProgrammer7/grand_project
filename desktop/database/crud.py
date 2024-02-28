@@ -58,11 +58,28 @@ def insert_table(model: Base, items: list, db: Session):
     print(f"All {model.__tablename__} created successfully")
 
 
+# TODO: Есть проблема в удалении элемента из таблицы (Если это вторичный ключ, надо удалять каскадно - ondelete='cascade')
 def delete_row(model: Base, id: int, db: Session):
     """
     Общий метод для удаления строки по ID из базы данных.
     """
     db_row = db.query(model).filter(model.id == id).first()
+    if db_row:
+        db.delete(db_row)
+        db.commit()
+        print(f"{model.__tablename__} deleted successfully")
+    else:
+        print(f"{model.__tablename__} not found")
+
+
+def delete_row_extended(model: Base, delete_by: str, value: str, db: Session):
+    """
+    Общий метод для удаления строки из базы данных по кастомному атрибуту.
+    """
+    # Динамически строим фильтр для запроса
+    filter_condition = getattr(model, delete_by) == value
+    db_row = db.query(model).filter(filter_condition).first()
+
     if db_row:
         db.delete(db_row)
         db.commit()

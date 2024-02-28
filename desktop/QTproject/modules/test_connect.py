@@ -1,8 +1,10 @@
 import sys
 
 import requests
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QInputDialog
-import urllib3
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton
+
+from desktop.database.my_personal_data import DOMEN
+
 
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -18,7 +20,7 @@ class MainWindow(QWidget):
 
         self.button_post.clicked.connect(self.test_data)
 
-        self.base_url = 'https://grandproject.k-lab.su/api/test'
+        self.base_url = api_test = f'https://{DOMEN}/api/test'
 
     def test_data(self):
         response = requests.post(self.base_url, verify=False)

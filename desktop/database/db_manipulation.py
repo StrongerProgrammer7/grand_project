@@ -2,6 +2,7 @@
 from datetime import datetime
 from crud import *
 from models import *
+from session import *
 
 
 def insert_test_data(db: Session):
@@ -129,3 +130,6 @@ def insert_test_data(db: Session):
 
     finally:
         db.close()
+
+
+delete_row_extended(FoodComposition, 'contact', 'Глеб', Session())

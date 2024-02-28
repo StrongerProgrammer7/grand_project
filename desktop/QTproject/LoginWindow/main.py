@@ -2,6 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QLineEdit
 from LoginWindow import Ui_Dialog
 
+
 class LoginWindowApp(QMainWindow):
     def __init__(self, parent=None):
         super(LoginWindowApp, self).__init__(parent)
@@ -14,6 +15,7 @@ class LoginWindowApp(QMainWindow):
             self.ui.lineEdit_2.setEchoMode(QLineEdit.Normal)
         else:
             self.ui.lineEdit_2.setEchoMode(QLineEdit.Password)
+
 
 if __name__ == "__main__":
     app = QApplication()

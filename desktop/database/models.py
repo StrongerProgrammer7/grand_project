@@ -9,6 +9,7 @@ Base = declarative_base()  # базовый класс из SQA, от котор
 class IngredientStorage(Base):  # Ингредиенты на складе
     __tablename__ = 'ingredient_storage'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    # TODO: ForeignKey("ingredient.id"), nullable=False, ondelete='cascade') ДЛЯ УДАЛЕНИЯ КАСКАДОМ
     id_ingredient = Column(Integer, ForeignKey("ingredient.id"), nullable=False)  # Id ингредиента
     delivery_date = Column(DateTime(timezone=True), nullable=False)  # Когда пришел на склад
     id_request = Column(Integer, ForeignKey("requisition_list.id"), nullable=False)  # Id заявки

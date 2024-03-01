@@ -17,12 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: install modules
-        run: |
-          ls
-          npm install
-        working-directory: ./web
-      - name: run server
-        run: npm run start
-        working-directory: ./web
+      - name: Run Docker compose
+        run: docker-compose up -d
+          working-directory: ./web/dev_env
 

@@ -8,6 +8,11 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv').config();
+//security
+const helmet = require('helmet');
+const toobusy = require('toobusy-js');
+const rateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
 
 const pages = require('./routers/router');
 const controller = require('./controller/controller');
@@ -44,6 +49,7 @@ app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/images', express.static(__dirname + '/public/images'));
 
+//app.use(bodyParser.json({ limit: "50kb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 
@@ -67,6 +73,29 @@ app.use('/', pages);
 app.use('/api', controller)
 
 app.use(errorHandler);
+
+app.use(helmet());
+app.use(function (req, res, next)
+{
+    if (toobusy())
+    {
+        res.send(503, 'Server too busy!');
+    } else
+    {
+        next();
+    }
+});
+
+const rateLimiter = rateLimit(
+    {
+        windowMs: 24 * 60 * 60 * 1000, // 24 hrs in milliseconds
+        max: 100, // maximum number of request inside a window
+        message: "You have exceeded the 100 requests in 24 hrs limit!", // the message when they exceed limit
+        standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+        legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    });
+app.use(rateLimiter);
+app.use(xss());
 
 const optionHTTPS =
 {

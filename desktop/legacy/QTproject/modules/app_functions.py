@@ -10,8 +10,7 @@
 
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
-from desktop.QTproject.main import *
-from desktop.QTproject.modules import Settings
+from desktop.legacy.QTproject.modules import Settings
 
 
 # WITH ACCESS TO MAIN WINDOW WIDGETS

@@ -1,5 +1,5 @@
-const { createLogger,transports,format } = require("winston");
-
+const { createLogger, transports, format } = require("winston");
+const { PostgresTransport } = require('@innova2/winston-pg');
 const logger = createLogger(
     {
         transports: [
@@ -16,14 +16,14 @@ const logger = createLogger(
                     filename: './logger/logsErrors.log'
                 }
             ),
-            // new Postgres(
-            //     {
-            //         connectionString: `postgres://${process.env.USER}:${process.env.PASSWORD}@localhost:${process.env.PORT_DB}/${process.env.DATABASE}`,
-            //         maxPool: 10,
-            //         level: 'info',
-            //         tableName: 'winston_logs',
-            //     }
-            // )
+            new PostgresTransport(
+                {
+                    connectionString: `postgres://${ process.env.USER }:${ process.env.PASSWORD }@${ process.env.HOST }:${ process.env.PORT_DB }/${ process.env.DATABASE }`,
+                    maxPool: 50,
+                    level: 'info',
+                    tableName: 'winston_logs',
+                }
+            )
         ],
         format: format.combine(
             format.json(),

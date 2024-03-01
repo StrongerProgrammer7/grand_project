@@ -1,4 +1,4 @@
-@baseUrl = https://localhost:5000
+@baseUrl = https://localhost:443
 ###
 GET {{baseUrl}}
 ###
@@ -12,4 +12,4 @@ Accept: application/json
 }
 
 ###
-GET http://grandproject.k-lab.su/
+GET https://grandproject.k-lab.su/

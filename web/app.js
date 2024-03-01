@@ -1,17 +1,22 @@
+// @ts-nocheck
 const https = require('https');
 const express = require('express');
 const expressWinston = require('express-winston');
 const cors = require('cors');
-const path = require('path');
+
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const dotenv = require('dotenv').config();
-const { transports, format } = require('winston');
+//security
+const helmet = require('helmet');
+const toobusy = require('toobusy-js');
+const rateLimit = require('express-rate-limit');
+const xss = require('xss-clean');
 
 const pages = require('./routers/router');
 const controller = require('./controller/controller');
-const errorHandler = require('./middleware/ErrorHadnlingMiddleware');
+const errorHandler = require('./middleware/HadnlingMiddleware');
 const logger = require('./logger/logger');
 const loggerInernalError = require('./logger/loggerInernalError');
 
@@ -29,7 +34,7 @@ app.use(expressWinston.logger(
 
 app.use(expressWinston.errorLogger(
     {
-        winstonInstance:loggerInernalError
+        winstonInstance: loggerInernalError
     }
 ))
 // app.all('*',function(req, res, next) {
@@ -44,6 +49,7 @@ app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/images', express.static(__dirname + '/public/images'));
 
+//app.use(bodyParser.json({ limit: "50kb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 
@@ -68,19 +74,43 @@ app.use('/api', controller)
 
 app.use(errorHandler);
 
+app.use(helmet());
+app.use(function (req, res, next)
+{
+    if (toobusy())
+    {
+        res.send(503, 'Server too busy!');
+    } else
+    {
+        next();
+    }
+});
+
+const rateLimiter = rateLimit(
+    {
+        windowMs: 24 * 60 * 60 * 1000, // 24 hrs in milliseconds
+        max: 100, // maximum number of request inside a window
+        message: "You have exceeded the 100 requests in 24 hrs limit!", // the message when they exceed limit
+        standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+        legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    });
+app.use(rateLimiter);
+app.use(xss());
+
 const optionHTTPS =
 {
     key: fs.readFileSync('./certificate/cert-key.pem'),
     cert: fs.readFileSync('./certificate/cert.pem')
 }
 
+const HOST = "0.0.0.0";
 
 const startServer = async function ()
 {
     try
     {
         https.createServer(optionHTTPS, app)
-            .listen(PORT, () =>
+            .listen(PORT, HOST, () =>
             {
                 console.log(`Server has been started on the port ${ PORT } and HTTPS. Env=${ process.env.NODE_ENV }`);
             })

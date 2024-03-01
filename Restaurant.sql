@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-02-20 05:43:21
+-- Started on 2024-03-01 11:00:07
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,9 +18,9 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-DROP DATABASE "Restaurant";
+DROP DATABASE IF EXISTS "Restaurant";
 --
--- TOC entry 4939 (class 1262 OID 24576)
+-- TOC entry 4953 (class 1262 OID 24576)
 -- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -41,6 +41,253 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- TOC entry 244 (class 1255 OID 42269)
+-- Name: add_client(character varying, character varying, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_client(IN _phone character varying, IN _contact character varying, IN _last_contact_date timestamp with time zone)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO client
+		(phone, contact, last_contact_date)
+	VALUES
+		(_name, _contact, date_trunc('second', now()));
+END
+$$;
+
+
+ALTER PROCEDURE public.add_client(IN _phone character varying, IN _contact character varying, IN _last_contact_date timestamp with time zone) OWNER TO postgres;
+
+--
+-- TOC entry 248 (class 1255 OID 50454)
+-- Name: add_client_order(integer, integer, character varying, integer, timestamp with time zone, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_id integer, IN _client_phone character varying, IN _food_amount integer, IN _formation_date timestamp with time zone, IN _giving_date timestamp with time zone, IN _status character varying DEFAULT NULL::character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO order_directory
+		(id_worker, phone_client, id_food, num_of_food, formation_date, giving_date, status)
+	VALUES
+		(_worker_id, _client_phone, _food_id, _food_amount, _formation_date, _giving_date, _status);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_id integer, IN _client_phone character varying, IN _food_amount integer, IN _formation_date timestamp with time zone, IN _giving_date timestamp with time zone, IN _status character varying) OWNER TO postgres;
+
+--
+-- TOC entry 246 (class 1255 OID 50452)
+-- Name: add_food(character varying, character varying, character varying, double precision, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_food(IN _food_type character varying, IN _name character varying, IN _unit_of_measurement character varying, IN _price double precision, IN _weight double precision DEFAULT NULL::double precision)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO food
+		("type", "name", unit_of_measurement, price, weight)
+	VALUES
+		(_food_type, _name, _unit_of_measurement, _price, _weight);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_food(IN _food_type character varying, IN _name character varying, IN _unit_of_measurement character varying, IN _price double precision, IN _weight double precision) OWNER TO postgres;
+
+--
+-- TOC entry 247 (class 1255 OID 50453)
+-- Name: add_food_composition(character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_food_composition(IN _food_name character varying, IN _ingredient_name character varying, IN _ingredient_weight double precision)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	_food_id INTEGER;
+	_ingredient_id INTEGER;
+BEGIN
+
+	SELECT "id" INTO _food_id FROM food WHERE "name" = _food_name;
+
+	SELECT "id" INTO _ingredient_id FROM ingredient WHERE "name" = _ingredient_name;
+
+	INSERT INTO food_composition
+		(id_food, id_ingredient, weight)
+	VALUES
+		(_food_id, _ingredient_id, _ingredient_weight);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_food_composition(IN _food_name character varying, IN _ingredient_name character varying, IN _ingredient_weight double precision) OWNER TO postgres;
+
+--
+-- TOC entry 240 (class 1255 OID 42265)
+-- Name: add_food_type(character varying); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_food_type(IN _type character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO food_type
+		("type")
+	VALUES
+		(_type);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_food_type(IN _type character varying) OWNER TO postgres;
+
+--
+-- TOC entry 261 (class 1255 OID 42263)
+-- Name: add_ingredient(character varying, character varying, integer, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_ingredient(IN _name character varying, IN _measurement character varying, IN _critical_rate integer, IN _price double precision DEFAULT NULL::double precision)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO ingredient
+		("name", measurement, critical_rate, price)
+	VALUES
+		(_name, _measurement, _critical_rate, _price);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_ingredient(IN _name character varying, IN _measurement character varying, IN _critical_rate integer, IN _price double precision) OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1255 OID 42267)
+-- Name: add_job_role(character varying, double precision, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_job_role(IN _name character varying, IN _min_salary double precision, IN _max_salary double precision)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO job_role
+		("name", min_salary, max_salary)
+	VALUES
+		(_name, _min_salary, _max_salary);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_job_role(IN _name character varying, IN _min_salary double precision, IN _max_salary double precision) OWNER TO postgres;
+
+--
+-- TOC entry 243 (class 1255 OID 42268)
+-- Name: add_storage(character varying, character varying, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_storage(IN _name character varying, IN _address character varying, IN _phone character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO "storage"
+		("name", address, phone)
+	VALUES
+		(_name, _address, _phone);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_storage(IN _name character varying, IN _address character varying, IN _phone character varying) OWNER TO postgres;
+
+--
+-- TOC entry 241 (class 1255 OID 42266)
+-- Name: add_table(integer); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_table(IN _human_slots integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO "table"
+		(human_slots)
+	VALUES
+		(_human_slots);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_table(IN _human_slots integer) OWNER TO postgres;
+
+--
+-- TOC entry 260 (class 1255 OID 42262)
+-- Name: add_worker(character varying, character varying, character varying, character varying, character varying, character varying, double precision, character varying, character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.add_worker(IN _login character varying, IN _password character varying, IN _test_password character varying, IN _job_role character varying, IN _surname character varying, IN _first_name character varying, IN _salary double precision, IN _patronymic character varying DEFAULT NULL::character varying, IN _email character varying DEFAULT NULL::character varying, IN _phone character varying DEFAULT NULL::character varying, IN _job_rate double precision DEFAULT NULL::double precision)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    worker_id INTEGER;
+BEGIN
+    -- Вставка записи в таблицу worker
+    INSERT INTO worker
+        (login, "password", test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate)
+    VALUES
+        (_login, _password, _test_password, _job_role, _surname, _first_name, _patronymic, _email, _phone, _salary, _job_rate)
+    RETURNING id INTO worker_id;
+
+    -- Вставка записи в таблицу worker_history
+    INSERT INTO worker_history
+        (start_date, end_date, id_worker, id_job_role, surname, "name", patronymic, email, phone, salary)
+    VALUES
+        (date_trunc('second', now()), date_trunc('second', now()), worker_id, _job_role, _surname, _first_name, _patronymic, _email, _phone, _salary);
+END
+$$;
+
+
+ALTER PROCEDURE public.add_worker(IN _login character varying, IN _password character varying, IN _test_password character varying, IN _job_role character varying, IN _surname character varying, IN _first_name character varying, IN _salary double precision, IN _patronymic character varying, IN _email character varying, IN _phone character varying, IN _job_rate double precision) OWNER TO postgres;
+
+--
+-- TOC entry 245 (class 1255 OID 42271)
+-- Name: book_table(integer, character varying, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.book_table(IN _id_table integer, IN _phone_client character varying, IN _order_time timestamp with time zone, IN _desired_booking_time timestamp with time zone)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	INSERT INTO client_table
+		(id_table, phone_client, order_date, desired_booking_date)
+	VALUES
+		(_id_table, _phone_client, _order_time, _desired_booking_time);
+END
+$$;
+
+
+ALTER PROCEDURE public.book_table(IN _id_table integer, IN _phone_client character varying, IN _order_time timestamp with time zone, IN _desired_booking_time timestamp with time zone) OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1255 OID 42264)
+-- Name: get_reorder_ingredients_list(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_reorder_ingredients_list() RETURNS TABLE(_name character varying, _quantity integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	RETURN QUERY
+	SELECT i.name AS _name, (i.critical_rate - s.quantity) AS _quantity
+	FROM ingredient_storage s
+	JOIN ingredient i ON s.id_ingredient = i.id
+	WHERE s.quantity < i.critical_rate;
+END
+$$;
+
+
+ALTER FUNCTION public.get_reorder_ingredients_list() OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -125,7 +372,7 @@ CREATE SEQUENCE public.food_id_seq
 ALTER SEQUENCE public.food_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4940 (class 0 OID 0)
+-- TOC entry 4954 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: food_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -178,7 +425,7 @@ CREATE SEQUENCE public.ingredient_id_seq
 ALTER SEQUENCE public.ingredient_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4941 (class 0 OID 0)
+-- TOC entry 4955 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: ingredient_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -221,7 +468,7 @@ CREATE SEQUENCE public.ingredient_storage_id_seq
 ALTER SEQUENCE public.ingredient_storage_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4942 (class 0 OID 0)
+-- TOC entry 4956 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: ingredient_storage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -279,7 +526,7 @@ CREATE SEQUENCE public.order_directory_id_seq
 ALTER SEQUENCE public.order_directory_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4943 (class 0 OID 0)
+-- TOC entry 4957 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: order_directory_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -335,7 +582,7 @@ CREATE SEQUENCE public.requisition_list_id_seq
 ALTER SEQUENCE public.requisition_list_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4944 (class 0 OID 0)
+-- TOC entry 4958 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: requisition_list_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -388,7 +635,7 @@ CREATE SEQUENCE public.table_id_seq
 ALTER SEQUENCE public.table_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4945 (class 0 OID 0)
+-- TOC entry 4959 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: table_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -426,7 +673,7 @@ CREATE SEQUENCE public.tables_id_seq
 ALTER SEQUENCE public.tables_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4946 (class 0 OID 0)
+-- TOC entry 4960 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: tables_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -500,7 +747,7 @@ CREATE SEQUENCE public.worker_id_seq
 ALTER SEQUENCE public.worker_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4947 (class 0 OID 0)
+-- TOC entry 4961 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: worker_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -509,7 +756,7 @@ ALTER SEQUENCE public.worker_id_seq OWNED BY public.worker.id;
 
 
 --
--- TOC entry 4705 (class 2604 OID 33934)
+-- TOC entry 4717 (class 2604 OID 33934)
 -- Name: food id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -517,7 +764,7 @@ ALTER TABLE ONLY public.food ALTER COLUMN id SET DEFAULT nextval('public.food_id
 
 
 --
--- TOC entry 4702 (class 2604 OID 33880)
+-- TOC entry 4714 (class 2604 OID 33880)
 -- Name: ingredient id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -525,7 +772,7 @@ ALTER TABLE ONLY public.ingredient ALTER COLUMN id SET DEFAULT nextval('public.i
 
 
 --
--- TOC entry 4708 (class 2604 OID 34037)
+-- TOC entry 4720 (class 2604 OID 34037)
 -- Name: ingredient_storage id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -533,7 +780,7 @@ ALTER TABLE ONLY public.ingredient_storage ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 4707 (class 2604 OID 34015)
+-- TOC entry 4719 (class 2604 OID 34015)
 -- Name: order_directory id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -541,7 +788,7 @@ ALTER TABLE ONLY public.order_directory ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 4706 (class 2604 OID 33964)
+-- TOC entry 4718 (class 2604 OID 33964)
 -- Name: requisition_list id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -549,7 +796,7 @@ ALTER TABLE ONLY public.requisition_list ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 4703 (class 2604 OID 33909)
+-- TOC entry 4715 (class 2604 OID 33909)
 -- Name: table id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -557,7 +804,7 @@ ALTER TABLE ONLY public."table" ALTER COLUMN id SET DEFAULT nextval('public.tabl
 
 
 --
--- TOC entry 4701 (class 2604 OID 31935)
+-- TOC entry 4713 (class 2604 OID 31935)
 -- Name: tables id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -565,7 +812,7 @@ ALTER TABLE ONLY public.tables ALTER COLUMN id SET DEFAULT nextval('public.table
 
 
 --
--- TOC entry 4704 (class 2604 OID 33916)
+-- TOC entry 4716 (class 2604 OID 33916)
 -- Name: worker id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -573,7 +820,7 @@ ALTER TABLE ONLY public.worker ALTER COLUMN id SET DEFAULT nextval('public.worke
 
 
 --
--- TOC entry 4917 (class 0 OID 33899)
+-- TOC entry 4931 (class 0 OID 33899)
 -- Dependencies: 222
 -- Data for Name: client; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -585,7 +832,7 @@ INSERT INTO public.client (phone, contact, last_contact_date) VALUES ('+79330339
 
 
 --
--- TOC entry 4924 (class 0 OID 33944)
+-- TOC entry 4938 (class 0 OID 33944)
 -- Dependencies: 229
 -- Data for Name: client_table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -597,7 +844,7 @@ INSERT INTO public.client_table (id_table, phone_client, order_date, desired_boo
 
 
 --
--- TOC entry 4923 (class 0 OID 33931)
+-- TOC entry 4937 (class 0 OID 33931)
 -- Dependencies: 228
 -- Data for Name: food; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -608,7 +855,7 @@ INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VAL
 
 
 --
--- TOC entry 4928 (class 0 OID 33996)
+-- TOC entry 4942 (class 0 OID 33996)
 -- Dependencies: 233
 -- Data for Name: food_composition; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -619,7 +866,7 @@ INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (3, 
 
 
 --
--- TOC entry 4916 (class 0 OID 33894)
+-- TOC entry 4930 (class 0 OID 33894)
 -- Dependencies: 221
 -- Data for Name: food_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -628,10 +875,12 @@ INSERT INTO public.food_type (type) VALUES ('Пицца');
 INSERT INTO public.food_type (type) VALUES ('Суши');
 INSERT INTO public.food_type (type) VALUES ('Салаты');
 INSERT INTO public.food_type (type) VALUES ('Напитки');
+INSERT INTO public.food_type (type) VALUES ('Спиртные напитки');
+INSERT INTO public.food_type (type) VALUES ('Соусы');
 
 
 --
--- TOC entry 4913 (class 0 OID 33877)
+-- TOC entry 4927 (class 0 OID 33877)
 -- Dependencies: 218
 -- Data for Name: ingredient; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -642,7 +891,7 @@ INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALU
 
 
 --
--- TOC entry 4932 (class 0 OID 34034)
+-- TOC entry 4946 (class 0 OID 34034)
 -- Dependencies: 237
 -- Data for Name: ingredient_storage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -653,7 +902,7 @@ INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_requ
 
 
 --
--- TOC entry 4915 (class 0 OID 33889)
+-- TOC entry 4929 (class 0 OID 33889)
 -- Dependencies: 220
 -- Data for Name: job_role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -665,7 +914,7 @@ INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Официа
 
 
 --
--- TOC entry 4930 (class 0 OID 34012)
+-- TOC entry 4944 (class 0 OID 34012)
 -- Dependencies: 235
 -- Data for Name: order_directory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -676,7 +925,7 @@ INSERT INTO public.order_directory (id, id_worker, phone_client, id_food, format
 
 
 --
--- TOC entry 4933 (class 0 OID 34050)
+-- TOC entry 4947 (class 0 OID 34050)
 -- Dependencies: 238
 -- Data for Name: requisition; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -687,7 +936,7 @@ INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (3, 
 
 
 --
--- TOC entry 4926 (class 0 OID 33961)
+-- TOC entry 4940 (class 0 OID 33961)
 -- Dependencies: 231
 -- Data for Name: requisition_list; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -698,7 +947,7 @@ INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) 
 
 
 --
--- TOC entry 4914 (class 0 OID 33883)
+-- TOC entry 4928 (class 0 OID 33883)
 -- Dependencies: 219
 -- Data for Name: storage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -709,7 +958,7 @@ INSERT INTO public.storage (name, address, phone) VALUES ('Ларец', 'Мос�
 
 
 --
--- TOC entry 4919 (class 0 OID 33906)
+-- TOC entry 4933 (class 0 OID 33906)
 -- Dependencies: 224
 -- Data for Name: table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -721,7 +970,7 @@ INSERT INTO public."table" (id, human_slots) VALUES (4, 5);
 
 
 --
--- TOC entry 4911 (class 0 OID 31932)
+-- TOC entry 4925 (class 0 OID 31932)
 -- Dependencies: 216
 -- Data for Name: tables; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -733,7 +982,7 @@ INSERT INTO public.tables (id, human_slots) VALUES (4, 5);
 
 
 --
--- TOC entry 4921 (class 0 OID 33913)
+-- TOC entry 4935 (class 0 OID 33913)
 -- Dependencies: 226
 -- Data for Name: worker; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -742,10 +991,15 @@ INSERT INTO public.worker (id, login, password, test_password, job_role, surname
 INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (2, 'alexxxanders_basket', '$pbkdf2-sha256$29000$TMm5dw4hhDAGIGRMae39nw$nmTEpKSwzg2LCnn3SC23PziGvP1G9QDisQKJVi4TXbs', 'zergi_rulyat', 'Младший Повар', 'Александров', 'Олег', '', NULL, '+79028759088', 50000, NULL);
 INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (3, 'x_vasya_x', '$pbkdf2-sha256$29000$h5ASYkzpvZeSEqJU6h3jnA$sByoqbnOyttRGUfRdU63Qse/vz4SQ7Yhmcy75VeuPAw', 'protosi_one_love', 'Шеф-Повар', 'Васильев', 'Михаил', '', NULL, '+79028759088', 50000, NULL);
 INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (4, 'zufar_eto_ne_prochitaet', '$pbkdf2-sha256$29000$6h2D0HovpdR6j1Eq5TyHcA$SYPAkLWb3RNyox7wD/YQEFoWOeKMe3hozhT/3SR9Ux4', 'kerrigan_zZzerg', 'Официант', 'Иванов', 'Олег', '', NULL, '+79028759088', 50000, NULL);
+INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (6, 'john_doe', 'password123', 'test_password', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
+INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (9, 'john_does', 'password123', 'test_password', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
+INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (11, 'john_doesss', 'password123', 'test_password', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
+INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (12, 'john_doessss', 'password123', 'test_password', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
+INSERT INTO public.worker (id, login, password, test_password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (13, 'john_doessssz', 'password123', 'test_password', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
 
 
 --
--- TOC entry 4927 (class 0 OID 33977)
+-- TOC entry 4941 (class 0 OID 33977)
 -- Dependencies: 232
 -- Data for Name: worker_history; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -753,10 +1007,14 @@ INSERT INTO public.worker (id, login, password, test_password, job_role, surname
 INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (1, '2024-02-18 02:55:51+03', '2024-02-18 02:55:51+03', 'Шеф-Повар', 'Александров', 'Олег', NULL, NULL, '+79637259702', 50000, NULL);
 INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-02-18 02:55:51+03', '2024-02-18 02:55:51+03', 'Младший Повар', 'Васильев', 'Олег', NULL, NULL, '+79637259702', 30000, NULL);
 INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-02-18 02:55:51+03', '2024-02-18 02:55:51+03', 'Младший Повар', 'Иванов', 'Михаил', NULL, NULL, '+79637259702', 60000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (9, '2024-02-28 07:43:54.652174+03', '2024-02-28 07:43:54.652174+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (11, '2024-02-28 07:46:19.819254+03', '2024-02-28 07:46:19.819254+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (12, '2024-02-28 07:49:40+03', '2024-02-28 07:49:40+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (13, '2024-02-28 08:10:17+03', '2024-02-28 08:10:17+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
 
 
 --
--- TOC entry 4948 (class 0 OID 0)
+-- TOC entry 4962 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: food_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -765,7 +1023,7 @@ SELECT pg_catalog.setval('public.food_id_seq', 3, true);
 
 
 --
--- TOC entry 4949 (class 0 OID 0)
+-- TOC entry 4963 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: ingredient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -774,7 +1032,7 @@ SELECT pg_catalog.setval('public.ingredient_id_seq', 3, true);
 
 
 --
--- TOC entry 4950 (class 0 OID 0)
+-- TOC entry 4964 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: ingredient_storage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -783,7 +1041,7 @@ SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 3, true);
 
 
 --
--- TOC entry 4951 (class 0 OID 0)
+-- TOC entry 4965 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: order_directory_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -792,7 +1050,7 @@ SELECT pg_catalog.setval('public.order_directory_id_seq', 3, true);
 
 
 --
--- TOC entry 4952 (class 0 OID 0)
+-- TOC entry 4966 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: requisition_list_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -801,7 +1059,7 @@ SELECT pg_catalog.setval('public.requisition_list_id_seq', 3, true);
 
 
 --
--- TOC entry 4953 (class 0 OID 0)
+-- TOC entry 4967 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -810,7 +1068,7 @@ SELECT pg_catalog.setval('public.table_id_seq', 4, true);
 
 
 --
--- TOC entry 4954 (class 0 OID 0)
+-- TOC entry 4968 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: tables_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -819,16 +1077,16 @@ SELECT pg_catalog.setval('public.tables_id_seq', 4, true);
 
 
 --
--- TOC entry 4955 (class 0 OID 0)
+-- TOC entry 4969 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: worker_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.worker_id_seq', 4, true);
+SELECT pg_catalog.setval('public.worker_id_seq', 13, true);
 
 
 --
--- TOC entry 4727 (class 2606 OID 33904)
+-- TOC entry 4741 (class 2606 OID 33904)
 -- Name: client client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -837,7 +1095,7 @@ ALTER TABLE ONLY public.client
 
 
 --
--- TOC entry 4737 (class 2606 OID 33949)
+-- TOC entry 4751 (class 2606 OID 33949)
 -- Name: client_table client_table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -846,7 +1104,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4743 (class 2606 OID 34000)
+-- TOC entry 4757 (class 2606 OID 34000)
 -- Name: food_composition food_composition_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -855,7 +1113,7 @@ ALTER TABLE ONLY public.food_composition
 
 
 --
--- TOC entry 4735 (class 2606 OID 33938)
+-- TOC entry 4749 (class 2606 OID 33938)
 -- Name: food food_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -864,7 +1122,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 4725 (class 2606 OID 33898)
+-- TOC entry 4739 (class 2606 OID 33898)
 -- Name: food_type food_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -873,7 +1131,16 @@ ALTER TABLE ONLY public.food_type
 
 
 --
--- TOC entry 4719 (class 2606 OID 33882)
+-- TOC entry 4731 (class 2606 OID 42261)
+-- Name: ingredient ingredient_name_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ingredient
+    ADD CONSTRAINT ingredient_name_unique UNIQUE (name);
+
+
+--
+-- TOC entry 4733 (class 2606 OID 33882)
 -- Name: ingredient ingredient_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -882,7 +1149,7 @@ ALTER TABLE ONLY public.ingredient
 
 
 --
--- TOC entry 4747 (class 2606 OID 34039)
+-- TOC entry 4761 (class 2606 OID 34039)
 -- Name: ingredient_storage ingredient_storage_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -891,7 +1158,7 @@ ALTER TABLE ONLY public.ingredient_storage
 
 
 --
--- TOC entry 4723 (class 2606 OID 33893)
+-- TOC entry 4737 (class 2606 OID 33893)
 -- Name: job_role job_role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -900,7 +1167,7 @@ ALTER TABLE ONLY public.job_role
 
 
 --
--- TOC entry 4745 (class 2606 OID 34017)
+-- TOC entry 4759 (class 2606 OID 34017)
 -- Name: order_directory order_directory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -909,7 +1176,7 @@ ALTER TABLE ONLY public.order_directory
 
 
 --
--- TOC entry 4739 (class 2606 OID 33966)
+-- TOC entry 4753 (class 2606 OID 33966)
 -- Name: requisition_list requisition_list_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -918,7 +1185,7 @@ ALTER TABLE ONLY public.requisition_list
 
 
 --
--- TOC entry 4749 (class 2606 OID 34054)
+-- TOC entry 4763 (class 2606 OID 34054)
 -- Name: requisition requisition_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -927,7 +1194,7 @@ ALTER TABLE ONLY public.requisition
 
 
 --
--- TOC entry 4721 (class 2606 OID 33888)
+-- TOC entry 4735 (class 2606 OID 33888)
 -- Name: storage storage_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -936,7 +1203,7 @@ ALTER TABLE ONLY public.storage
 
 
 --
--- TOC entry 4729 (class 2606 OID 33911)
+-- TOC entry 4743 (class 2606 OID 33911)
 -- Name: table table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -945,7 +1212,7 @@ ALTER TABLE ONLY public."table"
 
 
 --
--- TOC entry 4717 (class 2606 OID 31937)
+-- TOC entry 4729 (class 2606 OID 31937)
 -- Name: tables tables_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -954,7 +1221,7 @@ ALTER TABLE ONLY public.tables
 
 
 --
--- TOC entry 4741 (class 2606 OID 33985)
+-- TOC entry 4755 (class 2606 OID 33985)
 -- Name: worker_history worker_history_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -963,7 +1230,7 @@ ALTER TABLE ONLY public.worker_history
 
 
 --
--- TOC entry 4731 (class 2606 OID 33924)
+-- TOC entry 4745 (class 2606 OID 33924)
 -- Name: worker worker_login_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -972,7 +1239,7 @@ ALTER TABLE ONLY public.worker
 
 
 --
--- TOC entry 4733 (class 2606 OID 33922)
+-- TOC entry 4747 (class 2606 OID 33922)
 -- Name: worker worker_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -981,7 +1248,7 @@ ALTER TABLE ONLY public.worker
 
 
 --
--- TOC entry 4752 (class 2606 OID 33950)
+-- TOC entry 4766 (class 2606 OID 33950)
 -- Name: client_table client_table_id_table_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -990,7 +1257,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4753 (class 2606 OID 33955)
+-- TOC entry 4767 (class 2606 OID 33955)
 -- Name: client_table client_table_phone_client_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -999,7 +1266,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4758 (class 2606 OID 34001)
+-- TOC entry 4772 (class 2606 OID 34001)
 -- Name: food_composition food_composition_id_food_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1008,7 +1275,7 @@ ALTER TABLE ONLY public.food_composition
 
 
 --
--- TOC entry 4759 (class 2606 OID 34006)
+-- TOC entry 4773 (class 2606 OID 34006)
 -- Name: food_composition food_composition_id_ingredient_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1017,7 +1284,7 @@ ALTER TABLE ONLY public.food_composition
 
 
 --
--- TOC entry 4751 (class 2606 OID 33939)
+-- TOC entry 4765 (class 2606 OID 33939)
 -- Name: food food_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1026,7 +1293,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 4763 (class 2606 OID 34040)
+-- TOC entry 4777 (class 2606 OID 34040)
 -- Name: ingredient_storage ingredient_storage_id_ingredient_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1035,7 +1302,7 @@ ALTER TABLE ONLY public.ingredient_storage
 
 
 --
--- TOC entry 4764 (class 2606 OID 34045)
+-- TOC entry 4778 (class 2606 OID 34045)
 -- Name: ingredient_storage ingredient_storage_id_request_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1044,7 +1311,7 @@ ALTER TABLE ONLY public.ingredient_storage
 
 
 --
--- TOC entry 4760 (class 2606 OID 34028)
+-- TOC entry 4774 (class 2606 OID 34028)
 -- Name: order_directory order_directory_id_food_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1053,7 +1320,7 @@ ALTER TABLE ONLY public.order_directory
 
 
 --
--- TOC entry 4761 (class 2606 OID 34018)
+-- TOC entry 4775 (class 2606 OID 34018)
 -- Name: order_directory order_directory_id_worker_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1062,7 +1329,7 @@ ALTER TABLE ONLY public.order_directory
 
 
 --
--- TOC entry 4762 (class 2606 OID 34023)
+-- TOC entry 4776 (class 2606 OID 34023)
 -- Name: order_directory order_directory_phone_client_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1071,7 +1338,7 @@ ALTER TABLE ONLY public.order_directory
 
 
 --
--- TOC entry 4765 (class 2606 OID 34055)
+-- TOC entry 4779 (class 2606 OID 34055)
 -- Name: requisition requisition_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1080,7 +1347,7 @@ ALTER TABLE ONLY public.requisition
 
 
 --
--- TOC entry 4766 (class 2606 OID 34060)
+-- TOC entry 4780 (class 2606 OID 34060)
 -- Name: requisition requisition_id_ingredient_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1089,7 +1356,7 @@ ALTER TABLE ONLY public.requisition
 
 
 --
--- TOC entry 4754 (class 2606 OID 33967)
+-- TOC entry 4768 (class 2606 OID 33967)
 -- Name: requisition_list requisition_list_id_worker_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1098,7 +1365,7 @@ ALTER TABLE ONLY public.requisition_list
 
 
 --
--- TOC entry 4755 (class 2606 OID 33972)
+-- TOC entry 4769 (class 2606 OID 33972)
 -- Name: requisition_list requisition_list_storage_name_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1107,7 +1374,7 @@ ALTER TABLE ONLY public.requisition_list
 
 
 --
--- TOC entry 4756 (class 2606 OID 33991)
+-- TOC entry 4770 (class 2606 OID 33991)
 -- Name: worker_history worker_history_id_job_role_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1116,7 +1383,7 @@ ALTER TABLE ONLY public.worker_history
 
 
 --
--- TOC entry 4757 (class 2606 OID 33986)
+-- TOC entry 4771 (class 2606 OID 33986)
 -- Name: worker_history worker_history_id_worker_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1125,7 +1392,7 @@ ALTER TABLE ONLY public.worker_history
 
 
 --
--- TOC entry 4750 (class 2606 OID 33925)
+-- TOC entry 4764 (class 2606 OID 33925)
 -- Name: worker worker_job_role_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1133,7 +1400,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-02-20 05:43:21
+-- Completed on 2024-03-01 11:00:07
 
 --
 -- PostgreSQL database dump complete

@@ -1,5 +1,5 @@
-from desktop.QTproject.main import *
-from desktop.QTproject.widgets import CustomGrip
+from desktop.legacy.QTproject.main import *
+from desktop.legacy.QTproject.widgets import CustomGrip
 
 # GLOBALS
 # ///////////////////////////////////////////////////////////////

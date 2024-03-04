@@ -5,7 +5,6 @@ import platform
 
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
-from settings import *
 from modules import *
 from widgets import *
 
@@ -79,7 +78,7 @@ class MainWindow(QMainWindow):
 
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
-        self.themeFile = CURRENT_THEME
+        self.themeFile = "themes/py_dracula_dark.qss"
 
         widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 

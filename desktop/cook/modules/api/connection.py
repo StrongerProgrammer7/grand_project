@@ -1,4 +1,6 @@
 import json
+import os
+
 import requests
 from secret_file import *
 
@@ -41,3 +43,17 @@ class ApiConnect:
             if response.status_code == 200:
                 return response.json()
         return None
+
+    @staticmethod
+    def test_get(model: str):
+        if model:
+            file_path = os.path.join("jsons", f"{model}.json")
+
+            if os.path.exists(file_path):
+                with open(file_path, 'r') as file:
+                    json_data = json.load(file)
+                return json_data
+        return None
+
+
+print(ApiConnect.test_get('tables'))

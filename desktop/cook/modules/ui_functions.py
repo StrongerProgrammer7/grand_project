@@ -280,4 +280,7 @@ class UIFunctions(MainWindow):
             self.bottom_grip.setGeometry(0, self.height() - 10, self.width(), 10)
 
     # ///////////////////////////////////////////////////////////////
-    # END - GUI DEFINITIONS
+    # DB
+
+    def toogleDB(self):
+        self.ui.tableWidget

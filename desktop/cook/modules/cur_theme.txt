@@ -1,0 +1,1 @@
+"themes/py_dracula_dark.qss"

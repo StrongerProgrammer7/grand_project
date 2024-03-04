@@ -14,9 +14,9 @@ target = Executable(
 
 # SETUP CX FREEZE
 setup(
-    name="GRANDPROJECT",
-    version="0.1.3",
-    description="Modern GUI applications",
+    name="SOLIDSIGN for kitchen",
+    version="1.0",
+    description="Modern GUI for kitchen",
     author="49/1",
     options={'build_exe': {'include_files': files}},
     executables=[target]

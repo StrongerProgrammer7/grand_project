@@ -1,8 +1,4 @@
 <RCC>
-  <qresource prefix="images">
-    <file>images/images/PyDracula.png</file>
-    <file>images/images/PyDracula_vertical.png</file>
-  </qresource>
   <qresource prefix="icons">
     <file>images/icons/cil-3d.png</file>
     <file>images/icons/cil-4k.png</file>
@@ -265,5 +261,12 @@
     <file>images/icons/restaurantTable.png</file>
     <file>images/icons/servicebell.png</file>
     <file>images/icons/sun.png</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>images/images/logo.png</file>
+    <file>images/images/logo_back.png</file>
+    <file>images/images/PyDracula.png</file>
+    <file>images/images/PyDracula_horizontal.png</file>
+    <file>images/images/PyDracula_vertical.png</file>
   </qresource>
 </RCC>

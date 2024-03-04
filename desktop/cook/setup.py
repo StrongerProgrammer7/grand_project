@@ -14,10 +14,10 @@ target = Executable(
 
 # SETUP CX FREEZE
 setup(
-    name="SOLIDSIGN for kitchen",
+    name="PyDracula",
     version="1.0",
-    description="Modern GUI for kitchen",
-    author="49/1",
+    description="Modern GUI for Python applications",
+    author="Wanderson M. Pimenta",
     options={'build_exe': {'include_files': files}},
     executables=[target]
 

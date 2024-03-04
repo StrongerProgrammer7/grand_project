@@ -1,4 +1,4 @@
-class Settings:
+class Settings():
     # APP SETTINGS
     # ///////////////////////////////////////////////////////////////
     ENABLE_CUSTOM_TITLE_BAR = True
@@ -6,7 +6,6 @@ class Settings:
     LEFT_BOX_WIDTH = 240
     RIGHT_BOX_WIDTH = 240
     TIME_ANIMATION = 500
-    APP_VERSION = 'v1.0.3'
 
     # BTNS LEFT AND RIGHT BOX COLORS
     BTN_LEFT_BOX_COLOR = "background-color: rgb(44, 49, 58);"

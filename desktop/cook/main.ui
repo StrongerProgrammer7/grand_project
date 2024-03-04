@@ -718,7 +718,7 @@ Button */
               </font>
              </property>
              <property name="text">
-              <string>Для Кухни</string>
+              <string>Для официантов</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

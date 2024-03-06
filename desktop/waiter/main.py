@@ -52,8 +52,8 @@ class MainWindow(QMainWindow):
         title = "SOLIDSIGN - для официантов"
         description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
         # APPLY TEXTS
-        self.setWindowTitle(title)
-        widgets.titleRightInfo.setText(description)
+        #self.setWindowTitle(title)
+        #widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
         # ///////////////////////////////////////////////////////////////
@@ -85,10 +85,10 @@ class MainWindow(QMainWindow):
         # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
-        def openCloseRightBox():
-            UIFunctions.toggleRightBox(self, True)
+        #def openCloseRightBox():
+        #    UIFunctions.toggleRightBox(self, True)
 
-        widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
+        #widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
@@ -97,11 +97,11 @@ class MainWindow(QMainWindow):
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
-
-        widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
+        widgets.label.setStyleSheet("image: url(images/images/logo.png)")
+        #widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
         UIFunctions.theme(self, self.themeFile, True)
-        widgets.toggleLeftBox.clicked.connect(lambda: UIFunctions.toggle_theme(self))
+        widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
         # SET HACKS
         # AppFunctions.setThemeHack(self)
@@ -164,6 +164,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("icon.ico"))
+    #app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
     sys.exit(app.exec())

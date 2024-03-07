@@ -994,7 +994,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(:/images/images/images/PyDracula_vertical.png);\n"
+        self.home.setStyleSheet(u"background-image: url(:/images/images/images/logo_back.png);\n"
 "background-position: center;\n"
 "background-repeat: no-repeat;")
         self.stackedWidget.addWidget(self.home)
@@ -1133,8 +1133,63 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
         self.frame.setMinimumSize(QSize(0, 100))
+        self.frame.setStyleSheet(u"")
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_8 = QHBoxLayout(self.frame)
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.horizontalLayout_8.setContentsMargins(10, 0, 10, 200)
+        self.frame_4 = QFrame(self.frame)
+        self.frame_4.setObjectName(u"frame_4")
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.frame_4.sizePolicy().hasHeightForWidth())
+        self.frame_4.setSizePolicy(sizePolicy5)
+        self.frame_4.setMinimumSize(QSize(0, 50))
+        self.frame_4.setStyleSheet(u"")
+        self.frame_4.setFrameShape(QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_7 = QHBoxLayout(self.frame_4)
+        self.horizontalLayout_7.setSpacing(50)
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.horizontalLayout_7.setContentsMargins(10, 5, 10, 5)
+        self.pushButton = QPushButton(self.frame_4)
+        self.pushButton.setObjectName(u"pushButton")
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy6)
+        self.pushButton.setMinimumSize(QSize(150, 0))
+        self.pushButton.setStyleSheet(u"background-color: rgb(0, 170, 0);")
+
+        self.horizontalLayout_7.addWidget(self.pushButton)
+
+        self.pushButton_2 = QPushButton(self.frame_4)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        self.pushButton_2.setSizePolicy(sizePolicy7)
+        self.pushButton_2.setMinimumSize(QSize(150, 0))
+        self.pushButton_2.setStyleSheet(u"background-color: rgb(121, 121, 121);")
+
+        self.horizontalLayout_7.addWidget(self.pushButton_2)
+
+        self.pushButton_3 = QPushButton(self.frame_4)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        sizePolicy7.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
+        self.pushButton_3.setSizePolicy(sizePolicy7)
+        self.pushButton_3.setMinimumSize(QSize(150, 0))
+        self.pushButton_3.setStyleSheet(u"background-color: rgb(170, 0, 0);")
+
+        self.horizontalLayout_7.addWidget(self.pushButton_3)
+
+
+        self.horizontalLayout_8.addWidget(self.frame_4)
+
 
         self.verticalLayout.addWidget(self.frame)
 
@@ -1162,7 +1217,10 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setHorizontalHeaderItem(0, __qtablewidgetitem16)
         __qtablewidgetitem17 = QTableWidgetItem()
         self.tableWidget_3.setHorizontalHeaderItem(1, __qtablewidgetitem17)
+        font5 = QFont()
+        font5.setKerning(True)
         __qtablewidgetitem18 = QTableWidgetItem()
+        __qtablewidgetitem18.setFont(font5);
         self.tableWidget_3.setHorizontalHeaderItem(2, __qtablewidgetitem18)
         __qtablewidgetitem19 = QTableWidgetItem()
         self.tableWidget_3.setHorizontalHeaderItem(3, __qtablewidgetitem19)
@@ -1189,8 +1247,6 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setVerticalHeaderItem(7, __qtablewidgetitem28)
         __qtablewidgetitem29 = QTableWidgetItem()
         self.tableWidget_3.setItem(0, 0, __qtablewidgetitem29)
-        font5 = QFont()
-        font5.setKerning(True)
         __qtablewidgetitem30 = QTableWidgetItem()
         __qtablewidgetitem30.setFont(font5);
         self.tableWidget_3.setItem(0, 2, __qtablewidgetitem30)
@@ -1264,6 +1320,51 @@ class Ui_MainWindow(object):
         self.frame_3.setMinimumSize(QSize(0, 100))
         self.frame_3.setFrameShape(QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_13 = QHBoxLayout(self.frame_3)
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
+        self.horizontalLayout_13.setContentsMargins(10, 0, 10, 200)
+        self.frame_5 = QFrame(self.frame_3)
+        self.frame_5.setObjectName(u"frame_5")
+        sizePolicy5.setHeightForWidth(self.frame_5.sizePolicy().hasHeightForWidth())
+        self.frame_5.setSizePolicy(sizePolicy5)
+        self.frame_5.setMinimumSize(QSize(0, 50))
+        self.frame_5.setStyleSheet(u"")
+        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_11 = QHBoxLayout(self.frame_5)
+        self.horizontalLayout_11.setSpacing(50)
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.horizontalLayout_11.setContentsMargins(10, 5, 10, 5)
+        self.pushButton_7 = QPushButton(self.frame_5)
+        self.pushButton_7.setObjectName(u"pushButton_7")
+        sizePolicy6.setHeightForWidth(self.pushButton_7.sizePolicy().hasHeightForWidth())
+        self.pushButton_7.setSizePolicy(sizePolicy6)
+        self.pushButton_7.setMinimumSize(QSize(150, 0))
+        self.pushButton_7.setStyleSheet(u"background-color: rgb(0, 170, 0);")
+
+        self.horizontalLayout_11.addWidget(self.pushButton_7)
+
+        self.pushButton_8 = QPushButton(self.frame_5)
+        self.pushButton_8.setObjectName(u"pushButton_8")
+        sizePolicy7.setHeightForWidth(self.pushButton_8.sizePolicy().hasHeightForWidth())
+        self.pushButton_8.setSizePolicy(sizePolicy7)
+        self.pushButton_8.setMinimumSize(QSize(150, 0))
+        self.pushButton_8.setStyleSheet(u"background-color: rgb(121, 121, 121);")
+
+        self.horizontalLayout_11.addWidget(self.pushButton_8)
+
+        self.pushButton_9 = QPushButton(self.frame_5)
+        self.pushButton_9.setObjectName(u"pushButton_9")
+        sizePolicy7.setHeightForWidth(self.pushButton_9.sizePolicy().hasHeightForWidth())
+        self.pushButton_9.setSizePolicy(sizePolicy7)
+        self.pushButton_9.setMinimumSize(QSize(150, 0))
+        self.pushButton_9.setStyleSheet(u"background-color: rgb(170, 0, 0);")
+
+        self.horizontalLayout_11.addWidget(self.pushButton_9)
+
+
+        self.horizontalLayout_13.addWidget(self.frame_5)
+
 
         self.verticalLayout_20.addWidget(self.frame_3)
 
@@ -1403,7 +1504,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1489,6 +1590,9 @@ class Ui_MainWindow(object):
         self.tableWidget.setSortingEnabled(False)
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         ___qtablewidgetitem12 = self.tableWidget_3.horizontalHeaderItem(0)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"\u2116", None));
         ___qtablewidgetitem13 = self.tableWidget_3.horizontalHeaderItem(1)
@@ -1520,6 +1624,9 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setSortingEnabled(False)
         self.tableWidget_3.setSortingEnabled(__sortingEnabled1)
 
+        self.pushButton_7.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c", None))
+        self.pushButton_8.setText(QCoreApplication.translate("MainWindow", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c", None))
+        self.pushButton_9.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))

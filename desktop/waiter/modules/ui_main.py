@@ -994,9 +994,54 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(:/images/images/images/logo_back.png);\n"
-"background-position: center;\n"
-"background-repeat: no-repeat;")
+        self.home.setStyleSheet(u"")
+        self.verticalLayout_4 = QVBoxLayout(self.home)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(9, -1, -1, -1)
+        self.frame_6 = QFrame(self.home)
+        self.frame_6.setObjectName(u"frame_6")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.frame_6.sizePolicy().hasHeightForWidth())
+        self.frame_6.setSizePolicy(sizePolicy4)
+        self.frame_6.setMinimumSize(QSize(0, 50))
+        self.frame_6.setStyleSheet(u"")
+        self.frame_6.setFrameShape(QFrame.StyledPanel)
+        self.frame_6.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_9 = QHBoxLayout(self.frame_6)
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.label_2 = QLabel(self.frame_6)
+        self.label_2.setObjectName(u"label_2")
+        font4 = QFont()
+        font4.setFamilies([u"Segoe UI"])
+        font4.setPointSize(16)
+        font4.setBold(False)
+        font4.setItalic(False)
+        self.label_2.setFont(font4)
+        self.label_2.setStyleSheet(u"font: 16pt \"Segoe UI\";")
+        self.label_2.setAlignment(Qt.AlignBottom|Qt.AlignLeading|Qt.AlignLeft)
+
+        self.horizontalLayout_9.addWidget(self.label_2)
+
+        self.time_label = QLabel(self.frame_6)
+        self.time_label.setObjectName(u"time_label")
+        self.time_label.setStyleSheet(u"font: 16pt \"Segoe UI\";")
+        self.time_label.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.horizontalLayout_9.addWidget(self.time_label)
+
+
+        self.verticalLayout_4.addWidget(self.frame_6)
+
+        self.frame_7 = QFrame(self.home)
+        self.frame_7.setObjectName(u"frame_7")
+        self.frame_7.setStyleSheet(u"background-color: rgb(57, 255, 87);")
+        self.frame_7.setFrameShape(QFrame.StyledPanel)
+        self.frame_7.setFrameShadow(QFrame.Raised)
+
+        self.verticalLayout_4.addWidget(self.frame_7)
+
         self.stackedWidget.addWidget(self.home)
         self.widgets = QWidget()
         self.widgets.setObjectName(u"widgets")
@@ -1007,9 +1052,6 @@ class Ui_MainWindow(object):
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
         self.row_3 = QFrame(self.widgets)
         self.row_3.setObjectName(u"row_3")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.row_3.sizePolicy().hasHeightForWidth())
         self.row_3.setSizePolicy(sizePolicy4)
         self.row_3.setMinimumSize(QSize(0, 100))
@@ -1032,10 +1074,10 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         if (self.tableWidget.rowCount() < 20):
             self.tableWidget.setRowCount(20)
-        font4 = QFont()
-        font4.setFamilies([u"Segoe UI"])
+        font5 = QFont()
+        font5.setFamilies([u"Segoe UI"])
         __qtablewidgetitem4 = QTableWidgetItem()
-        __qtablewidgetitem4.setFont(font4);
+        __qtablewidgetitem4.setFont(font5);
         self.tableWidget.setVerticalHeaderItem(0, __qtablewidgetitem4)
         __qtablewidgetitem5 = QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(1, __qtablewidgetitem5)
@@ -1217,10 +1259,10 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setHorizontalHeaderItem(0, __qtablewidgetitem16)
         __qtablewidgetitem17 = QTableWidgetItem()
         self.tableWidget_3.setHorizontalHeaderItem(1, __qtablewidgetitem17)
-        font5 = QFont()
-        font5.setKerning(True)
+        font6 = QFont()
+        font6.setKerning(True)
         __qtablewidgetitem18 = QTableWidgetItem()
-        __qtablewidgetitem18.setFont(font5);
+        __qtablewidgetitem18.setFont(font6);
         self.tableWidget_3.setHorizontalHeaderItem(2, __qtablewidgetitem18)
         __qtablewidgetitem19 = QTableWidgetItem()
         self.tableWidget_3.setHorizontalHeaderItem(3, __qtablewidgetitem19)
@@ -1229,7 +1271,7 @@ class Ui_MainWindow(object):
         if (self.tableWidget_3.rowCount() < 20):
             self.tableWidget_3.setRowCount(20)
         __qtablewidgetitem21 = QTableWidgetItem()
-        __qtablewidgetitem21.setFont(font4);
+        __qtablewidgetitem21.setFont(font5);
         self.tableWidget_3.setVerticalHeaderItem(0, __qtablewidgetitem21)
         __qtablewidgetitem22 = QTableWidgetItem()
         self.tableWidget_3.setVerticalHeaderItem(1, __qtablewidgetitem22)
@@ -1248,7 +1290,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem29 = QTableWidgetItem()
         self.tableWidget_3.setItem(0, 0, __qtablewidgetitem29)
         __qtablewidgetitem30 = QTableWidgetItem()
-        __qtablewidgetitem30.setFont(font5);
+        __qtablewidgetitem30.setFont(font6);
         self.tableWidget_3.setItem(0, 2, __qtablewidgetitem30)
         self.tableWidget_3.setObjectName(u"tableWidget_3")
         sizePolicy4.setHeightForWidth(self.tableWidget_3.sizePolicy().hasHeightForWidth())
@@ -1470,11 +1512,11 @@ class Ui_MainWindow(object):
         self.creditsLabel = QLabel(self.bottomBar)
         self.creditsLabel.setObjectName(u"creditsLabel")
         self.creditsLabel.setMaximumSize(QSize(16777215, 16))
-        font6 = QFont()
-        font6.setFamilies([u"Segoe UI"])
-        font6.setBold(False)
-        font6.setItalic(False)
-        self.creditsLabel.setFont(font6)
+        font7 = QFont()
+        font7.setFamilies([u"Segoe UI"])
+        font7.setBold(False)
+        font7.setItalic(False)
+        self.creditsLabel.setFont(font7)
         self.creditsLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.horizontalLayout_5.addWidget(self.creditsLabel)
@@ -1561,6 +1603,8 @@ class Ui_MainWindow(object):
         self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
 #endif // QT_CONFIG(tooltip)
         self.closeAppBtn.setText("")
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0444\u043e\u0440\u043c\u043b\u0435\u043d\u0438\u0435 \u0437\u0430\u043a\u0430\u0437\u0430", None))
+        self.time_label.setText("")
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"\u2116", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)

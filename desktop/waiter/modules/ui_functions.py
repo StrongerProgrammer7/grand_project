@@ -13,7 +13,7 @@
 # https://doc.qt.io/qtforpython/licenses.html
 #
 # ///////////////////////////////////////////////////////////////
-
+from PySide6.QtCore import QDateTime, QTimer
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from main import *
@@ -224,6 +224,11 @@ class UIFunctions(MainWindow):
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
             self.themeFile = "themes/py_dracula_dark.qss"
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
+
+    def update_time(self):
+        current_time = QDateTime.currentDateTime().toString('hh:mm')
+        current_date = QDateTime.currentDateTime().toString('dd.MM.yyyy')
+        self.ui.time_label.setText(f"{current_time} {current_date}")
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

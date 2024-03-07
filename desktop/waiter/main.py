@@ -103,6 +103,11 @@ class MainWindow(QMainWindow):
         UIFunctions.theme(self, self.themeFile, True)
         widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
+        # DATETIME
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
+        self.timer.start(0)
+
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 

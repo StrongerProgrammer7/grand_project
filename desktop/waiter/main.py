@@ -108,6 +108,9 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
         self.timer.start(0)
 
+        widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
+        widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
+
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 

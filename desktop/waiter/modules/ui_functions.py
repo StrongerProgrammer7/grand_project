@@ -14,6 +14,7 @@
 #
 # ///////////////////////////////////////////////////////////////
 from PySide6.QtCore import QDateTime, QTimer
+from PySide6.QtWidgets import QLineEdit
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from main import *
@@ -229,6 +230,22 @@ class UIFunctions(MainWindow):
         current_time = QDateTime.currentDateTime().toString('hh:mm')
         current_date = QDateTime.currentDateTime().toString('dd.MM.yyyy')
         self.ui.time_label.setText(f"{current_time} {current_date}")
+
+    def generate_new_row(self):
+        row_index = self.ui.tableWidget_2.rowCount()
+        self.ui.tableWidget_2.insertRow(row_index)
+
+        for column_index in range(4):
+            item = QTableWidgetItem("")  # Замените "Text" на желаемый текст
+            self.ui.tableWidget_2.setItem(row_index, column_index, item)
+
+    def delete_row(self):
+        selected_rows = set()
+        for item in self.ui.tableWidget_2.selectedItems():
+            selected_rows.add(item.row())
+
+        for row_index in sorted(selected_rows, reverse=True):
+            self.ui.tableWidget_2.removeRow(row_index)
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

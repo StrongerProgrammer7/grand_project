@@ -19,6 +19,9 @@ import os
 import platform
 
 from PySide6.QtWidgets import QMainWindow
+from PySide6 import QtWidgets
+from modules.addview import Ui_Dialog
+from modules.addview2 import Ui_Dialog2
 
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
@@ -42,6 +45,10 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         global widgets
         widgets = self.ui
+
+        self.api = ApiConnect()
+
+
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
@@ -93,10 +100,10 @@ class MainWindow(QMainWindow):
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
         self.show()
-
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
+        self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
         #widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
@@ -108,8 +115,41 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
         self.timer.start(0)
 
+        # DIALOG WINDOWS
+        self.ui_dialog = Ui_Dialog()
+        self.ui_dialog.setupUi(self)
+        self.new_window = QtWidgets.QDialog()
+        self.ui_dialog.setupUi(self.new_window)
+        self.new_window.setFixedSize(self.new_window.size())
+
+        self.ui_dialog2 = Ui_Dialog2()
+        self.ui_dialog2.setupUi(self)
+        self.new_window2 = QtWidgets.QDialog()
+        self.ui_dialog2.setupUi(self.new_window2)
+        self.new_window2.setFixedSize(self.new_window2.size())
+
+        # 1 ВКЛАДКА КНОПКИ
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
+        widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
+        # widgets.utvrbtn.clicked.connect() Здесь могла быть ваша функция:)
+
+        # 2 ВКЛАДКА
+        widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
+        widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
+
+        # 3 ВКЛАДКА
+        widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
+        widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
+
+        self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
+        self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
+
+        tab1_column_widths = [10, 150, 120, 200, 200, 100]
+        UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
+
+        tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
+        UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
         # SET HACKS
         # AppFunctions.setThemeHack(self)
@@ -168,6 +208,118 @@ class MainWindow(QMainWindow):
             print('Mouse click: LEFT CLICK')
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
+
+    def open_new_window(self):
+        self.new_window.exec()
+
+    def open_new_window2(self):
+        self.new_window2.exec()
+
+    def update_second_table(self):
+        time1 = self.ui_dialog.timeEdit.text()
+        date = self.ui_dialog.dateEdit.text()
+        combBox = self.ui_dialog.comboBox.currentText()
+        line = self.ui_dialog.lineEdit.text()
+        time2 = self.ui_dialog.timeEdit_2.text()
+
+        # Создаем диалоговое окно для подтверждения
+        confirm_dialog = QMessageBox()
+        confirm_dialog.setIcon(QMessageBox.Question)
+        confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
+        confirm_dialog.setWindowTitle("Подтверждение")
+        confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        confirm_dialog.setDefaultButton(QMessageBox.No)
+
+        # Показываем диалоговое окно и ждем ответа пользователя
+        response = confirm_dialog.exec()
+
+        if response == QMessageBox.Yes:
+            # Получаем индекс выбранной строки
+            selected_row = self.ui.tableWidget.currentRow()
+
+            if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+                # Устанавливаем значения в каждом столбце выбранной строки
+                self.ui.tableWidget.setItem(selected_row, 0,
+                                            QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
+                self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(time1))
+                self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(date))
+                self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(combBox))
+                self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line))
+                self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(time2))
+
+                # TODO: Поменять после изменения таблицы
+                # Преобразуем данные в JSON
+                dishes_dict = {}  # Предполагается, что line содержит данные в формате "Название:Количество"
+                for dish in line.split(','):
+                    name, quantity = dish.split(':')
+                    dishes_dict[name.strip()] = int(quantity.strip())
+
+                data = {
+                    "id_order": selected_row + 1,
+                    "id_worker": 1,
+                    "dishes": dishes_dict,
+                    "status": combBox,
+                    "formation_date": date,
+                    "giving_date": time1
+                }
+
+                # Отправляем данные с помощью функции post_data
+                # if self.api.post_data('orders', data) is not None:
+                #     print(f'УСПЕШНАЯ ПЕРЕДАЧА | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
+                # else:
+                #     print(f'[!] ОШИБКА ПЕРЕДАЧИ | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
+                print(data)
+
+            self.new_window.close()
+        else:
+            # Если пользователь отменил действие, ничего не делаем
+            pass
+
+    def update_third_table(self):
+        combBox = self.ui_dialog2.comboBox.currentText()
+        time = self.ui_dialog2.timeEdit.text()
+        line = self.ui_dialog2.lineEdit.text()
+        line2 = self.ui_dialog2.lineEdit_2.text()
+
+        # Создаем диалоговое окно для подтверждения
+        confirm_dialog = QMessageBox()
+        confirm_dialog.setIcon(QMessageBox.Question)
+        confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
+        confirm_dialog.setWindowTitle("Подтверждение")
+        confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        confirm_dialog.setDefaultButton(QMessageBox.No)
+
+        # Показываем диалоговое окно и ждем ответа пользователя
+        response = confirm_dialog.exec()
+
+        if response == QMessageBox.Yes:
+            # Получаем индекс выбранной строки
+            selected_row = self.ui.tableWidget_3.currentRow()
+
+            if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+                # Устанавливаем значения в каждом столбце выбранной строки
+                self.ui.tableWidget_3.setItem(selected_row, 0,
+                                            QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
+                self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
+                self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(time))
+                self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(line))
+                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
+
+                # TODO: Сделать после изменения таблицы
+                data = {
+                  "id_table": 1,
+                  "id_worker": 3,
+                  "phone_client": "+79848718618",
+                  "order_time": "2024-03-24 13:11:31",
+                  "desired_booking_time": "2024-03-26 13:11:31",
+                  "booking_interval": "3 hours"
+                }
+                print(data)
+
+            self.new_window2.close()
+        else:
+            # Если пользователь отменил действие, ничего не делаем
+            pass
 
 
 if __name__ == "__main__":

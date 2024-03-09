@@ -7,17 +7,17 @@ files = ['icon.ico', 'themes/']
 
 # TARGET
 target = Executable(
-    script="cook_app.py",
+    script="main.py",
     base="Win32GUI",
     icon="icon.ico"
 )
 
 # SETUP CX FREEZE
 setup(
-    name="PyDracula",
+    name="SOLIDSIGN",
     version="1.0",
-    description="Modern GUI for Python applications",
-    author="Wanderson M. Pimenta",
+    description="SOLIDSIGN APP",
+    author="49/1",
     options={'build_exe': {'include_files': files}},
     executables=[target]
 

@@ -54,6 +54,14 @@ class ApiConnect:
                     json_data = json.load(file)
                 return json_data
         return None
+    @staticmethod
+    def test_data():
+        response = requests.post('https://grandproject.k-lab.su/api/test', verify=False)
+
+        if response.status_code == 200:
+            print('Ответ от сервера Node.js:', response.json())
+        else:
+            print(response.text)
 
 
-print(ApiConnect.test_get('tables'))
+print(ApiConnect.test_data())

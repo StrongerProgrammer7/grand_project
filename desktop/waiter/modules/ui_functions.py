@@ -13,6 +13,7 @@
 # https://doc.qt.io/qtforpython/licenses.html
 #
 # ///////////////////////////////////////////////////////////////
+from PySide6 import QtWidgets
 from PySide6.QtCore import QDateTime, QTimer
 from PySide6.QtWidgets import QLineEdit
 # MAIN FILE
@@ -23,6 +24,7 @@ from main import *
 # ///////////////////////////////////////////////////////////////
 GLOBAL_STATE = False
 GLOBAL_TITLE_BAR = True
+
 
 class UIFunctions(MainWindow):
     # MAXIMIZE/RESTORE
@@ -44,7 +46,7 @@ class UIFunctions(MainWindow):
         else:
             GLOBAL_STATE = False
             self.showNormal()
-            self.resize(self.width()+1, self.height()+1)
+            self.resize(self.width() + 1, self.height() + 1)
             self.ui.appMargins.setContentsMargins(10, 10, 10, 10)
             self.ui.maximizeRestoreAppBtn.setToolTip("Maximize")
             self.ui.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_maximize.png"))
@@ -114,7 +116,7 @@ class UIFunctions(MainWindow):
                 widthExtended = standard
                 # RESET BTN
                 self.ui.toggleLeftBox.setStyleSheet(style.replace(color, ''))
-                
+
         UIFunctions.start_box_animation(self, width, widthRightBox, "left")
 
     # TOGGLE RIGHT BOX
@@ -148,7 +150,7 @@ class UIFunctions(MainWindow):
 
     def start_box_animation(self, left_box_width, right_box_width, direction):
         right_width = 0
-        left_width = 0 
+        left_width = 0
 
         # Check values
         if left_box_width == 0 and direction == "left":
@@ -159,9 +161,9 @@ class UIFunctions(MainWindow):
         if right_box_width == 0 and direction == "right":
             right_width = 240
         else:
-            right_width = 0       
+            right_width = 0
 
-        # ANIMATION LEFT BOX        
+            # ANIMATION LEFT BOX
         self.left_box = QPropertyAnimation(self.ui.extraLeftBox, b"minimumWidth")
         self.left_box.setDuration(Settings.TIME_ANIMATION)
         self.left_box.setStartValue(left_box_width)
@@ -216,14 +218,23 @@ class UIFunctions(MainWindow):
         current_stylesheet = open(self.themeFile, 'r').read()
         dark_stylesheet = open("themes/py_dracula_dark.qss", 'r').read()
         light_stylesheet = open("themes/py_dracula_light.qss", 'r').read()
+        add_view_dark_stylesheet = open("themes/addview_dark.qss", 'r').read()
+        add_view_light_stylesheet = open("themes/addview_light.qss", 'r').read()
 
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
+            self.ui.titleFrame.setStyleSheet("background-color: #5b6996; color: #f8f8f2; border-radius: 5px")
+            self.ui_dialog.stylesheet.setStyleSheet(add_view_light_stylesheet)
+            self.ui_dialog2.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/sun.png)")
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
+            self.ui_dialog.stylesheet.setStyleSheet(light_stylesheet)
+            self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
             self.themeFile = "themes/py_dracula_dark.qss"
+            self.ui_dialog.stylesheet.setStyleSheet(add_view_dark_stylesheet)
+            self.ui_dialog2.stylesheet.setStyleSheet(add_view_dark_stylesheet)
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
 
     def update_time(self):
@@ -247,6 +258,24 @@ class UIFunctions(MainWindow):
         for row_index in sorted(selected_rows, reverse=True):
             self.ui.tableWidget_2.removeRow(row_index)
 
+    def clear_table(self):
+        self.ui.tableWidget_2.clearContents()
+        self.ui.tableWidget_2.setRowCount(0)
+
+    def delete_row_content(self, table):
+        selected_row = table.currentRow()
+        if selected_row != -1:
+            column_count = table.columnCount()
+            for column_index in range(column_count):
+                item = table.item(selected_row, column_index)
+                if item is not None:
+                    item.setText("")
+
+    def set_column_widths(self, table_widget, column_widths):
+        for column, width in enumerate(column_widths):
+            table_widget.setColumnWidth(column, width)
+
+
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////
     def uiDefinitions(self):
@@ -254,10 +283,11 @@ class UIFunctions(MainWindow):
             # IF DOUBLE CLICK CHANGE STATUS
             if event.type() == QEvent.MouseButtonDblClick:
                 QTimer.singleShot(250, lambda: UIFunctions.maximize_restore(self))
+
         self.ui.titleRightInfo.mouseDoubleClickEvent = dobleClickMaximizeRestore
 
         if Settings.ENABLE_CUSTOM_TITLE_BAR:
-            #STANDARD TITLE BAR
+            # STANDARD TITLE BAR
             self.setWindowFlags(Qt.FramelessWindowHint)
             self.setAttribute(Qt.WA_TranslucentBackground)
 
@@ -271,6 +301,7 @@ class UIFunctions(MainWindow):
                     self.move(self.pos() + event.globalPos() - self.dragPos)
                     self.dragPos = event.globalPos()
                     event.accept()
+
             self.ui.titleRightInfo.mouseMoveEvent = moveWindow
 
             # CUSTOM GRIPS

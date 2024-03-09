@@ -13,11 +13,14 @@
 # https://doc.qt.io/qtforpython/licenses.html
 #
 # ///////////////////////////////////////////////////////////////
+from PySide6 import QtWidgets
 from PySide6.QtCore import QDateTime, QTimer
 from PySide6.QtWidgets import QLineEdit
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from main import *
+
+
 
 # GLOBALS
 # ///////////////////////////////////////////////////////////////
@@ -246,6 +249,21 @@ class UIFunctions(MainWindow):
 
         for row_index in sorted(selected_rows, reverse=True):
             self.ui.tableWidget_2.removeRow(row_index)
+
+    def clear_table(self):
+        self.ui.tableWidget_2.clearContents()
+        self.ui.tableWidget_2.setRowCount(0)
+
+    def delete_row_content(self, table):
+        selected_row = table.currentRow()
+        if selected_row != -1:
+            column_count = table.columnCount()
+            for column_index in range(column_count):
+                item = table.item(selected_row, column_index)
+                if item is not None:
+                    item.setText("")
+
+
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

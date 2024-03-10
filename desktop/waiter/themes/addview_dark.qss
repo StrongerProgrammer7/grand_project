@@ -1,0 +1,101 @@
+QWidget{
+	color: rgb(221, 221, 221);
+	font: 10pt "Segoe UI";
+}
+
+/*ComboBox */
+QComboBox{
+	background-color: rgb(27, 29, 35);
+	border-radius: 5px;
+	border: 2px solid rgb(33, 37, 43);
+	padding: 5px;
+	padding-left: 10px;
+}
+QComboBox:hover{
+	border: 2px solid rgb(64, 71, 88);
+}
+QComboBox::drop-down {
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 25px;
+	border-left-width: 3px;
+	border-left-color: rgba(39, 44, 54, 150);
+	border-left-style: solid;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	background-image: url(:/icons/images/icons/cil-arrow-bottom.png);
+	background-position: center;
+	background-repeat: no-reperat;
+ }
+QComboBox QAbstractItemView {
+	color: rgb(255, 121, 198);
+	background-color: rgb(33, 37, 43);
+	padding: 10px;
+	selection-background-color: rgb(39, 44, 54);
+}
+
+/*LineEdit */
+QLineEdit {
+	background-color: rgb(27, 29, 35);
+	border-radius: 5px;
+	border: 2px solid rgb(33, 37, 43);
+	padding-left: 10px;
+	selection-color: rgb(255, 255, 255);
+	selection-background-color: rgb(255, 121, 198);
+}
+QLineEdit:hover {
+	border: 2px solid rgb(64, 71, 88);
+}
+QLineEdit:focus {
+	border: 2px solid rgb(91, 101, 124);
+}
+
+/*TimeEdit */
+QTimeEdit {
+    background-color: rgb(27, 29, 35);
+    border-radius: 5px;
+    border: 2px solid rgb(33, 37, 43);
+    padding: 5px;
+    padding-left: 10px;
+}
+
+QTimeEdit:hover {
+    border: 2px solid rgb(64, 71, 88);
+}
+
+/*DateEdit */
+QDateEdit {
+    background-color: rgb(27, 29, 35);
+    border-radius: 5px;
+    border: 2px solid rgb(33, 37, 43);
+    padding: 5px;
+    padding-left: 10px;
+}
+
+QDateEdit:hover {
+    border: 2px solid rgb(64, 71, 88);
+}
+/*Button*/
+QPushButton {
+	border: 2px solid rgb(52, 59, 72);
+	border-radius: 5px;
+	background-color: rgb(52, 59, 72);
+}
+QPushButton:hover {
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
+}
+QPushButton:pressed {
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
+}
+
+#mainFrame{
+    background-color: rgb(40, 44, 52);
+	border: 1px solid rgb(44, 49, 58);
+}
+
+QLabel {
+    background-color: rgb(33, 37, 43);
+	border-radius: 5px;
+}

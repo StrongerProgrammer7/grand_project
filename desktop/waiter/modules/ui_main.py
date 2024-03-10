@@ -554,7 +554,9 @@ class Ui_MainWindow(object):
 "	border: 2px solid rgb(43, 50, 61);\n"
 "}\n"
 "\n"
-"")
+"#pagesContainer QLabel{\n"
+"	background-color: rgb(152, 183, 255);\n"
+"}")
         self.appMargins = QVBoxLayout(self.styleSheet)
         self.appMargins.setSpacing(0)
         self.appMargins.setObjectName(u"appMargins")
@@ -1635,7 +1637,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

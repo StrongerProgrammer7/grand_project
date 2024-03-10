@@ -219,14 +219,21 @@ class UIFunctions(MainWindow):
         current_stylesheet = open(self.themeFile, 'r').read()
         dark_stylesheet = open("themes/py_dracula_dark.qss", 'r').read()
         light_stylesheet = open("themes/py_dracula_light.qss", 'r').read()
+        add_view_dark_stylesheet = open("themes/addview_dark.qss", 'r').read()
+        add_view_light_stylesheet = open("themes/addview_light.qss", 'r').read()
 
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
+            self.ui_dialog.stylesheet.setStyleSheet(add_view_light_stylesheet)
+            self.ui_dialog2.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/sun.png)")
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
+            self.ui_dialog.stylesheet.setStyleSheet(light_stylesheet)
             self.themeFile = "themes/py_dracula_dark.qss"
+            self.ui_dialog.stylesheet.setStyleSheet(add_view_dark_stylesheet)
+            self.ui_dialog2.stylesheet.setStyleSheet(add_view_dark_stylesheet)
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
 
     def update_time(self):

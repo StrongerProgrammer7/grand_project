@@ -20,6 +20,8 @@ const errorHandler = require('./middleware/HadnlingMiddleware');
 const logger = require('./logger/logger');
 const loggerInernalError = require('./logger/loggerInernalError');
 
+const swaggerDocs = require('./utils/swagger');
+
 const PORT = process.env.PORT || 443;
 const urlencodedParser = express.urlencoded({ extended: true });
 const app = express();
@@ -114,11 +116,22 @@ const startServer = async function ()
             {
                 console.log(`Server has been started on the port ${ PORT } and HTTPS. Env=${ process.env.NODE_ENV }`);
             })
+
     }
     catch (error)
     {
         console.log(error);
         console.error(`Unable to connect to the server(https): PORT=${ PORT }`);
+    }
+
+    try
+    {
+        swaggerDocs(app, PORT);
+    }
+    catch (error)
+    {
+        console.log("Error with swagger");
+        console.error(error);
     }
 }
 startServer();

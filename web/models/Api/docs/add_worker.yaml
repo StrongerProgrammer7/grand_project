@@ -1,0 +1,79 @@
+"/api/registration_worker":
+  post:
+    tags:
+      - Registration_worker
+    summary: Adding an employee
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              login:
+                type: string
+              password:
+                type: string
+              job_role:
+                type: string
+              surname:
+                type: string
+              first_name:
+                type: string
+              salary:
+                type: double
+              patronymic:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
+              job_rate:
+                type: double
+            example:
+              login: john_does
+              password: password123
+              job_role: Младший Повар
+              surname: Дуйэн
+              first_name: Джонсон
+              salary: 50000.00
+              patronymic: Патрикович
+              email: john@example.com
+              phone: "+79028759087"
+              job_rate: 1.0
+    responses:
+      "200":
+        description: Success added employee
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                message:
+                  type: string
+              example:
+                data: {}
+                message: Request execution
+      "404":
+        description: Data is empty or not correct
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+              example:
+                message: Request body is empty! | Don't enought data!
+      "500":
+        description: Internal error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+              example:
+                message: Sorry, server is problem! try again later.

@@ -30,7 +30,20 @@ const registration_worker = async (req, res, next) =>
             if (err)
                 return next(ApiError.internal('Internal error with hash password'));
 
-            await db.proc('add_worker', []);
+            // await db.query('CALL add_worker($1,$2,$3,$4,$5,$6,$7,$8, $9, $10,$11)', [
+            //     login,
+            //     hash,
+            //     password,
+            //     job_role,
+            //     surname,
+            //     first_name,
+            //     salary,
+            //     patronymic,
+            //     email,
+            //     phone,
+
+            //     job_rate
+            // ]);
             return next(DataApi.success({}, "Request execution"));
         })
     });

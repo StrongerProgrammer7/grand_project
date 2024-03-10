@@ -10,12 +10,16 @@ const add_ingridient = async (req, res, next) =>
             name,
             measurement,
             critical_rate,
-            price
+            price,
+            update // true/false
         } = req.body;
     if (!(name && measurement && critical_rate && price))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    /*const result = await db.proc('add_ingredient', []);*/
+    if (update === true)
+        console.log();/*const result = await db.proc('add_ingredient', []);*/
+    else
+        console.log();/*const result = await db.proc('update_ingredient', []);*/
 
     return next(DataApi.success({}, "Request execution"));
 }

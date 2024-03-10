@@ -3,7 +3,6 @@ const router = new Router();
 const { check } = require('express-validator');
 const logger = require('../logger/logger');
 
-const test = require('../models/test');
 const order = require('../models/Api/order');
 const add_food = require('../models/Api/add_food');
 const add_food_composition = require('../models/Api/add_food_composition');
@@ -21,8 +20,6 @@ const record_giving_time = require('../models/Api/record_giving_time');
 const cancel_booking = require('../models/Api/cancel_booking');
 const order_ingredient = require('../models/Api/order_ingredient');
 
-
-router.post("/test", test);
 
 router.post("/order", order);
 router.post('/add_food', add_food);

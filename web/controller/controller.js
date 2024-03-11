@@ -23,6 +23,7 @@ const get_reorder_ingredients_list = require('../models/Api/GET/get_reorder_ingr
 const get_all_booked_tables = require('../models/Api/GET/get_all_booked_tables');
 const get_food_composition = require('../models/Api/POST/get_food_composition');
 const get_free_tables = require('../models/Api/GET/get_free_tables');
+const get_menu_sorted_by_type = require('../models/Api/GET/get_menu_sorted_by_type');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -46,6 +47,7 @@ router.get('/get_current_orders', get_current_orders);
 router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);
 router.get('/get_all_booked_tables', get_all_booked_tables);
 router.get('/get_free_tables', get_free_tables);
+router.get('/get_menu_sorted_by_type', get_menu_sorted_by_type);
 
 module.exports = router;
 

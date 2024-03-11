@@ -56,7 +56,3 @@ class ApiConnect:
                 return json_data
         return None
 
-
-# print(ApiConnect.test_get('tables'))
-# a = ApiConnect()
-# print(a.post_data('book_table'))

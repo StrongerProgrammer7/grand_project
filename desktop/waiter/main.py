@@ -247,12 +247,12 @@ class MainWindow(QMainWindow):
                     dishes_dict[name.strip()] = int(quantity.strip())
 
                 data = {
-                    "order_id": selected_row + 1,
+                    "id_order": selected_row + 1,
+                    "id_worker": 1,
                     "dishes": dishes_dict,
-                    "comments": "ТЕСТ",
-                    "state": combBox,
-                    "date": date,
-                    "time": time1
+                    "status": combBox,
+                    "formation_date": date,
+                    "giving_date": time1
                 }
 
                 # Отправляем данные с помощью функции post_data
@@ -260,7 +260,7 @@ class MainWindow(QMainWindow):
                 #     print(f'УСПЕШНАЯ ПЕРЕДАЧА | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
                 # else:
                 #     print(f'[!] ОШИБКА ПЕРЕДАЧИ | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
-                # print(data)
+                print(data)
 
             self.new_window.close()
         else:
@@ -298,6 +298,15 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
 
                 # TODO: Сделать после изменения таблицы
+                data = {
+                  "id_table": 1,
+                  "id_worker": 3,
+                  "phone_client": "+79848718618",
+                  "order_time": "2024-03-24 13:11:31",
+                  "desired_booking_time": "2024-03-26 13:11:31",
+                  "booking_interval": "3 hours"
+                }
+                print(data)
 
             self.new_window2.close()
         else:

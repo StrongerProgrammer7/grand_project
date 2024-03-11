@@ -1,7 +1,7 @@
 "/api/cancel_booking":
   post:
     tags:
-      - Cancel book
+      - Table
     summary: Cancel book
     requestBody:
       content:

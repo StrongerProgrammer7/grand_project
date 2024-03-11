@@ -1,7 +1,7 @@
 "/api/book_table":
   post:
     tags:
-      - Booking
+      - Table
     summary: Booking table
     requestBody:
       content:

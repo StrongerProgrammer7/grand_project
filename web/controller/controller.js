@@ -21,6 +21,7 @@ const order_ingredient = require('../models/Api/POST/order_ingredient');
 const get_current_orders = require('../models/Api/GET/get_current_orders');
 const get_reorder_ingredients_list = require('../models/Api/GET/get_reorder_ingredients_list');
 const get_all_booked_tables = require('../models/Api/GET/get_all_booked_tables');
+const get_food_composition = require('../models/Api/POST/get_food_composition');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -37,7 +38,7 @@ router.post('/change_order_status', change_order_status);
 router.post('/record_giving_time', record_giving_time);
 router.post('/cancel_booking', cancel_booking);
 router.post('/order_ingredient', order_ingredient);
-
+router.post('/get_food_composition', get_food_composition);
 
 //GET
 router.get('/get_current_orders', get_current_orders);

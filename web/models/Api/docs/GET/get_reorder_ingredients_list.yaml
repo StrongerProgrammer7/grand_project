@@ -1,8 +1,8 @@
 "/api/get_reorder_ingredients_list":
   get:
     tags:
-      - Get orders
-    summary: Get not ready orders
+      - Get food
+    summary: Get list reorder ingredients
     responses:
       "201":
         description: Success!

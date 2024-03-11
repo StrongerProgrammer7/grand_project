@@ -1,7 +1,7 @@
 "/api/add_ingredient":
   post:
     tags:
-      - Ingredient
+      - Food
     summary: Add/Update ingredient
     requestBody:
       content:

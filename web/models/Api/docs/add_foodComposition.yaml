@@ -1,7 +1,7 @@
 "/api/add_food_composition":
   post:
     tags:
-      - Food composition
+      - Food
     summary: Add food composition
     requestBody:
       content:

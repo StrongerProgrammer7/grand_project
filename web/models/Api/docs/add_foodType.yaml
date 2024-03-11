@@ -1,7 +1,7 @@
 "/api/add_food_type":
   post:
     tags:
-      - Type of food
+      - Food
     summary: Add type of food
     requestBody:
       content:

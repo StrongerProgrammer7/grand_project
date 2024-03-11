@@ -27,12 +27,12 @@ const urlencodedParser = express.urlencoded({ extended: true });
 const app = express();
 
 
-app.use(expressWinston.logger(
-    {
-        winstonInstance: logger,
-        statusLevels: true
-    }
-));
+// app.use(expressWinston.logger(
+//     {
+//         winstonInstance: logger,
+//         statusLevels: true
+//     }
+// ));
 
 app.use(expressWinston.errorLogger(
     {

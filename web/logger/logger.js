@@ -6,6 +6,12 @@ const logger = createLogger(
             new transports.Console(),
             new transports.File(
                 {
+                    level: 'info',
+                    filename: './logger/logInfo.log'
+                }
+            ),
+            new transports.File(
+                {
                     level: 'warn',
                     filename: './logger/logsWarnings.log'
                 }

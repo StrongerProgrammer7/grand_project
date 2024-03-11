@@ -41,39 +41,9 @@
               phone: "+79028759087"
               job_rate: 1.0
     responses:
-      "200":
-        description: Success added employee
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: object
-                message:
-                  type: string
-              example:
-                data: {}
-                message: Request execution
+      "201":
+        $ref: "#/components/responses/201Success"
       "404":
-        description: Data is empty or not correct
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-              example:
-                message: Request body is empty! | Don't enought data!
+        $ref: "#/components/responses/404NotCorrectData"
       "500":
-        description: Internal error
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-              example:
-                message: Sorry, server is problem! try again later.
+        $ref: "#/components/responses/500InternalError"

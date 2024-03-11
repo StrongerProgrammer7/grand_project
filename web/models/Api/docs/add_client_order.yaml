@@ -1,4 +1,4 @@
-"/api/order":
+"/api/add_client_order":
   post:
     tags:
       - Order
@@ -29,17 +29,9 @@
               givig_date: 2024-03-04T10:11:31.718Z
               status: In Progress
     responses:
-      "200":
-        description: Success added order
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: object
-                message:
-                  type: string
-              example:
-                data: {}
-                message: Request execution
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

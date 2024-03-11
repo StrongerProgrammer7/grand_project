@@ -1,5 +1,5 @@
-const ApiError = require("../../../HandleAPI/ApiError");
-const logger = require('../../../logger/logger');
+const ApiError = require("../../HandleAPI/ApiError");
+const logger = require('../../logger/logger');
 
 const errorHandlerPOST = (messageConsole, codeError, messageBadRequest, messageInternal, err, next) =>
 {
@@ -19,7 +19,8 @@ const errorHandlerPOST = (messageConsole, codeError, messageBadRequest, messageI
         {
             logger.warn(err);
             return next(ApiError.badRequest(messageBadRequest));
-        }
+        } else
+            logger.error(err);
 
     }
     else

@@ -1,0 +1,51 @@
+"/api/get_current_orders":
+  get:
+    tags:
+      - Get orders
+    summary: Get not ready orders
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/CurrentOrder"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "id_order": 1,
+                      "id_worker": 1,
+                      "id_food": 3,
+                      "num_of_food": 1,
+                      "formation_date": "2024-03-04T10:15:52.909Z",
+                      "giving_date": "2024-03-04T10:15:52.909Z",
+                      "status": "Ready",
+                    },
+                  ]
+                message: Success!
+
+components:
+  schemas:
+    CurrentOrder:
+      type: object
+      properties:
+        id_order:
+          type: integer
+        id_worker:
+          type: integer
+        id_food:
+          type: integer
+        num_of_food:
+          type: integer
+        formation_date:
+          type: timestamp
+        givig_date:
+          type: timestamp
+        status:
+          type: string

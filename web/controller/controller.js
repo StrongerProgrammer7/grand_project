@@ -18,6 +18,7 @@ const record_giving_time = require('../models/Api/POST/record_giving_time');
 const cancel_booking = require('../models/Api/POST/cancel_booking');
 const order_ingredient = require('../models/Api/POST/order_ingredient');
 
+const get_current_orders = require('../models/Api/GET/get_current_orders');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -35,6 +36,9 @@ router.post('/record_giving_time', record_giving_time);
 router.post('/cancel_booking', cancel_booking);
 router.post('/order_ingredient', order_ingredient);
 
+
+//GET
+router.get('/get_current_orders', get_current_orders);
 module.exports = router;
 
 

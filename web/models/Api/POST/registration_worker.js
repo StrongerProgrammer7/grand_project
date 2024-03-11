@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
 const logger = require('../../../logger/logger');
-const errorHandler = require('./errorHandler');
+const errorHandler = require('../errorHandler');
 
 const db = require('../../db');
 
@@ -63,7 +63,7 @@ const registration_worker = async (req, res, next) =>
                 .catch((err) =>
                 {
                     errorHandler(" Error with registration worker",
-                        "23505",
+                        ["23505"],
                         "Worker is exists check your data",
                         "Internal error with registration worker!",
                         err,

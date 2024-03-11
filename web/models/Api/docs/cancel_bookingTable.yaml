@@ -1,0 +1,24 @@
+"/api/cancel_booking":
+  post:
+    tags:
+      - Cancel book
+    summary: Cancel book
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_table:
+                type: integer
+            required:
+              - id_table
+          example:
+            id_table: 5
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

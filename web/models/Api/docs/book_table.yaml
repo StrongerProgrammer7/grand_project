@@ -19,18 +19,22 @@
                 type: timestamp
               desired_booking_time:
                 type: timestamp
+              booking_interval:
+                type: string
             required:
               - id_table
               - id_worker
               - phone_client
               - order_time
               - desired_booking_time
+              - booking_interval
           example:
             id_table: 1
             id_worker: 3
             phone_client: "+79848718618"
             order_time: "2024-03-24 13:11:31"
             desired_booking_time: "2024-03-26 13:11:31"
+            booking_interval: "3 hours"
     responses:
       "201":
         $ref: "#/components/responses/201Success"

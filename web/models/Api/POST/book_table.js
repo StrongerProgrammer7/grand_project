@@ -13,11 +13,11 @@ const book_table = async (req, res, next) =>
             id_worker,
             phone_client,
             order_time,
-            desired_booking_time
+            desired_booking_time,
+            booking_interval // на сколько часов заняли стол
         } = req.body;
     if (!(id_table && id_worker && order_time && phone_client && desired_booking_time))
         return next(ApiError.badRequest("Don't enought data!"));
-    let booking_interval = calcDiffData(order_time, desired_booking_time) + " days";
     db.query('CALL book_table($1,$2,$3,$4,$5,$6)', [
         id_table,
         id_worker,
@@ -32,6 +32,7 @@ const book_table = async (req, res, next) =>
         })
         .catch(err =>
         {
+
             errorHandler(
                 "Error with book table",
                 ["23505"],

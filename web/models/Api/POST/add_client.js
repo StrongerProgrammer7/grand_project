@@ -28,7 +28,7 @@ const add_client = async (req, res, next) =>
         {
             errorHandler(
                 "Error with registration client",
-                "23505",
+                ["23505"],
                 "Client is exists check your data",
                 "Internal error with registration client!",
                 err,

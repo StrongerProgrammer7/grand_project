@@ -49,7 +49,7 @@ function addIngredient(data, next)
         {
             errorHandler(
                 "Error with add ingredient",
-                "23505",
+                ["23505"],
                 "ingredient is exists, check your data",
                 "Internal error with add ingredient!",
                 err,

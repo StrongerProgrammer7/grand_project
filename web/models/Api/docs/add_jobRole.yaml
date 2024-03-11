@@ -1,0 +1,32 @@
+"/api/add_job_role":
+  post:
+    tags:
+      - Role of worker
+    summary: Add role worker
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              min_salary:
+                type: double
+              max_salary:
+                type: double
+            required:
+              - name
+              - min_salary
+              - max_salary
+          example:
+            name: Младший Повар
+            min_salary: 90000
+            max_salary: 180000
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

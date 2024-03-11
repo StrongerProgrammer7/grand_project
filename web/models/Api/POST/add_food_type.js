@@ -22,7 +22,7 @@ const add_food_type = async (req, res, next) =>
         {
             errorHandler(
                 "Error with add type of food",
-                "23505",
+                ["23505"],
                 "Type of food is exists, check your data",
                 "Internal error with add type of food!",
                 err,

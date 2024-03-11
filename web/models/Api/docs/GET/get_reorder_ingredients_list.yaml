@@ -1,7 +1,7 @@
 "/api/get_reorder_ingredients_list":
   get:
     tags:
-      - Get food
+      - Food
     summary: Get list reorder ingredients
     responses:
       "201":

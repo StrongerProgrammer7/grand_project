@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
-const db = require('../db');
+const logger = require('../../../logger/logger');
+const errorHandler = require('./errorHandler');
+
+const db = require('../../db');
 
 const registration_worker = async (req, res, next) =>
 {
@@ -25,10 +28,19 @@ const registration_worker = async (req, res, next) =>
 
     const pass_hash = bcrypt.genSalt(10, (err, salt) =>
     {
+        if (err)
+        {
+            logger.error(`Gen SALT: ${ err }`);
+            return next(ApiError.internal('Internal error with gen salt'));
+        }
+
         bcrypt.hash(password, 10, async (err, hash) =>
         {
             if (err)
+            {
+                logger.error(`Get HASH: ${ err }`);
                 return next(ApiError.internal('Internal error with hash password'));
+            }
 
             db.query('CALL add_worker($1,$2,$3,$4,$5,$6,$7,$8, $9, $10,$11)', [
                 login,
@@ -46,13 +58,18 @@ const registration_worker = async (req, res, next) =>
                 .then((data) =>
                 {
                     console.log(data);
-                    return next(DataApi.success({}, "Request execution"));
+                    return next(DataApi.success({}, "Worker registered!"));
                 })
                 .catch((err) =>
                 {
-                    console.log("Error with registration worker", { color: "red" });
-                    console.error(err);
-                    return next(ApiError.badRequest("User is exists"));
+                    errorHandler(" Error with registration worker",
+                        "23505",
+                        "Worker is exists check your data",
+                        "Internal error with registration worker!",
+                        err,
+                        next
+                    )
+
                 })
 
         })

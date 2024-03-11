@@ -3,22 +3,22 @@ const router = new Router();
 const { check } = require('express-validator');
 const logger = require('../logger/logger');
 
-const order = require('../models/Api/order');
-const add_food = require('../models/Api/add_food');
-const add_food_composition = require('../models/Api/add_food_composition');
-const add_food_type = require('../models/Api/add_food_type');
-const add_ingredient = require('../models/Api/add_ingridient');
-const add_job_role = require('../models/Api/add_job_role');
-const add_table = require('../models/Api/add_table');
-const registration_worker = require('../models/Api/registration_worker');
-const book_table = require('../models/Api/book_table');
-const add_storehouse = require('../models/Api/add_storehouse');
-const add_client = require('../models/Api/add_client');
+const order = require('../models/Api/POST/order');
+const add_food = require('../models/Api/POST/add_food');
+const add_food_composition = require('../models/Api/POST/add_food_composition');
+const add_food_type = require('../models/Api/POST/add_food_type');
+const add_ingredient = require('../models/Api/POST/add_ingridient');
+const add_job_role = require('../models/Api/POST/add_job_role');
+const add_table = require('../models/Api/POST/add_table');
+const registration_worker = require('../models/Api/POST/registration_worker');
+const book_table = require('../models/Api/POST/book_table');
+const add_storehouse = require('../models/Api/POST/add_storehouse');
+const add_client = require('../models/Api/POST/add_client');
 const add_client_order = require('../models/Api/POST/add_client_order');
-const change_order_status = require('../models/Api/change_order_status');
-const record_giving_time = require('../models/Api/record_giving_time');
-const cancel_booking = require('../models/Api/cancel_booking');
-const order_ingredient = require('../models/Api/order_ingredient');
+const change_order_status = require('../models/Api/POST/change_order_status');
+const record_giving_time = require('../models/Api/POST/record_giving_time');
+const cancel_booking = require('../models/Api/POST/cancel_booking');
+const order_ingredient = require('../models/Api/POST/order_ingredient');
 
 
 router.post("/order", order);

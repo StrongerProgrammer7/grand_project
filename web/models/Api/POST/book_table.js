@@ -1,6 +1,6 @@
-const ApiError = require("../../Api/ApiError");
-const DataApi = require("../../Api/DataApi");
-const db = require('../db');
+const ApiError = require("../../../HandleAPI/ApiError");
+const DataApi = require("../../../HandleAPI/DataApi");
+const db = require('../../db');
 const book_table = async (req, res, next) =>
 {
     if (!req.body)

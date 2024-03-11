@@ -68,7 +68,7 @@ const registration_worker = async (req, res, next) =>
                         "Internal error with registration worker!",
                         err,
                         next
-                    )
+                    );
 
                 })
 

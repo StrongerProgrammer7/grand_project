@@ -1,5 +1,6 @@
 const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
+const errorHandler = require('./errorHandler');
 const db = require('../../db');
 
 const add_storehouse = async (req, res, next) =>
@@ -15,9 +16,28 @@ const add_storehouse = async (req, res, next) =>
     if (!(name && address && phone))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    /*const result = await db.proc('add_storage', []);*/
+    db.query('CALL add_storage($1,$2,$3)', [
+        name,
+        address,
+        phone
+    ])
+        .then(() =>
+        {
+            return next(DataApi.success({}, "Storehouse added successfully!"));
+        })
+        .catch(err =>
+        {
+            errorHandler(
+                "Error with add storehouse",
+                ["23505"],
+                "Storehouse is exists, check your data",
+                "Internal error with add storehouse!",
+                err,
+                next
+            );
+        });
 
-    return next(DataApi.success({}, "Request execution"));
+
 }
 
 module.exports = add_storehouse;

@@ -1,0 +1,32 @@
+"/api/add_storehouse":
+  post:
+    tags:
+      - Storehouse
+    summary: Add storehouse
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              address:
+                type: string
+              phone:
+                type: string
+            required:
+              - name
+              - address
+              - phone
+          example:
+            name: test name
+            address: test address
+            phone: "+1234567890"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

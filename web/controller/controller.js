@@ -1,9 +1,7 @@
 const Router = require('express');
 const router = new Router();
 const { check } = require('express-validator');
-const logger = require('../logger/logger');
 
-const order = require('../models/Api/POST/order');
 const add_food = require('../models/Api/POST/add_food');
 const add_food_composition = require('../models/Api/POST/add_food_composition');
 const add_food_type = require('../models/Api/POST/add_food_type');
@@ -21,7 +19,6 @@ const cancel_booking = require('../models/Api/POST/cancel_booking');
 const order_ingredient = require('../models/Api/POST/order_ingredient');
 
 
-router.post("/order", order);
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
 router.post('/add_food_type', add_food_type);

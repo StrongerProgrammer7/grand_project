@@ -12,7 +12,7 @@
               type: object
               properties:
                 data:
-                  $ref: "#/components/schemas/ReorderIngredients"
+                  $ref: "#/components/schemas/FreeTables"
                 message:
                   type: string
               example:
@@ -23,7 +23,7 @@
 
 components:
   schemas:
-    ReorderIngredients:
+    FreeTables:
       type: array
       items:
         type: object

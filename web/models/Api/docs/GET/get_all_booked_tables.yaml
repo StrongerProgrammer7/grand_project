@@ -12,7 +12,7 @@
               type: object
               properties:
                 data:
-                  $ref: "#/components/schemas/ReorderIngredients"
+                  $ref: "#/components/schemas/AllBookedTables"
                 message:
                   type: string
               example:
@@ -33,7 +33,7 @@
 
 components:
   schemas:
-    ReorderIngredients:
+    AllBookedTables:
       type: array
       items:
         type: object

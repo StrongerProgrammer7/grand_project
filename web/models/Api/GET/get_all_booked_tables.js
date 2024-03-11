@@ -2,10 +2,10 @@ const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
 
-const get_current_orders = async (req, res, next) =>
+const get_all_booked_tables = async (req, res, next) =>
 {
 
-    db.query('SELECT * FROM get_current_orders();')
+    db.query('SELECT * FROM view_all_booked_tables();')
         .then((data) =>
         {
             return next(DataApi.success(data.rows, "Success!"));
@@ -13,10 +13,10 @@ const get_current_orders = async (req, res, next) =>
         .catch(err =>
         {
             console.log(err);
-            errorHandler(" Error with get current orders",
+            errorHandler(" Error with get all booked tables",
                 [],
                 "",
-                "Internal error get current orders!",
+                "Internal error get all booked tables!",
                 err,
                 next
             );
@@ -25,4 +25,4 @@ const get_current_orders = async (req, res, next) =>
 
 }
 
-module.exports = get_current_orders;
+module.exports = get_all_booked_tables;

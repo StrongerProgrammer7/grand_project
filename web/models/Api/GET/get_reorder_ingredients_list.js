@@ -2,10 +2,10 @@ const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
 
-const get_current_orders = async (req, res, next) =>
+const get_reorder_ingredients_list = async (req, res, next) =>
 {
 
-    db.query('SELECT * FROM get_current_orders();')
+    db.query('SELECT * FROM get_reorder_ingredients_list();')
         .then((data) =>
         {
             return next(DataApi.success(data.rows, "Success!"));
@@ -13,10 +13,10 @@ const get_current_orders = async (req, res, next) =>
         .catch(err =>
         {
             console.log(err);
-            errorHandler(" Error with get current orders",
+            errorHandler(" Error with get reorder ingredients list",
                 [],
                 "",
-                "Internal error get current orders!",
+                "Internal error with get reorder ingredients list!",
                 err,
                 next
             );
@@ -25,4 +25,4 @@ const get_current_orders = async (req, res, next) =>
 
 }
 
-module.exports = get_current_orders;
+module.exports = get_reorder_ingredients_list;

@@ -29,23 +29,27 @@
                     },
                   ]
                 message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
 
 components:
   schemas:
     CurrentOrder:
-      type: object
-      properties:
-        id_order:
-          type: integer
-        id_worker:
-          type: integer
-        id_food:
-          type: integer
-        num_of_food:
-          type: integer
-        formation_date:
-          type: timestamp
-        givig_date:
-          type: timestamp
-        status:
-          type: string
+      type: array
+      items:
+        type: object
+        properties:
+          id_order:
+            type: integer
+          id_worker:
+            type: integer
+          id_food:
+            type: integer
+          num_of_food:
+            type: integer
+          formation_date:
+            type: timestamp
+          givig_date:
+            type: timestamp
+          status:
+            type: string

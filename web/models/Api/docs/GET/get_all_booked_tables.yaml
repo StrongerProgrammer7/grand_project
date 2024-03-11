@@ -1,0 +1,52 @@
+"/api/get_all_booked_tables":
+  get:
+    tags:
+      - Get booked tables
+    summary: Get all booked tables list
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/ReorderIngredients"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "table_id": 1,
+                      "booking_date": "2024-03-04T10:11:31.718Z",
+                      "worker_id": 3,
+                      "client_number": "+79389513658",
+                      "desired_date": "2024-03-04T10:11:31.718Z",
+                      "booking_interval": { "days": 3 },
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    ReorderIngredients:
+      type: array
+      items:
+        type: object
+        properties:
+          table_id:
+            type: integer
+          booking_date:
+            type: string
+          worker_id:
+            type: integer
+          client_number:
+            type: string
+          desired_date:
+            type: string
+          booking_interval:
+            type: string

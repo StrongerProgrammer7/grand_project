@@ -26,7 +26,7 @@ components:
             example:
               message: Request body is empty! | Don't correct data!
     500InternalError:
-      description: Internal error
+      description: "Error: Internal Server Error"
       content:
         application/json:
           schema:

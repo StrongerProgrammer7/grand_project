@@ -1,0 +1,32 @@
+"/api/add_client":
+  post:
+    tags:
+      - Client
+    summary: Add client
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              phone:
+                type: string
+              name_client:
+                type: string
+              last_contact_date:
+                type: timestamp
+            required:
+              - phone
+              - name_client
+              - last_contact_date
+            example:
+              phone: "+1234567890"
+              name_client: Глеб
+              last_contact_date: "2024-02-18 02:55:51"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

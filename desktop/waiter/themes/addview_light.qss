@@ -52,7 +52,7 @@ QLineEdit:focus {
 }
 
 /*TimeEdit */
-QTimeEdit {
+QDateTimeEdit {
     background-color: #6272a4;
     border-radius: 5px;
     border: 2px solid #6272a4;
@@ -61,21 +61,7 @@ QTimeEdit {
     color: #f8f8f2;
 }
 
-QTimeEdit:hover {
-    border: 2px solid #7284b9;
-}
-
-/*DateEdit */
-QDateEdit {
-    background-color: #6272a4;
-    border-radius: 5px;
-    border: 2px solid #6272a4;
-    padding: 5px;
-    padding-left: 10px;
-    color: #f8f8f2;
-}
-
-QDateEdit:hover {
+QDateTimeEdit:hover {
     border: 2px solid #7284b9;
 }
 

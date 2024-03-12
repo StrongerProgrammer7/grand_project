@@ -217,11 +217,11 @@ class MainWindow(QMainWindow):
         self.new_window2.exec()
 
     def update_second_table(self):
-        time1 = self.ui_dialog.timeEdit.text()
-        date = self.ui_dialog.dateEdit.text()
-        combBox = self.ui_dialog.comboBox.currentText()
         line = self.ui_dialog.lineEdit.text()
-        time2 = self.ui_dialog.timeEdit_2.text()
+        datetime1 = self.ui_dialog.dateTimeEdit.text()
+        datetime2 = self.ui_dialog.dateTimeEdit_2.text()
+        line2 = self.ui_dialog.lineEdit_2.text()
+        combBox = self.ui_dialog.comboBox.currentText()
 
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
@@ -242,11 +242,11 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(time1))
-                self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(date))
-                self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(combBox))
-                self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line))
-                self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(time2))
+                self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(line))
+                self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(datetime1))
+                self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(datetime2))
+                self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
+                self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
                 # TODO: Поменять после изменения таблицы
                 # Преобразуем данные в JSON
@@ -278,9 +278,12 @@ class MainWindow(QMainWindow):
 
     def update_third_table(self):
         combBox = self.ui_dialog2.comboBox.currentText()
-        time = self.ui_dialog2.timeEdit.text()
-        line = self.ui_dialog2.lineEdit.text()
+        line1 = self.ui_dialog2.lineEdit.text()
+        datetime1 = self.ui_dialog2.dateTimeEdit.text()
+        datetime2 = self.ui_dialog2.dateTimeEdit_2.text()
         line2 = self.ui_dialog2.lineEdit_2.text()
+        line3 = self.ui_dialog2.lineEdit_3.text()
+        line4 = self.ui_dialog2.lineEdit_4.text()
 
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
@@ -302,10 +305,12 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
                 self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
-                self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(time))
-                self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(line))
-                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
-
+                self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
+                self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
+                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(datetime2))
+                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
+                self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
+                self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
                 # TODO: Сделать после изменения таблицы
                 data = {
                   "id_table": 1,

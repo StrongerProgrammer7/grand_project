@@ -33,28 +33,27 @@
     <widget class="QWidget" name="stylesheet" native="true">
      <property name="styleSheet">
       <string notr="true">QWidget{
-	color: #333;
+	color: rgb(221, 221, 221);
 	font: 10pt &quot;Segoe UI&quot;;
 }
 
 /*ComboBox */
 QComboBox{
-	background-color: #6272a4;
+	background-color: rgb(27, 29, 35);
 	border-radius: 5px;
-	border: 2px solid #6272a4;
+	border: 2px solid rgb(33, 37, 43);
 	padding: 5px;
 	padding-left: 10px;
-    color: #f8f8f2;
 }
 QComboBox:hover{
-	border: 2px solid #7284b9;
+	border: 2px solid rgb(64, 71, 88);
 }
 QComboBox::drop-down {
 	subcontrol-origin: padding;
 	subcontrol-position: top right;
 	width: 25px;
 	border-left-width: 3px;
-	border-left-color: #6272a4;
+	border-left-color: rgba(39, 44, 54, 150);
 	border-left-style: solid;
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
@@ -64,78 +63,61 @@ QComboBox::drop-down {
  }
 QComboBox QAbstractItemView {
 	color: rgb(255, 121, 198);
-	background-color: #6272a4;
+	background-color: rgb(33, 37, 43);
 	padding: 10px;
-	selection-background-color: #6272a4;
+	selection-background-color: rgb(39, 44, 54);
 }
+
 /*LineEdit */
 QLineEdit {
-	background-color: #6272a4;
+	background-color: rgb(27, 29, 35);
 	border-radius: 5px;
-	border: 2px solid #6272a4;
+	border: 2px solid rgb(33, 37, 43);
 	padding-left: 10px;
 	selection-color: rgb(255, 255, 255);
 	selection-background-color: rgb(255, 121, 198);
-    color: #f8f8f2;
 }
 QLineEdit:hover {
 	border: 2px solid rgb(64, 71, 88);
 }
 QLineEdit:focus {
-	border: 2px solid #ff79c6;
-}
-
-/*TimeEdit */
-QTimeEdit {
-    background-color: #6272a4;
-    border-radius: 5px;
-    border: 2px solid #6272a4;
-    padding: 5px;
-    padding-left: 10px;
-    color: #f8f8f2;
-}
-
-QTimeEdit:hover {
-    border: 2px solid #7284b9;
+	border: 2px solid rgb(91, 101, 124);
 }
 
 /*DateEdit */
-QDateEdit {
-    background-color: #6272a4;
+QDateTimeEdit {
+    background-color: rgb(27, 29, 35);
     border-radius: 5px;
-    border: 2px solid #6272a4;
+    border: 2px solid rgb(33, 37, 43);
     padding: 5px;
     padding-left: 10px;
-    color: #f8f8f2;
 }
 
-QDateEdit:hover {
-    border: 2px solid #7284b9;
+QDateTimeEdit:hover {
+    border: 2px solid rgb(64, 71, 88);
 }
-
 /*Button*/
 QPushButton {
-	border: 2px solid #6272a4;
+	border: 2px solid rgb(52, 59, 72);
 	border-radius: 5px;
-	background-color: #6272a4;
-    color: #f8f8f2;
+	background-color: rgb(52, 59, 72);
 }
 QPushButton:hover {
-	background-color: #7082b6;
-	border: 2px solid #7082b6;
+	background-color: rgb(57, 65, 80);
+	border: 2px solid rgb(61, 70, 86);
 }
 QPushButton:pressed {
-	background-color: #546391;
-	border: 2px solid #ff79c6;
+	background-color: rgb(35, 40, 49);
+	border: 2px solid rgb(43, 50, 61);
 }
 
 #mainFrame{
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(40, 44, 52);
+	border: 1px solid rgb(44, 49, 58);
 }
 
 QLabel {
-	background-color: #5b6996;
-	color: #f8f8f2;
+    background-color: rgb(33, 37, 43);
 	border-radius: 5px;
 }
 </string>
@@ -233,91 +215,7 @@ QLabel {
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>Время</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QTimeEdit" name="timeEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Дата</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDateEdit" name="dateEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Статус</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <item>
-               <property name="text">
-                <string>Готов</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Отдан</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Отменен</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Блюда</string>
+               <string>Официант</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -341,9 +239,9 @@ QLabel {
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Время готовки</string>
+               <string>Дата выдачи</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -351,13 +249,87 @@ QLabel {
              </widget>
             </item>
             <item>
-             <widget class="QTimeEdit" name="timeEdit_2">
+             <widget class="QDateTimeEdit" name="dateTimeEdit">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Статус</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDateTimeEdit" name="dateTimeEdit_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Блюда</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Статус</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>Отдан</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Готов</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ожидание</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Отменен</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>

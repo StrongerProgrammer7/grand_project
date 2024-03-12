@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QDialog,
+from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QDialog,
     QFrame, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QTimeEdit, QVBoxLayout, QWidget)
+    QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -49,18 +49,18 @@ class Ui_Dialog(object):
 "QComboBox::drop-down {\n"
 "	subcontrol-origin: padding;\n"
 "	subcontrol-position: top right;\n"
-"	width: 25px; \n"
+"	width: 25px;\n"
 "	border-left-width: 3px;\n"
 "	border-left-color: rgba(39, 44, 54, 150);\n"
 "	border-left-style: solid;\n"
 "	border-top-right-radius: 3px;\n"
-"	border-bottom-right-radius: 3px;	\n"
+"	border-bottom-right-radius: 3px;\n"
 "	background-image: url(:/icons/images/icons/cil-arrow-bottom.png);\n"
 "	background-position: center;\n"
 "	background-repeat: no-reperat;\n"
 " }\n"
 "QComboBox QAbstractItemView {\n"
-"	color: rgb(255, 121, 198);	\n"
+"	color: rgb(255, 121, 198);\n"
 "	background-color: rgb(33, 37, 43);\n"
 "	padding: 10px;\n"
 "	selection-background-color: rgb(39, 44, 54);\n"
@@ -68,8 +68,8 @@ class Ui_Dialog(object):
 "\n"
 "/*LineEdit */\n"
 "QLineEdit {\n"
-"	background-color"
-                        ": rgb(27, 29, 35);\n"
+"	background-color: r"
+                        "gb(27, 29, 35);\n"
 "	border-radius: 5px;\n"
 "	border: 2px solid rgb(33, 37, 43);\n"
 "	padding-left: 10px;\n"
@@ -83,21 +83,8 @@ class Ui_Dialog(object):
 "	border: 2px solid rgb(91, 101, 124);\n"
 "}\n"
 "\n"
-"/*TimeEdit */\n"
-"QTimeEdit {\n"
-"    background-color: rgb(27, 29, 35);\n"
-"    border-radius: 5px;\n"
-"    border: 2px solid rgb(33, 37, 43);\n"
-"    padding: 5px;\n"
-"    padding-left: 10px;\n"
-"}\n"
-"\n"
-"QTimeEdit:hover {\n"
-"    border: 2px solid rgb(64, 71, 88);\n"
-"}\n"
-"\n"
 "/*DateEdit */\n"
-"QDateEdit {\n"
+"QDateTimeEdit {\n"
 "    background-color: rgb(27, 29, 35);\n"
 "    border-radius: 5px;\n"
 "    border: 2px solid rgb(33, 37, 43);\n"
@@ -105,28 +92,27 @@ class Ui_Dialog(object):
 "    padding-left: 10px;\n"
 "}\n"
 "\n"
-"QDateEdit:hover {\n"
+"QDateTimeEdit:hover {\n"
 "    border: 2px solid rgb(64, 71, 88);\n"
 "}\n"
 "/*Button*/\n"
 "QPushButton {\n"
 "	border: 2px solid rgb(52, 59, 72);\n"
-"	border-radius: 5px;	\n"
-"	bac"
-                        "kground-color: rgb(52, 59, 72);\n"
+"	border-radius: 5px;\n"
+"	background-color: rgb(52, 59, 72);\n"
 "}\n"
 "QPushButton:hover {\n"
 "	background-color: rgb(57, 65, 80);\n"
 "	border: 2px solid rgb(61, 70, 86);\n"
 "}\n"
-"QPushButton:pressed {	\n"
+"QPushButton:pressed {\n"
 "	background-color: rgb(35, 40, 49);\n"
 "	border: 2px solid rgb(43, 50, 61);\n"
 "}\n"
 "\n"
-"\n"
 "#mainFrame{\n"
-"    background-color: rgb(40, 44, 52);\n"
+""
+                        "    background-color: rgb(40, 44, 52);\n"
 "	border: 1px solid rgb(44, 49, 58);\n"
 "}\n"
 "\n"
@@ -181,53 +167,6 @@ class Ui_Dialog(object):
 
         self.verticalLayout_4.addWidget(self.label)
 
-        self.timeEdit = QTimeEdit(self.frame_2)
-        self.timeEdit.setObjectName(u"timeEdit")
-        sizePolicy.setHeightForWidth(self.timeEdit.sizePolicy().hasHeightForWidth())
-        self.timeEdit.setSizePolicy(sizePolicy)
-        self.timeEdit.setMinimumSize(QSize(0, 30))
-        self.timeEdit.setStyleSheet(u"")
-
-        self.verticalLayout_4.addWidget(self.timeEdit)
-
-        self.label_2 = QLabel(self.frame_2)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setAlignment(Qt.AlignCenter)
-
-        self.verticalLayout_4.addWidget(self.label_2)
-
-        self.dateEdit = QDateEdit(self.frame_2)
-        self.dateEdit.setObjectName(u"dateEdit")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.dateEdit.sizePolicy().hasHeightForWidth())
-        self.dateEdit.setSizePolicy(sizePolicy2)
-
-        self.verticalLayout_4.addWidget(self.dateEdit)
-
-        self.label_3 = QLabel(self.frame_2)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setAlignment(Qt.AlignCenter)
-
-        self.verticalLayout_4.addWidget(self.label_3)
-
-        self.comboBox = QComboBox(self.frame_2)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-        sizePolicy1.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
-        self.comboBox.setSizePolicy(sizePolicy1)
-
-        self.verticalLayout_4.addWidget(self.comboBox)
-
-        self.label_4 = QLabel(self.frame_2)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setAlignment(Qt.AlignCenter)
-
-        self.verticalLayout_4.addWidget(self.label_4)
-
         self.lineEdit = QLineEdit(self.frame_2)
         self.lineEdit.setObjectName(u"lineEdit")
         sizePolicy1.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
@@ -236,18 +175,65 @@ class Ui_Dialog(object):
 
         self.verticalLayout_4.addWidget(self.lineEdit)
 
+        self.label_2 = QLabel(self.frame_2)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout_4.addWidget(self.label_2)
+
+        self.dateTimeEdit = QDateTimeEdit(self.frame_2)
+        self.dateTimeEdit.setObjectName(u"dateTimeEdit")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.dateTimeEdit.sizePolicy().hasHeightForWidth())
+        self.dateTimeEdit.setSizePolicy(sizePolicy2)
+
+        self.verticalLayout_4.addWidget(self.dateTimeEdit)
+
+        self.label_3 = QLabel(self.frame_2)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout_4.addWidget(self.label_3)
+
+        self.dateTimeEdit_2 = QDateTimeEdit(self.frame_2)
+        self.dateTimeEdit_2.setObjectName(u"dateTimeEdit_2")
+        sizePolicy2.setHeightForWidth(self.dateTimeEdit_2.sizePolicy().hasHeightForWidth())
+        self.dateTimeEdit_2.setSizePolicy(sizePolicy2)
+
+        self.verticalLayout_4.addWidget(self.dateTimeEdit_2)
+
+        self.label_4 = QLabel(self.frame_2)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout_4.addWidget(self.label_4)
+
+        self.lineEdit_2 = QLineEdit(self.frame_2)
+        self.lineEdit_2.setObjectName(u"lineEdit_2")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.lineEdit_2.sizePolicy().hasHeightForWidth())
+        self.lineEdit_2.setSizePolicy(sizePolicy3)
+
+        self.verticalLayout_4.addWidget(self.lineEdit_2)
+
         self.label_5 = QLabel(self.frame_2)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_4.addWidget(self.label_5)
 
-        self.timeEdit_2 = QTimeEdit(self.frame_2)
-        self.timeEdit_2.setObjectName(u"timeEdit_2")
-        sizePolicy2.setHeightForWidth(self.timeEdit_2.sizePolicy().hasHeightForWidth())
-        self.timeEdit_2.setSizePolicy(sizePolicy2)
+        self.comboBox = QComboBox(self.frame_2)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
 
-        self.verticalLayout_4.addWidget(self.timeEdit_2)
+        self.verticalLayout_4.addWidget(self.comboBox)
 
         self.addtransbtn = QPushButton(self.frame_2)
         self.addtransbtn.setObjectName(u"addtransbtn")
@@ -276,15 +262,16 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.titleLabel.setText(QCoreApplication.translate("Dialog", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"\u0412\u0440\u0435\u043c\u044f", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"\u0414\u0430\u0442\u0430", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"\u041e\u0444\u0438\u0446\u0438\u0430\u043d\u0442", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"\u0414\u0430\u0442\u0430 \u0432\u044b\u0434\u0430\u0447\u0438", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"\u0421\u0442\u0430\u0442\u0443\u0441", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", u"\u0413\u043e\u0442\u043e\u0432", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", u"\u041e\u0442\u0434\u0430\u043d", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", u"\u041e\u0442\u043c\u0435\u043d\u0435\u043d", None))
-
         self.label_4.setText(QCoreApplication.translate("Dialog", u"\u0411\u043b\u044e\u0434\u0430", None))
-        self.label_5.setText(QCoreApplication.translate("Dialog", u"\u0412\u0440\u0435\u043c\u044f \u0433\u043e\u0442\u043e\u0432\u043a\u0438", None))
+        self.label_5.setText(QCoreApplication.translate("Dialog", u"\u0421\u0442\u0430\u0442\u0443\u0441", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", u"\u041e\u0442\u0434\u0430\u043d", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", u"\u0413\u043e\u0442\u043e\u0432", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", u"\u041e\u0436\u0438\u0434\u0430\u043d\u0438\u0435", None))
+        self.comboBox.setItemText(3, QCoreApplication.translate("Dialog", u"\u041e\u0442\u043c\u0435\u043d\u0435\u043d", None))
+
         self.addtransbtn.setText(QCoreApplication.translate("Dialog", u"\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c", None))
     # retranslateUi
 

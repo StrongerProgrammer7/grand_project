@@ -46,6 +46,8 @@ class MainWindow(QMainWindow):
         global widgets
         widgets = self.ui
 
+        self.api = ApiConnect()
+
 
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
@@ -245,6 +247,29 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line))
                 self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(time2))
 
+                # TODO: Поменять после изменения таблицы
+                # Преобразуем данные в JSON
+                dishes_dict = {}  # Предполагается, что line содержит данные в формате "Название:Количество"
+                for dish in line.split(','):
+                    name, quantity = dish.split(':')
+                    dishes_dict[name.strip()] = int(quantity.strip())
+
+                data = {
+                    "id_order": selected_row + 1,
+                    "id_worker": 1,
+                    "dishes": dishes_dict,
+                    "status": combBox,
+                    "formation_date": date,
+                    "giving_date": time1
+                }
+
+                # Отправляем данные с помощью функции post_data
+                # if self.api.post_data('orders', data) is not None:
+                #     print(f'УСПЕШНАЯ ПЕРЕДАЧА | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
+                # else:
+                #     print(f'[!] ОШИБКА ПЕРЕДАЧИ | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
+                print(data)
+
             self.new_window.close()
         else:
             # Если пользователь отменил действие, ничего не делаем
@@ -259,7 +284,7 @@ class MainWindow(QMainWindow):
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
         confirm_dialog.setIcon(QMessageBox.Question)
-        confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
+        confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         confirm_dialog.setDefaultButton(QMessageBox.No)
@@ -279,6 +304,17 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(time))
                 self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(line))
                 self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
+
+                # TODO: Сделать после изменения таблицы
+                data = {
+                  "id_table": 1,
+                  "id_worker": 3,
+                  "phone_client": "+79848718618",
+                  "order_time": "2024-03-24 13:11:31",
+                  "desired_booking_time": "2024-03-26 13:11:31",
+                  "booking_interval": "3 hours"
+                }
+                print(data)
 
             self.new_window2.close()
         else:

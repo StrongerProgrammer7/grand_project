@@ -224,7 +224,6 @@ class UIFunctions(MainWindow):
 
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
-            self.ui.titleFrame.setStyleSheet("background-color: #5b6996; color: #f8f8f2; border-radius: 5px")
             self.ui_dialog.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.ui_dialog2.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
@@ -232,7 +231,6 @@ class UIFunctions(MainWindow):
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
             self.ui_dialog.stylesheet.setStyleSheet(light_stylesheet)
-            self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
             self.themeFile = "themes/py_dracula_dark.qss"
             self.ui_dialog.stylesheet.setStyleSheet(add_view_dark_stylesheet)
             self.ui_dialog2.stylesheet.setStyleSheet(add_view_dark_stylesheet)
@@ -272,9 +270,6 @@ class UIFunctions(MainWindow):
                 if item is not None:
                     item.setText("")
 
-    def set_column_widths(self, table_widget, column_widths):
-        for column, width in enumerate(column_widths):
-            table_widget.setColumnWidth(column, width)
 
 
     # START - GUI DEFINITIONS

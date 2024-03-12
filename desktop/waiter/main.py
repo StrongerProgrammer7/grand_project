@@ -101,6 +101,7 @@ class MainWindow(QMainWindow):
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
+        self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
         #widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
@@ -112,6 +113,7 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
         self.timer.start(0)
 
+        # DIALOG WINDOWS
         self.ui_dialog = Ui_Dialog()
         self.ui_dialog.setupUi(self)
         self.new_window = QtWidgets.QDialog()
@@ -140,6 +142,12 @@ class MainWindow(QMainWindow):
 
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
+
+        tab1_column_widths = [10, 150, 120, 200, 200, 100]
+        UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
+
+        tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
+        UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
         # SET HACKS
         # AppFunctions.setThemeHack(self)

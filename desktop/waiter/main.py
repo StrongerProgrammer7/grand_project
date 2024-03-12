@@ -20,8 +20,10 @@ import platform
 
 from PySide6.QtWidgets import QMainWindow
 from PySide6 import QtWidgets
+
 from modules.addview import Ui_Dialog
 from modules.addview2 import Ui_Dialog2
+from modules.LoginWindow import Ui_Dialog3
 
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
@@ -64,7 +66,7 @@ class MainWindow(QMainWindow):
 
         # TOGGLE MENU
         # ///////////////////////////////////////////////////////////////
-        # widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
+        widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
         # SET UI DEFINITIONS
         # ///////////////////////////////////////////////////////////////
@@ -85,11 +87,11 @@ class MainWindow(QMainWindow):
         # widgets.btn_save.clicked.connect(self.buttonClick)
 
         # EXTRA LEFT BOX
-        # def openCloseLeftBox():
-        # UIFunctions.toggleLeftBox(self, True)
+        def openCloseLeftBox():
+            UIFunctions.toggleLeftBox(self, True)
 
-        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
+        widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
+        widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
         #def openCloseRightBox():
@@ -99,15 +101,16 @@ class MainWindow(QMainWindow):
 
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
-        self.show()
+        #self.show()
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
         self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
+        UIFunctions.theme(self, self.themeFile, True)
+
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
         #widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
-        UIFunctions.theme(self, self.themeFile, True)
         widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
         # DATETIME
@@ -115,24 +118,29 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
         self.timer.start(0)
 
-        # DIALOG WINDOWS
-        self.ui_dialog = Ui_Dialog()
-        self.ui_dialog.setupUi(self)
         self.new_window = QtWidgets.QDialog()
+        self.ui_dialog = Ui_Dialog()
         self.ui_dialog.setupUi(self.new_window)
         self.new_window.setFixedSize(self.new_window.size())
 
-        self.ui_dialog2 = Ui_Dialog2()
-        self.ui_dialog2.setupUi(self)
         self.new_window2 = QtWidgets.QDialog()
+        self.ui_dialog2 = Ui_Dialog2()
         self.ui_dialog2.setupUi(self.new_window2)
         self.new_window2.setFixedSize(self.new_window2.size())
 
-        # 1 ВКЛАДКА КНОПКИ
+        # ОКНО ВХОДА
+        self.new_window3 = QtWidgets.QDialog()
+        self.ui_dialog3 = Ui_Dialog3()
+        self.ui_dialog3.setupUi(self.new_window3)
+        self.new_window3.setFixedSize(self.new_window3.size())
+
+        self.ui_dialog3.checkBox.stateChanged.connect(self.change_password_visibility)
+        self.ui_dialog3.pushButton.clicked.connect(self.login)
+
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        # widgets.utvrbtn.clicked.connect() Здесь могла быть ваша функция:)
+        widgets.commitbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -151,6 +159,9 @@ class MainWindow(QMainWindow):
         tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
+        self.fill_table_widget(self.ui.tableWidget)
+
+
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 
@@ -158,6 +169,7 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
+
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -210,17 +222,36 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
     def open_new_window(self):
-        self.new_window.exec()
+        self.new_window.show()
 
     def open_new_window2(self):
-        self.new_window2.exec()
+        self.new_window2.show()
+
+    def login(self):
+        username = self.ui_dialog3.lineEdit.text()
+        password = self.ui_dialog3.lineEdit_2.text()
+        if username == "login" and password == "123":
+            self.new_window3.close()
+            self.show()
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка входа")
+            msg.setText("Логин или пароль неверны.")
+            msg.setIcon(QMessageBox.Critical)
+            msg.exec()
+
+    def change_password_visibility(self):
+        if self.ui_dialog3.checkBox.isChecked():
+            self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Normal)
+        else:
+            self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Password)
 
     def update_second_table(self):
-        time1 = self.ui_dialog.timeEdit.text()
-        date = self.ui_dialog.dateEdit.text()
-        combBox = self.ui_dialog.comboBox.currentText()
         line = self.ui_dialog.lineEdit.text()
-        time2 = self.ui_dialog.timeEdit_2.text()
+        datetime1 = self.ui_dialog.dateTimeEdit.text()
+        datetime2 = self.ui_dialog.dateTimeEdit_2.text()
+        line2 = self.ui_dialog.lineEdit_2.text()
+        combBox = self.ui_dialog.comboBox.currentText()
 
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
@@ -241,16 +272,17 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(time1))
-                self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(date))
-                self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(combBox))
-                self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line))
-                self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(time2))
+                self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(line))
+                self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(datetime1))
+                self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(datetime2))
+                self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
+                self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
-                # TODO: Поменять после изменения таблицы
+                # TODO: Добавить валидациюы
+
                 # Преобразуем данные в JSON
                 dishes_dict = {}  # Предполагается, что line содержит данные в формате "Название:Количество"
-                for dish in line.split(','):
+                for dish in line2.split(','):
                     name, quantity = dish.split(':')
                     dishes_dict[name.strip()] = int(quantity.strip())
 
@@ -259,8 +291,8 @@ class MainWindow(QMainWindow):
                     "id_worker": 1,
                     "dishes": dishes_dict,
                     "status": combBox,
-                    "formation_date": date,
-                    "giving_date": time1
+                    "formation_date": datetime1,
+                    "giving_date": datetime2
                 }
 
                 # Отправляем данные с помощью функции post_data
@@ -277,9 +309,12 @@ class MainWindow(QMainWindow):
 
     def update_third_table(self):
         combBox = self.ui_dialog2.comboBox.currentText()
-        time = self.ui_dialog2.timeEdit.text()
-        line = self.ui_dialog2.lineEdit.text()
+        line1 = self.ui_dialog2.lineEdit.text()
+        datetime1 = self.ui_dialog2.dateTimeEdit.text()
+        datetime2 = self.ui_dialog2.dateTimeEdit_2.text()
         line2 = self.ui_dialog2.lineEdit_2.text()
+        line3 = self.ui_dialog2.lineEdit_3.text()
+        line4 = self.ui_dialog2.lineEdit_4.text()
 
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
@@ -301,18 +336,20 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
                 self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
-                self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(time))
-                self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(line))
-                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
-
-                # TODO: Сделать после изменения таблицы
+                self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
+                self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
+                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(datetime2))
+                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
+                self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
+                self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
+                # TODO: Добавить валидацию
                 data = {
-                  "id_table": 1,
-                  "id_worker": 3,
-                  "phone_client": "+79848718618",
-                  "order_time": "2024-03-24 13:11:31",
-                  "desired_booking_time": "2024-03-26 13:11:31",
-                  "booking_interval": "3 hours"
+                  "id_table": selected_row+1,
+                  "id_worker": line1,
+                  "phone_client": line2,
+                  "order_time": datetime1,
+                  "desired_booking_time": datetime2,
+                  "booking_interval": line3
                 }
                 print(data)
 
@@ -321,9 +358,24 @@ class MainWindow(QMainWindow):
             # Если пользователь отменил действие, ничего не делаем
             pass
 
+    def fill_table_widget(self, tableWidget):
+
+        data = [
+            (1, 2, 3, 4, 5, 6),
+            (7, 8, 9, 10, 11, 12),
+            (1, 2, 3, 4, 5, 6),
+        ]
+
+        tableWidget.setRowCount(len(data))
+        tableWidget.setColumnCount(len(data[0]))
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(row_data):
+                item = QTableWidgetItem(str(cell_data))
+                tableWidget.setItem(row_idx, col_idx, item)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    #app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
+    window.new_window3.show()
     sys.exit(app.exec())

@@ -224,6 +224,7 @@ class UIFunctions(MainWindow):
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
             self.ui.titleFrame.setStyleSheet("background-color: #5b6996; color: #f8f8f2; border-radius: 5px")
+            self.ui.titleFrame.setStyleSheet("background-color: #6272a4; color: #f8f8f2; border-radius: 5px")
             self.ui_dialog.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.ui_dialog2.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
@@ -275,6 +276,23 @@ class UIFunctions(MainWindow):
         for column, width in enumerate(column_widths):
             table_widget.setColumnWidth(column, width)
 
+    def commit(self, table):
+        data_dict = {}
+        column_count = table.columnCount()
+
+        for row_index in range(table.rowCount()):
+            item_id = int(table.item(row_index, 0).text())
+            name = table.item(row_index, 1).text()
+            count = int(table.item(row_index, 2).text())
+            comment = table.item(row_index, 3).text()
+
+            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
+
+        json_data = {"data": data_dict}
+        print("Data saved:", json_data)
+
+    def load(self):
+        pass
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

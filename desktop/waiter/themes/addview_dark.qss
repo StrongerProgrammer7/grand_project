@@ -50,21 +50,8 @@ QLineEdit:focus {
 	border: 2px solid rgb(91, 101, 124);
 }
 
-/*TimeEdit */
-QTimeEdit {
-    background-color: rgb(27, 29, 35);
-    border-radius: 5px;
-    border: 2px solid rgb(33, 37, 43);
-    padding: 5px;
-    padding-left: 10px;
-}
-
-QTimeEdit:hover {
-    border: 2px solid rgb(64, 71, 88);
-}
-
 /*DateEdit */
-QDateEdit {
+QDateTimeEdit {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
     border: 2px solid rgb(33, 37, 43);
@@ -72,7 +59,7 @@ QDateEdit {
     padding-left: 10px;
 }
 
-QDateEdit:hover {
+QDateTimeEdit:hover {
     border: 2px solid rgb(64, 71, 88);
 }
 /*Button*/

@@ -20,6 +20,7 @@ import platform
 
 from PySide6.QtWidgets import QMainWindow
 from PySide6 import QtWidgets
+
 from modules.addview import Ui_Dialog
 from modules.addview2 import Ui_Dialog2
 
@@ -46,7 +47,7 @@ class MainWindow(QMainWindow):
         global widgets
         widgets = self.ui
 
-        self.api = ApiConnect()
+        #self.api = ApiConnect()
 
 
 

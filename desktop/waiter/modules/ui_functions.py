@@ -270,6 +270,9 @@ class UIFunctions(MainWindow):
                 if item is not None:
                     item.setText("")
 
+    def set_column_widths(self, table_widget, column_widths):
+        for column, width in enumerate(column_widths):
+            table_widget.setColumnWidth(column, width)
 
 
     # START - GUI DEFINITIONS

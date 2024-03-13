@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon ./app.js",
-    "start": "node ./app.js"
+    "start": "cross-env NODE_EXTRA_CA_CERTS=\"./certificate/ca.pem\" node ./app.js"
   },
   "repository": {
     "type": "git",
@@ -44,6 +44,7 @@
     "browserify": "^17.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.1",
     "ejs": "^3.1.9",
     "ejs-mate": "^4.0.0",
@@ -54,8 +55,10 @@
     "express-validator": "^7.0.1",
     "express-winston": "^4.2.0",
     "helmet": "^7.1.0",
+    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
+    "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "toobusy-js": "^0.5.1",

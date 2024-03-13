@@ -1,5 +1,6 @@
 const { createLogger, transports, format } = require("winston");
 const { PostgresTransport } = require('@innova2/winston-pg');
+
 const logger = createLogger(
     {
         transports: [

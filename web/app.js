@@ -107,6 +107,7 @@ const optionHTTPS =
 
 const HOST = "0.0.0.0";
 
+
 const startServer = async function ()
 {
     try
@@ -115,7 +116,16 @@ const startServer = async function ()
             .listen(PORT, HOST, () =>
             {
                 console.log(`Server has been started on the port ${ PORT } and HTTPS. Env=${ process.env.NODE_ENV }`);
-            })
+            });
+
+        let opts = {
+            method: 'GET',
+            hostname: "grandproject.k-lab.su",
+            port: 443,
+            path: '/',
+            ca: fs.readFileSync(__dirname + "/certificate/ca.pem")
+        };
+        https.request(opts, (response) => { }).end();
 
     }
     catch (error)
@@ -135,3 +145,5 @@ const startServer = async function ()
     }
 }
 startServer();
+
+module.exports = app;

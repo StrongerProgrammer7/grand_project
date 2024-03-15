@@ -291,7 +291,8 @@ class UIFunctions(MainWindow):
         json_data = {"data": data_dict}
         print("Data saved:", json_data)
 
-    def
+    def load(self):
+        pass
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

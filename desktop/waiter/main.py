@@ -134,7 +134,6 @@ class MainWindow(QMainWindow):
         self.ui_dialog3.setupUi(self.new_window3)
         self.new_window3.setFixedSize(self.new_window3.size())
 
-
         self.ui_dialog3.checkBox.stateChanged.connect(self.change_password_visibility)
         self.ui_dialog3.pushButton.clicked.connect(self.login)
 
@@ -159,6 +158,9 @@ class MainWindow(QMainWindow):
 
         tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
+
+        self.fill_table_widget(self.ui.tableWidget)
+
 
         # SET HACKS
         # AppFunctions.setThemeHack(self)
@@ -356,6 +358,21 @@ class MainWindow(QMainWindow):
             # Если пользователь отменил действие, ничего не делаем
             pass
 
+    def fill_table_widget(self, tableWidget):
+
+        data = [
+            (1, 2, 3, 4, 5, 6),
+            (7, 8, 9, 10, 11, 12),
+            (1, 2, 3, 4, 5, 6),
+        ]
+
+        tableWidget.setRowCount(len(data))
+        tableWidget.setColumnCount(len(data[0]))
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(row_data):
+                item = QTableWidgetItem(str(cell_data))
+                tableWidget.setItem(row_idx, col_idx, item)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -1088,16 +1088,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setSpacing(6)
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.utvrbtn = QPushButton(self.frame_7)
-        self.utvrbtn.setObjectName(u"utvrbtn")
+        self.commitbtn = QPushButton(self.frame_7)
+        self.commitbtn.setObjectName(u"utvrbtn")
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.utvrbtn.sizePolicy().hasHeightForWidth())
-        self.utvrbtn.setSizePolicy(sizePolicy5)
-        self.utvrbtn.setStyleSheet(u"background-color: rgb(255, 170, 0);")
+        sizePolicy5.setHeightForWidth(self.commitbtn.sizePolicy().hasHeightForWidth())
+        self.commitbtn.setSizePolicy(sizePolicy5)
+        self.commitbtn.setStyleSheet(u"background-color: rgb(255, 170, 0);")
 
-        self.horizontalLayout_10.addWidget(self.utvrbtn)
+        self.horizontalLayout_10.addWidget(self.commitbtn)
 
         self.clearbtn = QPushButton(self.frame_7)
         self.clearbtn.setObjectName(u"clearbtn")
@@ -1690,7 +1690,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043f\u043e\u0440\u0446\u0438\u0439", None));
         ___qtablewidgetitem3 = self.tableWidget_2.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438", None));
-        self.utvrbtn.setText(QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c", None))
+        self.commitbtn.setText(QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c", None))
         self.clearbtn.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c", None))
         self.delrow_btn.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c", None))
         self.addrow_btn.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c", None))

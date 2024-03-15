@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         global widgets
         widgets = self.ui
 
-        #self.api = ApiConnect()
+        self.api = ApiConnect()
 
 
 
@@ -133,7 +133,7 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        # widgets.utvrbtn.clicked.connect() Здесь могла быть ваша функция:)
+        widgets.commitbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -248,10 +248,11 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
                 self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
-                # TODO: Поменять после изменения таблицы
+                # TODO: Добавить валидациюы
+
                 # Преобразуем данные в JSON
                 dishes_dict = {}  # Предполагается, что line содержит данные в формате "Название:Количество"
-                for dish in line.split(','):
+                for dish in line2.split(','):
                     name, quantity = dish.split(':')
                     dishes_dict[name.strip()] = int(quantity.strip())
 
@@ -260,8 +261,8 @@ class MainWindow(QMainWindow):
                     "id_worker": 1,
                     "dishes": dishes_dict,
                     "status": combBox,
-                    "formation_date": date,
-                    "giving_date": time1
+                    "formation_date": datetime1,
+                    "giving_date": datetime2
                 }
 
                 # Отправляем данные с помощью функции post_data
@@ -311,14 +312,14 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
                 self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
                 self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
-                # TODO: Сделать после изменения таблицы
+                # TODO: Добавить валидацию
                 data = {
-                  "id_table": 1,
-                  "id_worker": 3,
-                  "phone_client": "+79848718618",
-                  "order_time": "2024-03-24 13:11:31",
-                  "desired_booking_time": "2024-03-26 13:11:31",
-                  "booking_interval": "3 hours"
+                  "id_table": selected_row+1,
+                  "id_worker": line1,
+                  "phone_client": line2,
+                  "order_time": datetime1,
+                  "desired_booking_time": datetime2,
+                  "booking_interval": line3
                 }
                 print(data)
 

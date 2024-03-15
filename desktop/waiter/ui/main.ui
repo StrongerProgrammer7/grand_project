@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1281</width>
-    <height>840</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -603,7 +603,7 @@ Button */
          </property>
          <property name="minimumSize">
           <size>
-           <width>240</width>
+           <width>62</width>
            <height>0</height>
           </size>
          </property>
@@ -784,6 +784,42 @@ Button */
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
+                <item>
+                 <widget class="QPushButton" name="toggleButton">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>45</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>Segoe UI</family>
+                    <pointsize>10</pointsize>
+                    <italic>false</italic>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-image: url(:/icons/images/icons/icon_menu.png);</string>
+                  </property>
+                  <property name="text">
+                   <string>Hide</string>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <widget class="QPushButton" name="btn_home">
                   <property name="sizePolicy">
@@ -1109,7 +1145,7 @@ Button */
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset>
+                  <iconset resource="../resources.qrc">
                    <normaloff>:/icons/images/icons/icon_close.png</normaloff>:/icons/images/icons/icon_close.png</iconset>
                  </property>
                  <property name="iconSize">
@@ -1559,7 +1595,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/icons/images/icons/icon_minimize.png</normaloff>:/icons/images/icons/icon_minimize.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -1603,7 +1639,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/icons/images/icons/icon_maximize.png</normaloff>:/icons/images/icons/icon_maximize.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -1638,7 +1674,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources.qrc">
                     <normaloff>:/icons/images/icons/icon_close.png</normaloff>:/icons/images/icons/icon_close.png</iconset>
                   </property>
                   <property name="iconSize">

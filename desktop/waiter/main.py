@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
 
         # TOGGLE MENU
         # ///////////////////////////////////////////////////////////////
-        # widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
+        widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
         # SET UI DEFINITIONS
         # ///////////////////////////////////////////////////////////////
@@ -87,11 +87,11 @@ class MainWindow(QMainWindow):
         # widgets.btn_save.clicked.connect(self.buttonClick)
 
         # EXTRA LEFT BOX
-        # def openCloseLeftBox():
-        # UIFunctions.toggleLeftBox(self, True)
+        def openCloseLeftBox():
+            UIFunctions.toggleLeftBox(self, True)
 
-        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
+        widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
+        widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
         #def openCloseRightBox():

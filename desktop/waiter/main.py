@@ -23,6 +23,7 @@ from PySide6 import QtWidgets
 
 from modules.addview import Ui_Dialog
 from modules.addview2 import Ui_Dialog2
+from modules.LoginWindow import Ui_Dialog3
 
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
@@ -100,15 +101,16 @@ class MainWindow(QMainWindow):
 
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
-        self.show()
+        #self.show()
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
         self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
+        UIFunctions.theme(self, self.themeFile, True)
+
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
         #widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
-        UIFunctions.theme(self, self.themeFile, True)
         widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
         # DATETIME
@@ -116,20 +118,26 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
         self.timer.start(0)
 
-        # DIALOG WINDOWS
-        self.ui_dialog = Ui_Dialog()
-        self.ui_dialog.setupUi(self)
         self.new_window = QtWidgets.QDialog()
+        self.ui_dialog = Ui_Dialog()
         self.ui_dialog.setupUi(self.new_window)
         self.new_window.setFixedSize(self.new_window.size())
 
-        self.ui_dialog2 = Ui_Dialog2()
-        self.ui_dialog2.setupUi(self)
         self.new_window2 = QtWidgets.QDialog()
+        self.ui_dialog2 = Ui_Dialog2()
         self.ui_dialog2.setupUi(self.new_window2)
         self.new_window2.setFixedSize(self.new_window2.size())
 
-        # 1 ВКЛАДКА КНОПКИ
+        # ОКНО ВХОДА
+        self.new_window3 = QtWidgets.QDialog()
+        self.ui_dialog3 = Ui_Dialog3()
+        self.ui_dialog3.setupUi(self.new_window3)
+        self.new_window3.setFixedSize(self.new_window3.size())
+
+
+        self.ui_dialog3.checkBox.stateChanged.connect(self.change_password_visibility)
+        self.ui_dialog3.pushButton.clicked.connect(self.login)
+
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
@@ -159,6 +167,7 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
+
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -211,10 +220,29 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
     def open_new_window(self):
-        self.new_window.exec()
+        self.new_window.show()
 
     def open_new_window2(self):
-        self.new_window2.exec()
+        self.new_window2.show()
+
+    def login(self):
+        username = self.ui_dialog3.lineEdit.text()
+        password = self.ui_dialog3.lineEdit_2.text()
+        if username == "login" and password == "123":
+            self.new_window3.close()
+            self.show()
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка входа")
+            msg.setText("Логин или пароль неверны.")
+            msg.setIcon(QMessageBox.Critical)
+            msg.exec()
+
+    def change_password_visibility(self):
+        if self.ui_dialog3.checkBox.isChecked():
+            self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Normal)
+        else:
+            self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Password)
 
     def update_second_table(self):
         line = self.ui_dialog.lineEdit.text()
@@ -331,6 +359,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    #app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
+    window.new_window3.show()
     sys.exit(app.exec())

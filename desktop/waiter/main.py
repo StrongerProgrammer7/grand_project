@@ -72,26 +72,17 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
 
-        # QTableWidget PARAMETERS
-        # ///////////////////////////////////////////////////////////////
-        widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-        # BUTTONS CLICK
-        # ///////////////////////////////////////////////////////////////
-
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-        # widgets.btn_save.clicked.connect(self.buttonClick)
-
         # EXTRA LEFT BOX
-        def openCloseLeftBox():
-            UIFunctions.toggleLeftBox(self, True)
+        #def openCloseLeftBox():
+        #    UIFunctions.toggleLeftBox(self, True)
 
-        widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
+        #widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
+        #widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
         #def openCloseRightBox():
@@ -128,7 +119,6 @@ class MainWindow(QMainWindow):
         self.ui_dialog2.setupUi(self.new_window2)
         self.new_window2.setFixedSize(self.new_window2.size())
 
-        # ОКНО ВХОДА
         self.new_window3 = QtWidgets.QDialog()
         self.ui_dialog3 = Ui_Dialog3()
         self.ui_dialog3.setupUi(self.new_window3)
@@ -140,7 +130,7 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.commitbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -153,13 +143,19 @@ class MainWindow(QMainWindow):
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
 
-        tab1_column_widths = [10, 150, 120, 200, 200, 100]
+        tab1_column_widths = [80, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
 
-        tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
+        tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
         self.fill_table_widget(self.ui.tableWidget)
+
+        # Сортировка таблиц
+        self.column_sort_order = {}
+        self.connect_sorting_function(widgets.tableWidget)
+        self.connect_sorting_function(widgets.tableWidget_2)
+        self.connect_sorting_function(widgets.tableWidget_3)
 
 
         # SET HACKS
@@ -230,7 +226,7 @@ class MainWindow(QMainWindow):
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
-        if username == "login" and password == "123":
+        if username == "" and password == "":
             self.new_window3.close()
             self.show()
         else:
@@ -245,6 +241,21 @@ class MainWindow(QMainWindow):
             self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Normal)
         else:
             self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Password)
+
+    def connect_sorting_function(self, table_widget):
+        table_widget.horizontalHeader().sectionClicked.connect(
+            lambda index: self.sort_table_column(table_widget, index))
+
+    def sort_table_column(self, table, column_index):
+        # Получаем текущее направление сортировки для столбца
+        current_sort_order = self.column_sort_order.get(column_index, Qt.AscendingOrder)
+        # Переключаем направление сортировки
+        if current_sort_order == Qt.AscendingOrder:
+            new_sort_order = Qt.DescendingOrder
+        else:
+            new_sort_order = Qt.AscendingOrder
+        self.column_sort_order[column_index] = new_sort_order
+        table.sortItems(column_index, new_sort_order)
 
     def update_second_table(self):
         line = self.ui_dialog.lineEdit.text()
@@ -344,7 +355,7 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
                 # TODO: Добавить валидацию
                 data = {
-                  "id_table": selected_row+1,
+                  "id_table": selected_row + 1,
                   "id_worker": line1,
                   "phone_client": line2,
                   "order_time": datetime1,

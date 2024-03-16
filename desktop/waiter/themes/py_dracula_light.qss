@@ -225,6 +225,7 @@ QTableWidget {
     outline: none;
 }
 QTableWidget::item{
+    color: #000000;
 	border-color: #9faeda;
 	padding-left: 5px;
 	padding-right: 5px;

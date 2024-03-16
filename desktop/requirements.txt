@@ -10,3 +10,4 @@ PySide6-Addons==6.6.1
 PySide6-Essentials==6.6.1
 async-timeout==4.0.3
 asyncpg==0.29.0
+schedule==1.2.1

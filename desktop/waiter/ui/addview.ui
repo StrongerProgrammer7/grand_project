@@ -261,7 +261,7 @@ QLabel {
             <item>
              <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>Статус</string>
+               <string>Дата формирования</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

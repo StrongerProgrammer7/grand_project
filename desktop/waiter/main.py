@@ -17,10 +17,14 @@
 import sys
 import os
 import platform
+import threading
+import time
+
+import schedule
 
 from PySide6.QtWidgets import QMainWindow
 from PySide6 import QtWidgets
-
+from datetime import datetime
 from modules.addview import Ui_Dialog
 from modules.addview2 import Ui_Dialog2
 from modules.LoginWindow import Ui_Dialog3
@@ -48,9 +52,14 @@ class MainWindow(QMainWindow):
         global widgets
         widgets = self.ui
 
+        # SET API WORK
+        # ///////////////////////////////////////////////////////////////
         self.api = ApiConnect()
 
-
+        # Запуск обновления данных каждые 10 минут
+        schedule.every(10).minutes.do(self.api.update_json_files)
+        schedule.run_pending()
+        time.sleep(1)
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
@@ -58,11 +67,12 @@ class MainWindow(QMainWindow):
 
         # APP NAME
         # ///////////////////////////////////////////////////////////////
+
         title = "SOLIDSIGN - для официантов"
         description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
         # APPLY TEXTS
-        #self.setWindowTitle(title)
-        #widgets.titleRightInfo.setText(description)
+        # self.setWindowTitle(title)
+        # widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
         # ///////////////////////////////////////////////////////////////
@@ -94,14 +104,14 @@ class MainWindow(QMainWindow):
         widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
-        #def openCloseRightBox():
+        # def openCloseRightBox():
         #    UIFunctions.toggleRightBox(self, True)
 
-        #widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
+        # widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
-        #self.show()
+        # self.show()
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
@@ -109,7 +119,7 @@ class MainWindow(QMainWindow):
         UIFunctions.theme(self, self.themeFile, True)
 
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
-        #widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
+        # widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
         widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
@@ -140,7 +150,8 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.commitbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.commitbtn.clicked.connect(
+            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -159,9 +170,6 @@ class MainWindow(QMainWindow):
         tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
-        self.fill_table_widget(self.ui.tableWidget)
-
-
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 
@@ -169,7 +177,6 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
-
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -230,7 +237,17 @@ class MainWindow(QMainWindow):
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
-        if username == "login" and password == "123":
+        if username == "" and password == "":
+            # Создаем и запускаем потоки для заполнения таблиц
+            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            order_thread.start()
+            table_booking_thread.start()
+
+            # Ожидаем завершения потоков
+            order_thread.join()
+            table_booking_thread.join()
+
             self.new_window3.close()
             self.show()
         else:
@@ -334,7 +351,7 @@ class MainWindow(QMainWindow):
             if selected_row >= 0:  # Проверяем, что строка действительно выбрана
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget_3.setItem(selected_row, 0,
-                                            QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
+                                              QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
                 self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
                 self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
                 self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
@@ -344,12 +361,12 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
                 # TODO: Добавить валидацию
                 data = {
-                  "id_table": selected_row+1,
-                  "id_worker": line1,
-                  "phone_client": line2,
-                  "order_time": datetime1,
-                  "desired_booking_time": datetime2,
-                  "booking_interval": line3
+                    "id_table": selected_row + 1,
+                    "id_worker": line1,
+                    "phone_client": line2,
+                    "order_time": datetime1,
+                    "desired_booking_time": datetime2,
+                    "booking_interval": line3
                 }
                 print(data)
 
@@ -359,20 +376,60 @@ class MainWindow(QMainWindow):
             pass
 
     def fill_table_widget(self, tableWidget):
+        if tableWidget.objectName() == 'tableWidget':
+            field_mapping = {
+                "№": "id_order",
+                "Официант": "id_worker",
+                "Дата выдачи": "giving_date",
+                "Дата формирования": "formation_date",
+                "Блюдо": "id_food",
+                "Количество блюд": "num_of_food",
+                "Статус": "status"
+            }
+            endpoint = 'order_history'
+            date_keys = ['formation_date', 'giving_date']
+        elif tableWidget.objectName() == 'tableWidget_3':
+            field_mapping = {
+                "№": "table_id",
+                "Официант": "worker_id",
+                "Дата заказа": "desired_date",
+                "Дата брони": "booking_date",
+                "Номер телефона": "client_number",
+                "Интервал брони": "booking_interval",
+                "На чье имя": ""  # Пропустить поле "На чье имя"
+            }
+            endpoint = 'all_booked_tables'
+            date_keys = ['booking_date', 'desired_date']
+        else:
+            return  # Если таблица не соответствует ни одному известному типу данных, выходим из функции
 
-        data = [
-            (1, 2, 3, 4, 5, 6),
-            (7, 8, 9, 10, 11, 12),
-            (1, 2, 3, 4, 5, 6),
-        ]
+        # Загружаем данные из JSON файла
+        with open(f"modules/api/jsons/{endpoint}.json", "r") as file:
+            json_data = json.load(file)
+
+        data = json_data['data']  # Получаем данные из загруженного JSON
 
         tableWidget.setRowCount(len(data))
-        tableWidget.setColumnCount(len(data[0]))
+        tableWidget.setColumnCount(len(field_mapping))
+
+        headers = list(field_mapping.keys())  # Получаем заголовки столбцов из ключей первого элемента
 
         for row_idx, row_data in enumerate(data):
-            for col_idx, cell_data in enumerate(row_data):
-                item = QTableWidgetItem(str(cell_data))
+            for col_idx, header in enumerate(headers):
+                key = field_mapping[header]
+                if key == "":  # Пропустить поле "На чье имя"
+                    continue
+                if key in date_keys:  # Если это дата, проводим валидацию и форматирование
+                    date_obj = datetime.strptime(row_data[key], "%Y-%m-%dT%H:%M:%S.%fZ")
+                    formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                    item = QTableWidgetItem(formatted_date)
+                elif key == 'booking_interval' and field_mapping[
+                    header] == 'table_booking':  # Если это интервал для бронирования столика
+                    item = QTableWidgetItem(str(row_data[key]['days']))
+                else:
+                    item = QTableWidgetItem(str(row_data[key]))
                 tableWidget.setItem(row_idx, col_idx, item)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

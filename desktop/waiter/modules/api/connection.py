@@ -10,50 +10,50 @@ urllib3.disable_warnings()
 class ApiConnect:
     api_url = f'https://{DOMEN}/api'
 
-    def get_data(self, model: str):
-        if model:
-            url = f'{self.api_url}/{model}'
+    def get_data(self, endpoint: str):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.get(url, verify=False)
+
             if response.status_code == 201:
+                print(f'get_data | {endpoint} | ', response)
                 return response.json()
         return None
 
-    def post_data(self, model: str, data: json):
-        if model:
-            url = f'{self.api_url}/{model}'
+    def post_data(self, endpoint: str, data: json):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.post(url, json=data, verify=False)
 
             if response.status_code == 201:
                 return response.json()
         return None
 
-    def put_data(self, model: str):
-        if model:
-            url = f'{self.api_url}/{model}'
+    def put_data(self, endpoint: str):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.put(url, verify=False)
 
             if response.status_code == 201:
                 return response.json()
         return None
 
-    def delete_data(self, model: str):
-        if model:
-            url = f'{self.api_url}/{model}'
+    def delete_data(self, endpoint: str):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.delete(url, verify=False)
 
             if response.status_code == 201:
                 return response.json()
         return None
 
-    def test_get(self, model: str):
-        if model:
-            file_path = os.path.join("jsons", f"{model}.json")
+    def update_json_files(self):
+        endpoints = ['order_history', 'all_booked_tables']  # список всех эндпоинтов, которые нужно обновить
 
-            if os.path.exists(file_path):
-                with open(file_path, 'r') as file:
-                    json_data = json.load(file)
-                return json_data
-        return None
-
+        for endpoint in endpoints:
+            data = self.get_data(endpoint)
+            if data:
+                with open(f"jsons/{endpoint}.json", "w") as file:
+                    json.dump(data, file)
 
 

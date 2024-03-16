@@ -1,0 +1,34 @@
+{
+    "data": [
+        {
+            "table_id": 1,
+            "booking_date": "2024-03-04T10:11:31.718Z",
+            "worker_id": 3,
+            "client_number": "+79389513658",
+            "desired_date": "2024-03-04T10:11:31.718Z",
+            "booking_interval": {
+                "days": 3
+            }
+        },
+        {
+            "table_id": 3,
+            "booking_date": "2024-03-04T10:11:31.718Z",
+            "worker_id": 6,
+            "client_number": "+79637259702",
+            "desired_date": "2024-03-04T10:11:31.718Z",
+            "booking_interval": {
+                "days": 3
+            }
+        },
+        {
+            "table_id": 4,
+            "booking_date": "2024-03-04T10:11:31.718Z",
+            "worker_id": 1,
+            "client_number": "+79848718618",
+            "desired_date": "2024-03-04T10:11:31.718Z",
+            "booking_interval": {
+                "days": 3
+            }
+        }
+    ]
+}

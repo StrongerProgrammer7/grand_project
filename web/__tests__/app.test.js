@@ -1,3 +1,4 @@
+// @ts-nocheck
 const supertest = require('supertest');
 const request = require("supertest");
 // const https = require('https');
@@ -65,12 +66,9 @@ describe("Prepare test environment", () =>
                 return await response.json(); // parses JSON response into native JavaScript objects
             }
 
-            postData("https://grandproject.k-lab.su/api/get_all_booked_tables").then((data) =>
-            {
-                console.log(data); // JSON data parsed by `response.json()` call
-                expect(typeof data.data).toBe(typeof []);
-            });
-
+            const data = await postData("https://grandproject.k-lab.su/api/get_all_booked_tables")
+            // console.log(data);
+            expect(data.data.length > 0 && data.data[0].table_id);
         });
     });
 

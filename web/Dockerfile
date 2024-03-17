@@ -6,4 +6,4 @@ COPY ./ ./
 
 RUN npm install
 
-CMD ["node","app.js"]
+CMD ["sleep","30","&&","node","app.js"]

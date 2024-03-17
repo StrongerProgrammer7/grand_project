@@ -16,7 +16,7 @@ const options =
         },
         servers: [
             {
-                url: 'https://localhost:5000',
+                url: 'https://grandproject.k-lab.su',
                 description: 'Deveopment server'
             }
         ],
@@ -59,7 +59,7 @@ function swaggerDocs(app, port)
         res.send(swaggerSpec);
     });
 
-    logger.info(`Docs available at https://localhost:${ port }/docs`);
+    logger.info(`Docs available at https://grandproject.k-lab.su/docs`);
 };
 
 module.exports = swaggerDocs;

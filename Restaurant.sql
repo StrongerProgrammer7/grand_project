@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-17 15:55:38
+-- Started on 2024-03-17 22:05:25
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -264,43 +264,69 @@ $$;
 ALTER PROCEDURE public.add_worker(IN _login character varying, IN _password character varying, IN _job_role character varying, IN _surname character varying, IN _first_name character varying, IN _salary double precision, IN _patronymic character varying, IN _email character varying, IN _phone character varying, IN _job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 282 (class 1255 OID 58784)
--- Name: book_table(integer, integer, character varying, timestamp with time zone, timestamp with time zone, interval); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 277 (class 1255 OID 67044)
+-- Name: book_table(integer, integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _desired_booking_date timestamp with time zone, IN _booking_interval interval)
+CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone)
     LANGUAGE plpgsql
     AS $$
-DECLARE
-    v_booking_start TIMESTAMP WITH TIME ZONE;
-    v_booking_end TIMESTAMP WITH TIME ZONE;
 BEGIN
-    -- Check if the table exists
+    -- Существует ли таблица
     IF NOT EXISTS (SELECT 1 FROM public."table" WHERE id = _id_table) THEN
         RAISE EXCEPTION 'Table with id % does not exist', _id_table;
     END IF;
 
-    -- Check if the worker exists
+    -- Существует ли рабочий
     IF NOT EXISTS (SELECT 1 FROM public.worker WHERE id = _id_worker) THEN
         RAISE EXCEPTION 'Worker with id % does not exist', _id_worker;
     END IF;
 
-    -- Check if the client exists
+    -- Существует ли клиент
     IF NOT EXISTS (SELECT 1 FROM public.client WHERE phone = _client_phone) THEN
         RAISE EXCEPTION 'Client with phone number % does not exist', _client_phone;
     END IF;
 
-    -- Insert the booking into the client_table
     INSERT INTO public.client_table
-        (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval)
+        (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date)
     VALUES
-        (_id_table, _order_date, _id_worker, _client_phone, _desired_booking_date, _booking_interval);
+        (_id_table, _order_date, _id_worker, _client_phone, _start_booking_date, _end_booking_date);
 
 END
 $$;
 
 
-ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _desired_booking_date timestamp with time zone, IN _booking_interval interval) OWNER TO postgres;
+ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
+
+--
+-- TOC entry 281 (class 1255 OID 67046)
+-- Name: book_table_from_web(integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Существует ли таблица
+    IF NOT EXISTS (SELECT 1 FROM public."table" WHERE id = _id_table) THEN
+        RAISE EXCEPTION 'Table with id % does not exist', _id_table;
+    END IF;
+
+    -- Существует ли клиент
+    IF NOT EXISTS (SELECT 1 FROM public.client WHERE phone = _client_phone) THEN
+        RAISE EXCEPTION 'Client with phone number % does not exist', _client_phone;
+    END IF;
+
+    INSERT INTO public.client_table
+        (id_table, order_date, client_phone, start_booking_date, end_booking_date)
+    VALUES
+        (_id_table, _order_date, _client_phone, _start_booking_date, _end_booking_date);
+
+END
+$$;
+
+
+ALTER PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
 
 --
 -- TOC entry 262 (class 1255 OID 58717)
@@ -403,7 +429,7 @@ $$;
 ALTER PROCEDURE public.delete_order(IN order_id integer) OWNER TO postgres;
 
 --
--- TOC entry 281 (class 1255 OID 58848)
+-- TOC entry 283 (class 1255 OID 58848)
 -- Name: delete_worker(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -454,7 +480,7 @@ $$;
 ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 58854)
+-- TOC entry 280 (class 1255 OID 58854)
 -- Name: get_count_place_all_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -472,7 +498,7 @@ $$;
 ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
 
 --
--- TOC entry 277 (class 1255 OID 58827)
+-- TOC entry 278 (class 1255 OID 58827)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -674,7 +700,7 @@ $$;
 ALTER FUNCTION public.update_issue_date() OWNER TO postgres;
 
 --
--- TOC entry 280 (class 1255 OID 58831)
+-- TOC entry 282 (class 1255 OID 58831)
 -- Name: update_order(integer, integer[], integer[], character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -791,7 +817,7 @@ $$;
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 58828)
+-- TOC entry 279 (class 1255 OID 58828)
 -- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -920,10 +946,10 @@ ALTER TABLE public.client OWNER TO postgres;
 CREATE TABLE public.client_table (
     id_table integer NOT NULL,
     order_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    id_worker integer NOT NULL,
+    id_worker integer,
     client_phone character varying(32) NOT NULL,
-    desired_booking_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
-    booking_interval interval DEFAULT '03:00:00'::interval NOT NULL
+    start_booking_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
+    end_booking_date timestamp with time zone NOT NULL
 );
 
 
@@ -1333,7 +1359,7 @@ ALTER SEQUENCE public.worker_id_seq OWNED BY public.worker.id;
 
 
 --
--- TOC entry 4738 (class 2604 OID 33934)
+-- TOC entry 4739 (class 2604 OID 33934)
 -- Name: food id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1341,7 +1367,7 @@ ALTER TABLE ONLY public.food ALTER COLUMN id SET DEFAULT nextval('public.food_id
 
 
 --
--- TOC entry 4734 (class 2604 OID 33880)
+-- TOC entry 4735 (class 2604 OID 33880)
 -- Name: ingredient id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1349,7 +1375,7 @@ ALTER TABLE ONLY public.ingredient ALTER COLUMN id SET DEFAULT nextval('public.i
 
 
 --
--- TOC entry 4742 (class 2604 OID 34037)
+-- TOC entry 4743 (class 2604 OID 34037)
 -- Name: ingredient_storage id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1357,7 +1383,7 @@ ALTER TABLE ONLY public.ingredient_storage ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 4743 (class 2604 OID 50461)
+-- TOC entry 4744 (class 2604 OID 50461)
 -- Name: order_directory id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1365,7 +1391,7 @@ ALTER TABLE ONLY public.order_directory ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 4740 (class 2604 OID 33964)
+-- TOC entry 4741 (class 2604 OID 33964)
 -- Name: requisition_list id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1373,7 +1399,7 @@ ALTER TABLE ONLY public.requisition_list ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 4736 (class 2604 OID 33909)
+-- TOC entry 4737 (class 2604 OID 33909)
 -- Name: table id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1381,7 +1407,7 @@ ALTER TABLE ONLY public."table" ALTER COLUMN id SET DEFAULT nextval('public.tabl
 
 
 --
--- TOC entry 4737 (class 2604 OID 33916)
+-- TOC entry 4738 (class 2604 OID 33916)
 -- Name: worker id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1407,11 +1433,8 @@ INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+7938
 -- Data for Name: client_table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (3, '2024-03-04 13:11:31.718063+03', 6, '+79637259702', '2024-03-04 13:11:31.718063+03', '03:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 12:00:00+03', 3, '+79389513658', '2024-03-23 10:00:00+03', '05:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 13:00:00+03', 3, '+79389513658', '2024-03-23 16:00:00+03', '02:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 15:00:00+03', 3, '+79389513658', '2024-03-23 17:00:00+03', '02:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 14:00:00+03', 3, '+79389513658', '2024-03-23 17:00:00+03', '02:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 14:00:00+03', 3, '+79389513658', '2024-03-23 17:00:00+03', '2024-03-23 19:00:00+03');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-19 14:00:00+03', NULL, '+79389513658', '2024-04-24 10:00:00+03', '2024-04-24 14:00:00+03');
 
 
 --
@@ -1987,7 +2010,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-17 15:55:38
+-- Completed on 2024-03-17 22:05:26
 
 --
 -- PostgreSQL database dump complete

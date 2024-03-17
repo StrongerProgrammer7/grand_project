@@ -22,9 +22,10 @@ const get_current_orders = require('../models/Api/GET/get_current_orders');
 const get_reorder_ingredients_list = require('../models/Api/GET/get_reorder_ingredients_list');
 const get_all_booked_tables = require('../models/Api/GET/get_all_booked_tables');
 const get_food_composition = require('../models/Api/POST/get_food_composition');
-const get_free_tables = require('../models/Api/GET/get_free_tables');
+const get_all_tables_on_date = require('../models/Api/POST/get_all_tables_on_date');
 const get_menu_sorted_by_type = require('../models/Api/GET/get_menu_sorted_by_type');
 const get_order_history = require('../models/Api/GET/get_order_history');
+const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_on_date');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -42,12 +43,13 @@ router.post('/record_giving_time', record_giving_time);
 router.post('/cancel_booking', cancel_booking);
 router.post('/order_ingredient', order_ingredient);
 router.post('/get_food_composition', get_food_composition);
+router.post('/get_booked_tables_on_date', get_booked_tables_on_date);
+router.post('/get_all_tables_on_date', get_all_tables_on_date);
 
 //GET
 router.get('/get_current_orders', get_current_orders);
 router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);
 router.get('/get_all_booked_tables', get_all_booked_tables);
-router.get('/get_free_tables', get_free_tables);
 router.get('/get_menu_sorted_by_type', get_menu_sorted_by_type);
 router.get('/get_order_history', get_order_history);
 module.exports = router;

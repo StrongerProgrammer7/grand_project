@@ -1,8 +1,20 @@
-"/api/get_free_tables":
-  get:
+"/api/get_all_tables_on_date":
+  post:
     tags:
       - Table
-    summary: Get list all free tables
+    summary: Get list all tables by date
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              date:
+                type: Date
+            required:
+              - date
+          example:
+            date: "2024-03-17"
     responses:
       "201":
         description: Success!
@@ -12,23 +24,23 @@
               type: object
               properties:
                 data:
-                  $ref: "#/components/schemas/FreeTables"
+                  $ref: "#/components/schemas/AllTables"
                 message:
                   type: string
               example:
-                data: [{ "table_id": 2, "table_capacity": 3 }]
+                data: [{ "id": 4, "human_slots": 5 }]
                 message: Success!
       "500":
         $ref: "#/components/responses/500InternalError"
 
 components:
   schemas:
-    FreeTables:
+    AllTables:
       type: array
       items:
         type: object
         properties:
-          table_id:
+          id:
             type: integer
-          table_capacity:
+          human_slots:
             type: integer

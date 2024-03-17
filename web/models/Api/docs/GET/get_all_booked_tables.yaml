@@ -1,7 +1,7 @@
 "/api/get_all_booked_tables":
   get:
     tags:
-      - Tables
+      - Table
     summary: Get all booked tables list
     responses:
       "201":
@@ -24,7 +24,7 @@
                       "worker_id": 3,
                       "client_number": "+79389513658",
                       "desired_date": "2024-03-04T10:11:31.718Z",
-                      "booking_interval": { "days": 3 },
+                      "booking_interval": { "hours": 3 },
                     },
                   ]
                 message: Success!

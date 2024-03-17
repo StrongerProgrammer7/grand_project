@@ -1,20 +1,15 @@
-"/api/delete_order":
-  post:
+"/api/delete_order/{id}":
+  delete:
     tags:
       - Order
     summary: Delete order by id
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id_order:
-                type: integer
-            required:
-              - id_order
-          example:
-            id_order: 1
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the order to delete
     responses:
       "201":
         $ref: "#/components/responses/201Success"

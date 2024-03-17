@@ -5,16 +5,16 @@ const errorHandler = require("../errorHandler");
 
 const delete_ingredient = async (req, res, next) =>
 {
-    if (!req.body)
-        return next(ApiError.badRequest("Request body is empty!"));
+    if (!req.params)
+        return next(ApiError.badRequest("Request params is empty!"));
     const
         {
-            id_ingredient,
-        } = req.body;
-    if (!id_ingredient)
+            id,
+        } = req.params;
+    if (!id)
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL delete_ingredient($1)', [id_ingredient])
+    db.query('CALL delete_ingredient($1)', [id])
         .then(() =>
         {
             return next(DataApi.success({}, "Ingredient deleted"));

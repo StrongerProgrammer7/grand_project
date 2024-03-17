@@ -1,20 +1,15 @@
-"/api/delete_ingredient":
-  post:
+"/api/delete_ingredient/{id}":
+  delete:
     tags:
       - Food
-    summary: Delete ingredient
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id_ingredient:
-                type: integer
-            required:
-              - id_order
-          example:
-            id_ingredient: 1
+    summary: Delete ingredient by id
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the ingredient to delete
     responses:
       "201":
         $ref: "#/components/responses/201Success"

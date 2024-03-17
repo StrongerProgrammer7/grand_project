@@ -5,17 +5,16 @@ const errorHandler = require("../errorHandler");
 
 const delete_order = async (req, res, next) =>
 {
-    if (!req.body)
-        return next(ApiError.badRequest("Request body is empty!"));
+    if (!req.params)
+        return next(ApiError.badRequest("Request params is empty!"));
     const
         {
-            id_order
-
-        } = req.body;
-    if (!(id_order && status))
+            id
+        } = req.params;
+    if (!id)
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL delete_order($1)', [id_order])
+    db.query('CALL delete_order($1)', [id])
         .then(() =>
         {
             return next(DataApi.success({}, "Order deleted"));

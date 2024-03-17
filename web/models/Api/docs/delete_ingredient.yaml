@@ -1,0 +1,24 @@
+"/api/delete_ingredient":
+  post:
+    tags:
+      - Food
+    summary: Delete ingredient
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_ingredient:
+                type: integer
+            required:
+              - id_order
+          example:
+            id_ingredient: 1
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

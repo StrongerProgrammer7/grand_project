@@ -29,7 +29,7 @@ const get_order_history = require('../models/Api/GET/get_order_history');
 const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_on_date');
 const get_ingredients_info = require('../models/Api/GET/get_ingredients_info');
 const get_worker_list = require('../models/Api/GET/get_worker_list');
-
+const delete_ingredient = require('../models/Api/POST/delete_ingredient');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -49,7 +49,7 @@ router.post('/order_ingredient', order_ingredient);
 router.post('/get_food_composition', get_food_composition);
 router.post('/get_booked_tables_on_date', get_booked_tables_on_date);
 router.post('/get_all_tables_on_date', get_all_tables_on_date);
-
+router.post('/delete_ingredient', delete_ingredient);
 //GET
 router.get('/get_current_orders', get_current_orders);
 router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);
@@ -58,6 +58,8 @@ router.get('/get_menu_sorted_by_type', get_menu_sorted_by_type);
 router.get('/get_order_history', get_order_history);
 router.get('/get_ingredients_info', get_ingredients_info);
 router.get('/get_worker_list', get_worker_list);
+
+
 module.exports = router;
 
 

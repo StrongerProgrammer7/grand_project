@@ -119,7 +119,6 @@ class MainWindow(QMainWindow):
         self.ui_dialog2.setupUi(self.new_window2)
         self.new_window2.setFixedSize(self.new_window2.size())
 
-        # ОКНО ВХОДА
         self.new_window3 = QtWidgets.QDialog()
         self.ui_dialog3 = Ui_Dialog3()
         self.ui_dialog3.setupUi(self.new_window3)
@@ -151,6 +150,12 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
         self.fill_table_widget(self.ui.tableWidget)
+
+        # Сортировка таблиц
+        self.column_sort_order = {}
+        self.connect_sorting_function(widgets.tableWidget)
+        self.connect_sorting_function(widgets.tableWidget_2)
+        self.connect_sorting_function(widgets.tableWidget_3)
 
 
         # SET HACKS
@@ -236,6 +241,21 @@ class MainWindow(QMainWindow):
             self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Normal)
         else:
             self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Password)
+
+    def connect_sorting_function(self, table_widget):
+        table_widget.horizontalHeader().sectionClicked.connect(
+            lambda index: self.sort_table_column(table_widget, index))
+
+    def sort_table_column(self, table, column_index):
+        # Получаем текущее направление сортировки для столбца
+        current_sort_order = self.column_sort_order.get(column_index, Qt.AscendingOrder)
+        # Переключаем направление сортировки
+        if current_sort_order == Qt.AscendingOrder:
+            new_sort_order = Qt.DescendingOrder
+        else:
+            new_sort_order = Qt.AscendingOrder
+        self.column_sort_order[column_index] = new_sort_order
+        table.sortItems(column_index, new_sort_order)
 
     def update_second_table(self):
         line = self.ui_dialog.lineEdit.text()

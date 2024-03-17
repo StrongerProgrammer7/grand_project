@@ -1,7 +1,7 @@
 "/api/add_job_role":
   post:
     tags:
-      - Role of worker
+      - Worker
     summary: Add role worker
     requestBody:
       content:

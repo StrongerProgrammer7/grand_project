@@ -1,7 +1,7 @@
 "/api/registration_worker":
   post:
     tags:
-      - Registration_worker
+      - Worker
     summary: Adding an employee
     requestBody:
       content:

@@ -1,8 +1,8 @@
-"/api/get_all_booked_tables":
+"/api/get_worker_list":
   get:
     tags:
-      - Tables
-    summary: Get all booked tables list
+      - Worker
+    summary: Get info about all workers order by job role
     responses:
       "201":
         description: Success!
@@ -12,19 +12,19 @@
               type: object
               properties:
                 data:
-                  $ref: "#/components/schemas/AllBookedTables"
+                  $ref: "#/components/schemas/AllInfoWorker"
                 message:
                   type: string
               example:
                 data:
                   [
                     {
-                      "table_id": 1,
-                      "booking_date": "2024-03-04T10:11:31.718Z",
-                      "worker_id": 3,
-                      "client_number": "+79389513658",
-                      "desired_date": "2024-03-04T10:11:31.718Z",
-                      "booking_interval": { "days": 3 },
+                      "job_role": "Manager",
+                      "surname": "surname",
+                      "first_name": "first name",
+                      "patronymic": "lastnmae",
+                      "phone": "75684564612",
+                      "salary": 24341,
                     },
                   ]
                 message: Success!
@@ -33,20 +33,20 @@
 
 components:
   schemas:
-    AllBookedTables:
+    AllInfoWorker:
       type: array
       items:
         type: object
         properties:
-          table_id:
+          job_role:
+            type: string
+          surname:
+            type: string
+          first_name:
+            type: string
+          patronymic:
+            type: string
+          phone:
+            type: string
+          salary:
             type: integer
-          booking_date:
-            type: string
-          worker_id:
-            type: integer
-          client_number:
-            type: string
-          desired_date:
-            type: string
-          booking_interval:
-            type: string

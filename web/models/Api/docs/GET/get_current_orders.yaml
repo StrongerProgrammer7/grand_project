@@ -1,7 +1,7 @@
 "/api/get_current_orders":
   get:
     tags:
-      - Get orders
+      - Order
     summary: Get not ready orders
     responses:
       "201":
@@ -22,7 +22,7 @@
                       "id_order": 1,
                       "id_worker": 1,
                       "id_food": 3,
-                      "num_of_food": 1,
+                      "dishes": { "1": 2, "2": 7, "3": 5 },
                       "formation_date": "2024-03-04T10:15:52.909Z",
                       "giving_date": "2024-03-04T10:15:52.909Z",
                       "status": "Ready",
@@ -45,8 +45,13 @@ components:
             type: integer
           id_food:
             type: integer
-          num_of_food:
-            type: integer
+          dishes:
+            type: object
+            properties:
+              1:
+                type: integer
+              2:
+                type: integer
           formation_date:
             type: timestamp
           givig_date:

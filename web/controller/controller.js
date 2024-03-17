@@ -1,3 +1,4 @@
+// @ts-nocheck
 const Router = require('express');
 const router = new Router();
 const { check } = require('express-validator');
@@ -26,6 +27,9 @@ const get_all_tables_on_date = require('../models/Api/POST/get_all_tables_on_dat
 const get_menu_sorted_by_type = require('../models/Api/GET/get_menu_sorted_by_type');
 const get_order_history = require('../models/Api/GET/get_order_history');
 const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_on_date');
+const get_ingredients_info = require('../models/Api/GET/get_ingredients_info');
+const get_worker_list = require('../models/Api/GET/get_worker_list');
+
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -52,6 +56,8 @@ router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);
 router.get('/get_all_booked_tables', get_all_booked_tables);
 router.get('/get_menu_sorted_by_type', get_menu_sorted_by_type);
 router.get('/get_order_history', get_order_history);
+router.get('/get_ingredients_info', get_ingredients_info);
+router.get('/get_worker_list', get_worker_list);
 module.exports = router;
 
 

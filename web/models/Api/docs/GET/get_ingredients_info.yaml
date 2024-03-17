@@ -1,0 +1,46 @@
+"/api/get_ingredients_info":
+  get:
+    tags:
+      - Food
+    summary: Get info about ingredients
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/IngredientsInfo"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "name": "Огурцы",
+                      "measurement": "кг",
+                      "price": 100,
+                      "critical_rate": 3,
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    IngredientsInfo:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+          measurement:
+            type: string
+          price:
+            type: integer
+          critical_rate:
+            type: integer

@@ -1,0 +1,24 @@
+"/api/delete_order":
+  post:
+    tags:
+      - Order
+    summary: Delete order by id
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_order:
+                type: integer
+            required:
+              - id_order
+          example:
+            id_order: 1
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

@@ -30,6 +30,7 @@ const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_
 const get_ingredients_info = require('../models/Api/GET/get_ingredients_info');
 const get_worker_list = require('../models/Api/GET/get_worker_list');
 const delete_ingredient = require('../models/Api/POST/delete_ingredient');
+const delete_order = require('../models/Api/POST/delete_order');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -50,6 +51,7 @@ router.post('/get_food_composition', get_food_composition);
 router.post('/get_booked_tables_on_date', get_booked_tables_on_date);
 router.post('/get_all_tables_on_date', get_all_tables_on_date);
 router.post('/delete_ingredient', delete_ingredient);
+router.post('/delete_order', delete_order);
 //GET
 router.get('/get_current_orders', get_current_orders);
 router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);

@@ -31,7 +31,7 @@
                 type: double
             example:
               login: john_does
-              password: password123
+              password: hashpassword
               job_role: Младший Повар
               surname: Дуйэн
               first_name: Джонсон

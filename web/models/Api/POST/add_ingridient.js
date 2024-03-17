@@ -14,23 +14,51 @@ const add_ingridient = async (req, res, next) =>
             measurement,
             critical_rate,
             price,
+            id,
         } = req.body;
     if (req.body.update)
         update = req.body.update;
-    if (!(name && measurement && critical_rate && price))
+    if (!(critical_rate && price))
         return next(ApiError.badRequest("Don't enought data!"));
 
     if (update === false)
+    {
+        if (!(name && measurement))
+            return next(ApiError.badRequest("Don't enought data!"));
         return addIngredient({ name, measurement, critical_rate, price }, next);
+    }
     else
-        console.log();/*const result = await db.proc('update_ingredient', []);*/
+    {
+        if (!id)
+            return next(ApiError.badRequest("Don't enought data!"));
+        return updateIngrdient({ id, price, critical_rate }, next);
+    }
 
 
 }
 
-function updateIngrdient()
+function updateIngrdient(data, next)
 {
-    return next(DataApi.success({}, "Ingredient update!"));
+    db.query('CALL update_ingredient($1,$2,$3)', [
+        data.id,
+        data.price,
+        data.critical_rate
+    ])
+        .then(() =>
+        {
+            return next(DataApi.success({}, "Ingredient updated!"));
+        })
+        .catch(err =>
+        {
+            errorHandler(
+                "Error with update ingredient",
+                ["23505"],
+                "ingredient is not exists, check your data",
+                "Internal error with update ingredient!",
+                err,
+                next
+            );
+        });
 }
 
 function addIngredient(data, next)

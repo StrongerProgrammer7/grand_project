@@ -35,8 +35,7 @@
                 update: false
             Update:
               value:
-                name: Помидоры
-                measurement: кг
+                id: 1
                 critical_rate: 5
                 price: 200
                 update: true

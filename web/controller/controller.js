@@ -18,19 +18,11 @@ const change_order_status = require('../models/Api/POST/change_order_status');
 const record_giving_time = require('../models/Api/POST/record_giving_time');
 const cancel_booking = require('../models/Api/POST/cancel_booking');
 const order_ingredient = require('../models/Api/POST/order_ingredient');
-
-const get_current_orders = require('../models/Api/GET/get_current_orders');
-const get_reorder_ingredients_list = require('../models/Api/GET/get_reorder_ingredients_list');
-const get_all_booked_tables = require('../models/Api/GET/get_all_booked_tables');
 const get_food_composition = require('../models/Api/POST/get_food_composition');
 const get_all_tables_on_date = require('../models/Api/POST/get_all_tables_on_date');
-const get_menu_sorted_by_type = require('../models/Api/GET/get_menu_sorted_by_type');
-const get_order_history = require('../models/Api/GET/get_order_history');
 const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_on_date');
-const get_ingredients_info = require('../models/Api/GET/get_ingredients_info');
-const get_worker_list = require('../models/Api/GET/get_worker_list');
-const delete_ingredient = require('../models/Api/DELETE/delete_ingredient');
-const delete_order = require('../models/Api/DELETE/delete_order');
+
+
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -53,9 +45,23 @@ router.post('/get_all_tables_on_date', get_all_tables_on_date);
 
 
 //DELETE
+const delete_ingredient = require('../models/Api/DELETE/delete_ingredient');
+const delete_order = require('../models/Api/DELETE/delete_order');
+const delete_worker = require('../models/Api/DELETE/delete_worker');
+
 router.delete('/delete_ingredient/:id', delete_ingredient);
 router.delete('/delete_order/:id', delete_order);
+router.delete('/delete_worker/:id', delete_worker);
+
 //GET
+const get_current_orders = require('../models/Api/GET/get_current_orders');
+const get_reorder_ingredients_list = require('../models/Api/GET/get_reorder_ingredients_list');
+const get_all_booked_tables = require('../models/Api/GET/get_all_booked_tables');
+const get_menu_sorted_by_type = require('../models/Api/GET/get_menu_sorted_by_type');
+const get_ingredients_info = require('../models/Api/GET/get_ingredients_info');
+const get_worker_list = require('../models/Api/GET/get_worker_list');
+const get_order_history = require('../models/Api/GET/get_order_history');
+
 router.get('/get_current_orders', get_current_orders);
 router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);
 router.get('/get_all_booked_tables', get_all_booked_tables);

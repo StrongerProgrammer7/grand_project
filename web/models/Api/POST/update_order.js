@@ -3,38 +3,42 @@ const DataApi = require("../../../HandleAPI/DataApi");
 const db = require('../../db');
 const errorHandler = require("../errorHandler");
 
-const record_giving_time = async (req, res, next) =>
+const update_order = async (req, res, next) =>
 {
     if (!req.body)
         return next(ApiError.badRequest("Request body is empty!"));
     const
         {
-            id_order,
-            giving_time
+            order_id,
+            food_id,
+            quantities,
+            new_status
 
         } = req.body;
-    if (!(id_order && giving_time))
+    if (!(order_id && food_id && quantities && new_status))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL record_giving_time($1,$2)', [
-        id_order,
-        giving_time
+    db.query('CALL update_order($1,$2,$3,$4)', [
+        order_id,
+        food_id,
+        quantities,
+        new_status
     ])
         .then(() =>
         {
-            return next(DataApi.success({}, "Updated giving time order!"));
+            return next(DataApi.success({}, "Updated order!"));
         })
         .catch(err =>
         {
             errorHandler(
-                "Error with update giving_time order by id",
+                "Error with update order",
                 [],
                 "Order is not exists, check your data",
-                "Internal error with update giving_time order by id!",
+                "Internal error with update order!",
                 err,
                 next
             );
         });
 }
 
-module.exports = record_giving_time;
+module.exports = update_order;

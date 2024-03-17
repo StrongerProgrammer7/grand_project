@@ -1,0 +1,28 @@
+"/api/record_giving_time":
+  post:
+    tags:
+      - Order
+    summary: Change giving time order by id
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              order_id:
+                type: string
+              giving_time:
+                type: Date
+            required:
+              - type
+              - giving_time
+            example:
+              orider_id: 1
+              giving_time: "2023-03-13"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-17 07:43:22
+-- Started on 2024-03-17 15:55:38
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -24,7 +24,7 @@ DROP DATABASE IF EXISTS "Restaurant";
 -- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'ru_RU.utf8';
+CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
 
 
 ALTER DATABASE "Restaurant" OWNER TO postgres;
@@ -43,26 +43,26 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 245 (class 1255 OID 58714)
--- Name: add_client(character varying, character varying, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 276 (class 1255 OID 58852)
+-- Name: add_client(character varying, character varying, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.add_client(IN _phone character varying, IN _how_to_appeal character varying, IN _last_contact_date timestamp with time zone)
+CREATE PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
 	INSERT INTO client
-		(phone, how_to_appeal, last_contact_date)
+		(phone, "name", last_contact_date, email)
 	VALUES
-		(_name, _how_to_appeal, date_trunc('second', now()));
+		(_phone, _name, date_trunc('second', now()), _email);
 END
 $$;
 
 
-ALTER PROCEDURE public.add_client(IN _phone character varying, IN _how_to_appeal character varying, IN _last_contact_date timestamp with time zone) OWNER TO postgres;
+ALTER PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying) OWNER TO postgres;
 
 --
--- TOC entry 276 (class 1255 OID 58826)
+-- TOC entry 274 (class 1255 OID 58826)
 -- Name: add_client_order(integer, integer[], integer[], timestamp with time zone, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -159,7 +159,7 @@ $$;
 ALTER PROCEDURE public.add_food_type(IN _type character varying) OWNER TO postgres;
 
 --
--- TOC entry 264 (class 1255 OID 42263)
+-- TOC entry 263 (class 1255 OID 42263)
 -- Name: add_ingredient(character varying, character varying, integer, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -235,7 +235,7 @@ $$;
 ALTER PROCEDURE public.add_table(IN _human_slots integer) OWNER TO postgres;
 
 --
--- TOC entry 269 (class 1255 OID 58725)
+-- TOC entry 268 (class 1255 OID 58725)
 -- Name: add_worker(character varying, character varying, character varying, character varying, character varying, double precision, character varying, character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -303,7 +303,7 @@ $$;
 ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _desired_booking_date timestamp with time zone, IN _booking_interval interval) OWNER TO postgres;
 
 --
--- TOC entry 263 (class 1255 OID 58717)
+-- TOC entry 262 (class 1255 OID 58717)
 -- Name: cancel_booking(integer, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -325,7 +325,7 @@ $$;
 ALTER PROCEDURE public.cancel_booking(IN _table_id integer, IN _desired_booking_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 265 (class 1255 OID 50536)
+-- TOC entry 264 (class 1255 OID 50536)
 -- Name: change_order_status(integer, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -343,7 +343,7 @@ $$;
 ALTER PROCEDURE public.change_order_status(IN _order_id integer, IN _new_status character varying) OWNER TO postgres;
 
 --
--- TOC entry 262 (class 1255 OID 50563)
+-- TOC entry 261 (class 1255 OID 50563)
 -- Name: check_ingredient_amount(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -363,7 +363,7 @@ $$;
 ALTER FUNCTION public.check_ingredient_amount() OWNER TO postgres;
 
 --
--- TOC entry 275 (class 1255 OID 58808)
+-- TOC entry 273 (class 1255 OID 58808)
 -- Name: delete_ingredient(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -386,7 +386,7 @@ $$;
 ALTER PROCEDURE public.delete_ingredient(IN ingredient_id integer) OWNER TO postgres;
 
 --
--- TOC entry 273 (class 1255 OID 58735)
+-- TOC entry 271 (class 1255 OID 58735)
 -- Name: delete_order(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -434,25 +434,7 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 271 (class 1255 OID 58799)
--- Name: get_all_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.get_all_tables_on_date(input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer)
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT public."table".id, public."table".human_slots
-    FROM public."table";
-END;
-$$;
-
-
-ALTER FUNCTION public.get_all_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
-
---
--- TOC entry 272 (class 1255 OID 58801)
+-- TOC entry 270 (class 1255 OID 58801)
 -- Name: get_booked_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -472,7 +454,25 @@ $$;
 ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 58827)
+-- TOC entry 279 (class 1255 OID 58854)
+-- Name: get_count_place_all_tables(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_count_place_all_tables() RETURNS TABLE(id integer, human_slots integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT public."table".id, public."table".human_slots
+    FROM public."table";
+END;
+$$;
+
+
+ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
+
+--
+-- TOC entry 277 (class 1255 OID 58827)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -521,7 +521,7 @@ $$;
 ALTER FUNCTION public.get_current_orders() OWNER TO postgres;
 
 --
--- TOC entry 247 (class 1255 OID 58727)
+-- TOC entry 246 (class 1255 OID 58727)
 -- Name: get_ingredients_info(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -559,7 +559,7 @@ $$;
 ALTER FUNCTION public.get_reorder_ingredients_list() OWNER TO postgres;
 
 --
--- TOC entry 246 (class 1255 OID 58723)
+-- TOC entry 245 (class 1255 OID 58723)
 -- Name: get_worker_list(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -578,7 +578,7 @@ $$;
 ALTER FUNCTION public.get_worker_list() OWNER TO postgres;
 
 --
--- TOC entry 267 (class 1255 OID 58719)
+-- TOC entry 266 (class 1255 OID 58719)
 -- Name: order_ingredient(integer, character varying, integer, integer, double precision, timestamp with time zone, timestamp with time zone, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -618,7 +618,7 @@ $$;
 ALTER PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name character varying, IN ingredient_id integer, IN ingredient_quantity integer, IN ingredient_weight double precision, IN ingredient_expiry_date timestamp with time zone, IN supplied_date timestamp with time zone, IN supplied_weight double precision, IN supplied_quantity integer) OWNER TO postgres;
 
 --
--- TOC entry 266 (class 1255 OID 50537)
+-- TOC entry 265 (class 1255 OID 50537)
 -- Name: record_giving_time(integer, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -636,7 +636,7 @@ $$;
 ALTER PROCEDURE public.record_giving_time(IN _order_id integer, IN _giving_time timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 270 (class 1255 OID 58731)
+-- TOC entry 269 (class 1255 OID 58731)
 -- Name: update_ingredient(integer, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -655,7 +655,7 @@ $$;
 ALTER PROCEDURE public.update_ingredient(IN p_ingredient_id integer, IN p_price double precision, IN p_critical_rate integer) OWNER TO postgres;
 
 --
--- TOC entry 274 (class 1255 OID 58809)
+-- TOC entry 272 (class 1255 OID 58809)
 -- Name: update_issue_date(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -714,7 +714,7 @@ $$;
 ALTER PROCEDURE public.update_order(IN _order_id integer, IN _food_id integer[], IN _quantities integer[], IN _new_status character varying) OWNER TO postgres;
 
 --
--- TOC entry 268 (class 1255 OID 58724)
+-- TOC entry 267 (class 1255 OID 58724)
 -- Name: update_worker_salary_and_rate(integer, double precision, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -733,7 +733,7 @@ $$;
 ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN new_salary double precision, IN new_job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 259 (class 1255 OID 50548)
+-- TOC entry 258 (class 1255 OID 50548)
 -- Name: view_all_booked_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -751,7 +751,7 @@ $$;
 ALTER FUNCTION public.view_all_booked_tables() OWNER TO postgres;
 
 --
--- TOC entry 261 (class 1255 OID 50553)
+-- TOC entry 260 (class 1255 OID 50553)
 -- Name: view_food_with_composition(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -771,7 +771,7 @@ $$;
 ALTER FUNCTION public.view_food_with_composition(_food_id integer) OWNER TO postgres;
 
 --
--- TOC entry 260 (class 1255 OID 50551)
+-- TOC entry 259 (class 1255 OID 50551)
 -- Name: view_menu_sorted_by_type(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -791,7 +791,7 @@ $$;
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 58828)
+-- TOC entry 278 (class 1255 OID 58828)
 -- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -838,7 +838,7 @@ $$;
 ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
--- TOC entry 277 (class 1255 OID 58844)
+-- TOC entry 275 (class 1255 OID 58844)
 -- Name: worker_history_trigger_function(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -902,7 +902,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.client (
     phone character varying(32) NOT NULL,
-    how_to_appeal character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
     last_contact_date timestamp with time zone NOT NULL,
     email character varying(255) NOT NULL,
     CONSTRAINT valid_email_format CHECK (((email)::text ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'::text)),
@@ -1394,10 +1394,11 @@ ALTER TABLE ONLY public.worker ALTER COLUMN id SET DEFAULT nextval('public.worke
 -- Data for Name: client; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51+03', 'john@example.com');
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51+03', 'john1@example.com');
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51+03', 'john12@example.com');
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51+03', 'john123@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51+03', 'john@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51+03', 'john1@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51+03', 'john12@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51+03', 'john123@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513678', 'Алекслепеха', '2024-03-17 15:42:22+03', 'leps@example.com');
 
 
 --
@@ -1986,7 +1987,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-17 07:43:22
+-- Completed on 2024-03-17 15:55:38
 
 --
 -- PostgreSQL database dump complete

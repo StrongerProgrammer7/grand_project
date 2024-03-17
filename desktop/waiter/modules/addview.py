@@ -264,7 +264,7 @@ class Ui_Dialog(object):
         self.titleLabel.setText(QCoreApplication.translate("Dialog", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"\u041e\u0444\u0438\u0446\u0438\u0430\u043d\u0442", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"\u0414\u0430\u0442\u0430 \u0432\u044b\u0434\u0430\u0447\u0438", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"\u0421\u0442\u0430\u0442\u0443\u0441", None))
+        self.label_3.setText(QCoreApplication.translate("Dialog", u"\u0414\u0430\u0442\u0430 \u0444\u043e\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f", None))
         self.label_4.setText(QCoreApplication.translate("Dialog", u"\u0411\u043b\u044e\u0434\u0430", None))
         self.label_5.setText(QCoreApplication.translate("Dialog", u"\u0421\u0442\u0430\u0442\u0443\u0441", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", u"\u041e\u0442\u0434\u0430\u043d", None))

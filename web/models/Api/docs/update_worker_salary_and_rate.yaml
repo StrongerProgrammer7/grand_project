@@ -1,0 +1,32 @@
+"/api/update_worker_salary_and_rate":
+  post:
+    tags:
+      - Worker
+    summary: Update salary and rate of worker
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              worker_id:
+                type: integer
+              new_salary:
+                type: double
+              new_job_rate:
+                type: double
+            required:
+              - worker_id
+              - new_salary
+              - new_job_rate
+            example:
+              worker_id: 7
+              new_salary: 50000
+              new_job_rate: 5.0
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

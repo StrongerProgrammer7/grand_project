@@ -72,26 +72,17 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
 
-        # QTableWidget PARAMETERS
-        # ///////////////////////////////////////////////////////////////
-        widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-        # BUTTONS CLICK
-        # ///////////////////////////////////////////////////////////////
-
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-        # widgets.btn_save.clicked.connect(self.buttonClick)
-
         # EXTRA LEFT BOX
-        def openCloseLeftBox():
-            UIFunctions.toggleLeftBox(self, True)
+        #def openCloseLeftBox():
+        #    UIFunctions.toggleLeftBox(self, True)
 
-        widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
+        #widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
+        #widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
         # EXTRA RIGHT BOX
         #def openCloseRightBox():
@@ -153,10 +144,10 @@ class MainWindow(QMainWindow):
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
 
-        tab1_column_widths = [10, 150, 120, 200, 200, 100]
+        tab1_column_widths = [80, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
 
-        tab2_column_widths = [30, 150, 150, 200, 200, 250, 200, 200]
+        tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
         self.fill_table_widget(self.ui.tableWidget)

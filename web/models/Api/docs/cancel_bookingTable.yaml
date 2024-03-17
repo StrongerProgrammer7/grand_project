@@ -2,7 +2,7 @@
   post:
     tags:
       - Table
-    summary: Cancel book
+    summary: Cancel book table by date
     requestBody:
       content:
         application/json:
@@ -11,8 +11,11 @@
             properties:
               id_table:
                 type: integer
+              desired_booking_date:
+                type: Date
             required:
               - id_table
+              - desired_booking_date
           example:
             id_table: 5
     responses:

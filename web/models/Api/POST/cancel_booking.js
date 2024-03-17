@@ -9,12 +9,13 @@ const cancel_booking = async (req, res, next) =>
         return next(ApiError.badRequest("Request body is empty!"));
     const
         {
-            id_table
+            id_table,
+            desired_booking_date
         } = req.body;
-    if (!id_table)
+    if (!(id_table && desired_booking_date))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL cancel_booking($1)', [id_table])
+    db.query('CALL cancel_booking($1,$2)', [id_table, desired_booking_date])
         .then(() =>
         {
             return next(DataApi.success({}, "Booking table is cancel"));

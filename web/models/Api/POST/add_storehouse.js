@@ -16,7 +16,7 @@ const add_storehouse = async (req, res, next) =>
     if (!(name && address && phone))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL add_storage($1,$2,$3)', [
+    db.query('CALL add_storehouse($1,$2,$3)', [
         name,
         address,
         phone

@@ -38,6 +38,26 @@ describe("Prepare test environment", () =>
             const response = await request(app).get("/api/get_current_orders");
             expect(response.status).toBe(201);
         });
+        it("should return current orders", async() =>
+        {
+            const response = await request(app).get("/api/get_current_orders");
+           // Проверка сообщения об успехе
+            expect(response.body.message).toBe("Success!");
+
+            // Проверка значений полей заказа
+            expect(response.body.data[0].id_order).toBe(1)
+
+            expect(response.body.data[0].id_worker).toBe(1);
+            expect(response.body.data[0].id_food).toBe(3);
+            expect(response.body.data[0].dishes['1']).toBe(2);
+            expect(response.body.data[0].dishes['2']).toBe(7);
+            expect(response.body.data[0].dishes['3']).toBe(5);
+            expect(response.body.data[0].formation_date).toBe('2024-03-04T10:15:52.909Z');
+            expect(response.body.data[0].giving_date).toBe('2024-03-04T10:15:52.909Z');
+            expect(response.body.data[0].status).toBe('Ready');
+
+        });
+
 
         it("NEED TEST PROBLEM WITH CERTIFICATE", async () =>
         {

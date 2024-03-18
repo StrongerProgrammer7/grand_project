@@ -78,7 +78,7 @@ describe("Prepare test environment", () =>
             const result = await postData("https://grandproject.k-lab.su/api/get_all_booked_tables");
 
             console.log(result);
-            expect(data.data.length > 0 && data.data[0].table_id);
+            expect(result.data.length > 0 && result.data[0].table_id);
 
         });
     });

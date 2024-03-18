@@ -1778,7 +1778,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                       <string notr="true">background: transparent;</string>
                      </property>
                      <property name="currentIndex">
-                      <number>1</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2667,11 +2667,6 @@ background-color: rgb(177, 177, 177);</string>
                             </column>
                             <column>
                              <property name="text">
-                              <string>Статус</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
                               <string>Официант</string>
                              </property>
                              <property name="font">
@@ -2710,7 +2705,7 @@ background-color: rgb(177, 177, 177);</string>
                               <string/>
                              </property>
                             </item>
-                            <item row="0" column="2">
+                            <item row="0" column="1">
                              <property name="text">
                               <string/>
                              </property>

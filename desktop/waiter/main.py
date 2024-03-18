@@ -411,8 +411,7 @@ class MainWindow(QMainWindow):
                 "Официант": "id_worker",
                 "Дата выдачи": "giving_date",
                 "Дата формирования": "formation_date",
-                "Блюдо": "id_food",
-                "Количество блюд": "num_of_food",
+                "Блюда": "dishes",
                 "Статус": "status"
             }
             endpoint = 'get_order_history'
@@ -421,11 +420,10 @@ class MainWindow(QMainWindow):
             field_mapping = {
                 "№": "table_id",
                 "Официант": "worker_id",
-                "Дата заказа": "desired_date",
-                "Дата брони": "booking_date",
+                "Дата заказа": "booking_date",
+                "Желаема дата": "desired_date",
                 "Номер телефона": "client_number",
-                "Интервал брони": "booking_interval",
-                "На чье имя": ""  # Пропустить поле "На чье имя"
+                "Интервал брони": "booking_interval"
             }
             endpoint = 'get_all_booked_tables'
             date_keys = ['booking_date', 'desired_date']
@@ -433,35 +431,38 @@ class MainWindow(QMainWindow):
             return  # Если таблица не соответствует ни одному известному типу данных, выходим из функции
 
         # Загружаем данные из JSON файла
-        with open(f"modules/api/jsons/{endpoint}.json", "r") as file:
+        with open(f"../waiter/modules/api/jsons/{endpoint}.json", "r") as file:
             json_data = json.load(file)
 
-        data = json_data['data']  # Получаем данные из загруженного JSON
+        data = json_data['data'][0]['view_order_history'] if endpoint == 'get_order_history' else json_data['data']
 
         tableWidget.setRowCount(len(data))
         tableWidget.setColumnCount(len(field_mapping))
 
-        headers = list(field_mapping.keys())  # Получаем заголовки столбцов из ключей первого элемента
+        headers = list(field_mapping.keys())
 
         for row_idx, row_data in enumerate(data):
             for col_idx, header in enumerate(headers):
                 key = field_mapping[header]
-                if key == "":  # Пропустить поле "На чье имя"
+                if key == "":
                     continue
                 if endpoint == 'get_all_booked_tables':
-                    if key in date_keys:  # Если это дата, проводим валидацию и форматирование
+                    if key in date_keys:
                         date_obj = datetime.strptime(row_data[key], "%Y-%m-%dT%H:%M:%S.%fZ")
                         formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
                         item = QTableWidgetItem(formatted_date)
-                    elif key == 'booking_interval':  # Если это интервал для бронирования столика
+                    elif key == 'booking_interval':
                         item = QTableWidgetItem(str(row_data[key]['hours']))
                     else:
                         item = QTableWidgetItem(str(row_data[key]))
                 elif endpoint == 'get_order_history':
-                    if key in date_keys:  # Если это дата, проводим валидацию и форматирование
+                    if key in date_keys:
                         date_obj = datetime.fromisoformat(row_data[key])
                         formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
                         item = QTableWidgetItem(formatted_date)
+                    elif key == 'dishes':
+                        dishes_str = ', '.join([f'{dish}: {qty}' for dish, qty in row_data[key].items()])
+                        item = QTableWidgetItem(dishes_str)
                     else:
                         item = QTableWidgetItem(str(row_data[key]))
                 else:

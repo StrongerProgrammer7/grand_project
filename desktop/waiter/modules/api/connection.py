@@ -18,6 +18,7 @@ class ApiConnect:
             if response.status_code == 201:
                 print(f'get_data | {endpoint} | ', response.status_code)
                 return response.json()
+        print('None')
         return None
 
     def post_data(self, endpoint: str, data: json):
@@ -48,11 +49,4 @@ class ApiConnect:
                 return response.json()
         return None
 
-    def update_json_files(self):
-        endpoints = ['order_history', 'all_booked_tables']  # список всех эндпоинтов, которые нужно обновить
 
-        for endpoint in endpoints:
-            data = self.get_data(endpoint)
-            if data:
-                with open(f"jsons/{endpoint}.json", "w") as file:
-                    json.dump(data, file)

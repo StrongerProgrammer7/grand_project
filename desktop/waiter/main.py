@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         self.api = ApiConnect()
 
         # Запуск обновления данных каждые 10 минут
-        schedule.every(10).minutes.do(self.api.update_json_files)
+        schedule.every(3).hours.do(self.update_json_files)
         schedule.run_pending()
         time.sleep(1)
 
@@ -138,7 +138,8 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.utvrbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(
+            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -165,7 +166,6 @@ class MainWindow(QMainWindow):
         self.connect_sorting_function(widgets.tableWidget_2)
         self.connect_sorting_function(widgets.tableWidget_3)
 
-
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 
@@ -173,7 +173,6 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
-
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -231,17 +230,27 @@ class MainWindow(QMainWindow):
     def open_new_window2(self):
         self.new_window2.show()
 
+    def update_json_files(self):
+        endpoints = ['get_order_history', 'get_all_booked_tables']  # список всех эндпоинтов, которые нужно обновить
+
+        for endpoint in endpoints:
+            data = self.api.get_data(endpoint)
+            if data:
+                with open(f"../waiter/modules/api/jsons/{endpoint}.json", "w") as file:
+                    json.dump(data, file)
+
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
-        self.curUser = User.authorization(username, password, self.api)
 
-        if self.curUser is not None:
-            pass
+        # self.curUser = User.authorization(username, password, self.api)
+        #
+        # if self.curUser is not None:
+        #     pass
 
         if username == "" and password == "":
 
-            self.api.update_json_files()
+            self.update_json_files()
             # Создаем и запускаем потоки для заполнения таблиц
             order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
             table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
@@ -370,7 +379,7 @@ class MainWindow(QMainWindow):
             if selected_row >= 0:  # Проверяем, что строка действительно выбрана
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget_3.setItem(selected_row, 0,
-                                            QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
+                                              QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
                 self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
                 self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
                 self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
@@ -381,12 +390,12 @@ class MainWindow(QMainWindow):
 
                 # TODO: Добавить валидацию
                 data = {
-                  "id_table": selected_row+1,
-                  "id_worker": line1,
-                  "phone_client": line2,
-                  "order_time": datetime1,
-                  "desired_booking_time": datetime2,
-                  "booking_interval": line3
+                    "id_table": selected_row + 1,
+                    "id_worker": line1,
+                    "phone_client": line2,
+                    "order_time": datetime1,
+                    "desired_booking_time": datetime2,
+                    "booking_interval": line3
                 }
                 print(data)
 
@@ -406,7 +415,7 @@ class MainWindow(QMainWindow):
                 "Количество блюд": "num_of_food",
                 "Статус": "status"
             }
-            endpoint = 'order_history'
+            endpoint = 'get_order_history'
             date_keys = ['formation_date', 'giving_date']
         elif tableWidget.objectName() == 'tableWidget_3':
             field_mapping = {
@@ -418,7 +427,7 @@ class MainWindow(QMainWindow):
                 "Интервал брони": "booking_interval",
                 "На чье имя": ""  # Пропустить поле "На чье имя"
             }
-            endpoint = 'all_booked_tables'
+            endpoint = 'get_all_booked_tables'
             date_keys = ['booking_date', 'desired_date']
         else:
             return  # Если таблица не соответствует ни одному известному типу данных, выходим из функции
@@ -439,15 +448,24 @@ class MainWindow(QMainWindow):
                 key = field_mapping[header]
                 if key == "":  # Пропустить поле "На чье имя"
                     continue
-                if key in date_keys:  # Если это дата, проводим валидацию и форматирование
-                    date_obj = datetime.strptime(row_data[key], "%Y-%m-%dT%H:%M:%S.%fZ")
-                    formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
-                    item = QTableWidgetItem(formatted_date)
-                elif key == 'booking_interval' and field_mapping[
-                    header] == 'table_booking':  # Если это интервал для бронирования столика
-                    item = QTableWidgetItem(str(row_data[key]['days']))
+                if endpoint == 'get_all_booked_tables':
+                    if key in date_keys:  # Если это дата, проводим валидацию и форматирование
+                        date_obj = datetime.strptime(row_data[key], "%Y-%m-%dT%H:%M:%S.%fZ")
+                        formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                        item = QTableWidgetItem(formatted_date)
+                    elif key == 'booking_interval':  # Если это интервал для бронирования столика
+                        item = QTableWidgetItem(str(row_data[key]['hours']))
+                    else:
+                        item = QTableWidgetItem(str(row_data[key]))
+                elif endpoint == 'get_order_history':
+                    if key in date_keys:  # Если это дата, проводим валидацию и форматирование
+                        date_obj = datetime.fromisoformat(row_data[key])
+                        formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                        item = QTableWidgetItem(formatted_date)
+                    else:
+                        item = QTableWidgetItem(str(row_data[key]))
                 else:
-                    item = QTableWidgetItem(str(row_data[key]))
+                    continue
                 tableWidget.setItem(row_idx, col_idx, item)
 
 

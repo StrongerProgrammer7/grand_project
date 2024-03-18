@@ -16,7 +16,7 @@ class ApiConnect:
             response = requests.get(url, verify=False)
 
             if response.status_code == 201:
-                print(f'get_data | {endpoint} | ', response)
+                print(f'get_data | {endpoint} | ', response.status_code)
                 return response.json()
         return None
 
@@ -25,6 +25,7 @@ class ApiConnect:
             url = f'{self.api_url}/{endpoint}'
             response = requests.post(url, json=data, verify=False)
 
+            print(f'post_data | {endpoint} | ', response.status_code)
             if response.status_code == 201:
                 return response.json()
         return None
@@ -55,5 +56,3 @@ class ApiConnect:
             if data:
                 with open(f"jsons/{endpoint}.json", "w") as file:
                     json.dump(data, file)
-
-

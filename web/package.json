@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon ./app.js",
-    "start": "cross-env NODE_EXTRA_CA_CERTS=\"./certificate/ca.pem\" node ./app.js"
+    "start": "cross-env NODE_EXTRA_CA_CERTS=\"./certificate/ca.pem\" node ./app.js",
+    "test": "cross-env NODE_EXTRA_CA_CERTS=\"./certificate/ca.pem\" jest ."
   },
   "repository": {
     "type": "git",

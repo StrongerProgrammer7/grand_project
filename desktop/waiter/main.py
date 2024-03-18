@@ -355,7 +355,7 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
                 # TODO: Добавить валидацию
                 data = {
-                  "id_table": selected_row + 1,
+                  "id_table": selected_row+1,
                   "id_worker": line1,
                   "phone_client": line2,
                   "order_time": datetime1,

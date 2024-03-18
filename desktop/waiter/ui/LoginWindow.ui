@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>LoginWindow</string>
+   <string>Авторизация</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{
@@ -268,7 +268,7 @@ background-position: left center;
 	border-radius: 5px;</string>
    </property>
    <property name="text">
-    <string>Войти</string>
+    <string>Авторизация</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

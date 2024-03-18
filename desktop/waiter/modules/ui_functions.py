@@ -276,7 +276,6 @@ class UIFunctions(MainWindow):
         for column, width in enumerate(column_widths):
             table_widget.setColumnWidth(column, width)
 
-
     def sort_column(logicalIndex):
         sender = QObject.sender()  # Получаем отправителя события
         table_widget = sender.parent()  # Получаем ссылку на таблицу, в которой был клик на заголовок столбца
@@ -295,6 +294,7 @@ class UIFunctions(MainWindow):
 
         # Сохраняем новый порядок сортировки для данной таблицы и данного столбца
         table_widget.column_sort_order[logicalIndex] = order
+
     def commit(self, table):
         data_dict = {}
         column_count = table.columnCount()

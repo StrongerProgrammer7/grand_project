@@ -1,19 +1,3 @@
-# ///////////////////////////////////////////////////////////////
-#
-# BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
-
 import sys
 import os
 import platform
@@ -48,63 +32,38 @@ class MainWindow(QMainWindow):
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         # APP NAME
-        # ///////////////////////////////////////////////////////////////
-        title = "SOLIDSIGN - для официантов"
-        description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
+        #title = "SOLIDSIGN - для официантов"
+        #description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
         # APPLY TEXTS
-        self.setWindowTitle(title)
-        widgets.titleRightInfo.setText(description)
+        #self.setWindowTitle(title)
+        #widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
-        # ///////////////////////////////////////////////////////////////
-        # widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
+        widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
         # SET UI DEFINITIONS
-        # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
 
         # QTableWidget PARAMETERS
-        # ///////////////////////////////////////////////////////////////
         widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # BUTTONS CLICK
-        # ///////////////////////////////////////////////////////////////
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
-        #widgets.btn_new.clicked.connect(self.buttonClick)
-
-        # widgets.btn_save.clicked.connect(self.buttonClick)
-
-        # EXTRA LEFT BOX
-        # def openCloseLeftBox():
-        # UIFunctions.toggleLeftBox(self, True)
-
-        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
-
-        # EXTRA RIGHT BOX
-        def openCloseRightBox():
-            UIFunctions.toggleRightBox(self, True)
-
-        widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
 
         # SHOW APP
-        # ///////////////////////////////////////////////////////////////
         self.show()
 
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
-
-        widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
+        widgets.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
 
         UIFunctions.theme(self, self.themeFile, True)
-        widgets.toggleLeftBox.clicked.connect(lambda: UIFunctions.toggle_theme(self))
+        widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
-        # SET HACKS
-        # AppFunctions.setThemeHack(self)
 
         # SET HOME PAGE AND SELECT MENU
         # ///////////////////////////////////////////////////////////////
@@ -137,11 +96,6 @@ class MainWindow(QMainWindow):
             UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
 
-        if btnName == "btn_save":
-            print("Save BTN clicked!")
-
-        # PRINT BTN NAME
-        print(f'Button "{btnName}" pressed!')
 
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
@@ -161,9 +115,23 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
+    def fill_table_widget(self, tableWidget):
+
+        data = [
+            (1, 2, 3, 4, 5, 6),
+            (7, 8, 9, 10, 11, 12),
+            (1, 2, 3, 4, 5, 6),
+        ]
+
+        tableWidget.setRowCount(len(data))
+        tableWidget.setColumnCount(len(data[0]))
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, cell_data in enumerate(row_data):
+                item = QTableWidgetItem(str(cell_data))
+                tableWidget.setItem(row_idx, col_idx, item)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
     sys.exit(app.exec())

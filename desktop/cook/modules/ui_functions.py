@@ -203,11 +203,11 @@ class UIFunctions(MainWindow):
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
-            self.ui.toggleLeftBox.setStyleSheet("background-image: url(images/icons/sun.png)")
+            self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/sun.png)")
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
             self.themeFile = "themes/py_dracula_dark.qss"
-            self.ui.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
+            self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
 
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////

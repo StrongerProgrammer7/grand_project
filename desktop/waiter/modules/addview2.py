@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QDialog,
-    QFrame, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDateTimeEdit, QDialog, QFrame,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QVBoxLayout, QWidget)
 
 class Ui_Dialog2(object):
     def setupUi(self, Dialog):
@@ -155,27 +155,11 @@ class Ui_Dialog2(object):
         self.verticalLayout_4.setSpacing(5)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalLayout_4.setContentsMargins(50, 0, 50, 10)
-        self.label_3 = QLabel(self.frame_2)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setAlignment(Qt.AlignCenter)
-
-        self.verticalLayout_4.addWidget(self.label_3)
-
-        self.comboBox = QComboBox(self.frame_2)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
+        self.label = QLabel(self.frame_2)
+        self.label.setObjectName(u"label")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
-        self.comboBox.setSizePolicy(sizePolicy1)
-
-        self.verticalLayout_4.addWidget(self.comboBox)
-
-        self.label = QLabel(self.frame_2)
-        self.label.setObjectName(u"label")
         sizePolicy1.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy1)
         self.label.setStyleSheet(u"")
@@ -286,11 +270,6 @@ class Ui_Dialog2(object):
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c", None))
         self.titleLabel.setText(QCoreApplication.translate("Dialog", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u0437\u0430\u043f\u0438\u0441\u044c", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"\u0421\u0442\u0430\u0442\u0443\u0441", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("Dialog", u"\u0411\u0440\u043e\u043d\u044c", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Dialog", u"\u0417\u0430\u043d\u044f\u0442", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("Dialog", u"\u0421\u0432\u043e\u0431\u043e\u0434\u0435\u043d", None))
-
         self.label.setText(QCoreApplication.translate("Dialog", u"\u041e\u0444\u0438\u0446\u0438\u0430\u043d\u0442", None))
         self.label_4.setText(QCoreApplication.translate("Dialog", u"\u0414\u0430\u0442\u0430 \u0437\u0430\u043a\u0430\u0437\u0430", None))
         self.label_5.setText(QCoreApplication.translate("Dialog", u"\u0414\u0430\u0442\u0430 \u0431\u0440\u043e\u043d\u0438", None))

@@ -76,14 +76,49 @@ describe("Prepare test environment", () =>
             }
 
             const result = await postData("https://grandproject.k-lab.su/api/get_all_booked_tables");
-
-            console.log(result);
+//            console.log(result);
             expect(result.data.length > 0 && result.data[0].table_id);
 
             const res1 = await postData("https://grandproject.k-lab.su/api/get_current_orders");
-
-            console.log(res1);
+//            console.log(res1);
             expect(res1.data.length > 0 && res1.data[0].id_order);
+
+            const order_history = await postData("https://grandproject.k-lab.su/api/get_order_history");
+//            console.log(order_history);
+            expect(order_history.data.length > 0 && order_history.data[0].id_order);
+            expect(order_history.message).toBe("Success!");
+
+
+            const get_ingredients_info = await postData("https://grandproject.k-lab.su/api/get_ingredients_info");
+//            console.log(get_ingredients_info);
+            expect(get_ingredients_info.data.length > 0 && get_ingredients_info.data[0].name);
+            expect(get_ingredients_info.message).toBe("Success!");
+
+
+            const get_menu_sorted_by_type = await postData("https://grandproject.k-lab.su/api/get_menu_sorted_by_type");
+//            console.log(get_menu_sorted_by_type);
+            expect(get_menu_sorted_by_type.data.length > 0 && get_menu_sorted_by_type.data[0].food_id);
+            expect(get_menu_sorted_by_type.message).toBe("Success!");
+
+
+            const get_reorder_ingredients_list = await postData("https://grandproject.k-lab.su/api/get_reorder_ingredients_list");
+//            console.log(get_reorder_ingredients_list);
+            expect(get_reorder_ingredients_list.data.length > 0 && get_reorder_ingredients_list.data[0].name);
+            expect(get_reorder_ingredients_list.message).toBe("Success!");
+
+
+            const get_name_storehouse = await postData("https://grandproject.k-lab.su/api/get_name_storehouse");
+//            console.log(get_name_storehouse);
+            expect(get_name_storehouse.data.length > 0 && get_name_storehouse.data[0].name);
+            expect(get_name_storehouse.message).toBe("Success!");
+            console.error("Body is undefined in get_name_storehouse");
+
+
+            const get_worker_list = await postData("https://grandproject.k-lab.su/api/get_worker_list");
+//            console.log(get_worker_list);
+            expect(get_worker_list.data.length > 0 && get_worker_list.data[0].phone);
+            expect(get_worker_list.message).toBe("Success!");
+
 
 
         });

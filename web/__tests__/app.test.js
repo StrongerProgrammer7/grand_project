@@ -111,13 +111,41 @@ describe("Prepare test environment", () =>
 //            console.log(get_name_storehouse);
             expect(get_name_storehouse.data.length > 0 && get_name_storehouse.data[0].name);
             expect(get_name_storehouse.message).toBe("Success!");
-            console.error("Body is undefined in get_name_storehouse");
 
 
             const get_worker_list = await postData("https://grandproject.k-lab.su/api/get_worker_list");
 //            console.log(get_worker_list);
             expect(get_worker_list.data.length > 0 && get_worker_list.data[0].phone);
             expect(get_worker_list.message).toBe("Success!");
+
+        });
+
+
+        it("NEED TEST PROBLEM WITH CERTIFICATE", async () =>
+        {
+
+            /* let response = await fetch("https://grandproject.k-lab.su", {
+                 agent: new https.Agent({ ca: fs.readFileSync(__dirname + "/ca.pem") })
+             });
+             let fetchHtml = await response.text();
+             console.log(fetchHtml);*/
+            async function postData(url = "", data = {})
+            {
+                // Default options are marked with *
+                const response = await fetch(url, {
+                    method: "GET", // *GET, POST, PUT, DELETE, etc.
+                    mode: "cors", // no-cors, *cors, same-origin
+                    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                    credentials: "same-origin", // include, *same-origin, omit
+                    headers: {
+                        "Content-Type": "application/json",
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: "follow", // manual, *follow, error
+                    referrerPolicy: "no-referrer", // no-referrer, *client
+                });
+                return await response.json(); // parses JSON response into native JavaScript objects
+            }
 
 
 

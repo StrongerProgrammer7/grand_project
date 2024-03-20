@@ -1,18 +1,3 @@
-# ///////////////////////////////////////////////////////////////
-#
-# BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
 from PySide6 import QtWidgets
 from PySide6.QtCore import QDateTime, QTimer
 from PySide6.QtWidgets import QLineEdit
@@ -300,13 +285,15 @@ class UIFunctions(MainWindow):
 
         for row_index in range(table.rowCount()):
             item_id = int(table.item(row_index, 0).text())
-            name = table.item(row_index, 1).text()
-            count = int(table.item(row_index, 2).text())
+            food_id = table.item(row_index, 1).text()
+            food_amount = int(table.item(row_index, 2).text())
             comment = table.item(row_index, 3).text()
+            formation_date = None
+            givig_date = None
 
-            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
+            data_dict[str(item_id)] = {"name": food_id, "count": food_amount, "comment": comment}
 
-        json_data = {"data": data_dict}
+        json_data = {"data": data_dict, "status": "In Progress"}
         print("Data saved:", json_data)
 
     def load(self):

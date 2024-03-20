@@ -80,6 +80,12 @@ describe("Prepare test environment", () =>
             console.log(result);
             expect(result.data.length > 0 && result.data[0].table_id);
 
+            const res1 = await postData("https://grandproject.k-lab.su/api/get_current_orders");
+
+            console.log(res1);
+            expect(res1.data.length > 0 && res1.data[0].id_order);
+
+
         });
     });
 

@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>720</height>
+    <width>701</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,8 +19,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>1280</width>
-    <height>720</height>
+    <width>500</width>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -2112,6 +2112,9 @@ background-color: rgb(177, 177, 177);</string>
                           </property>
                           <item>
                            <widget class="QTableWidget" name="tableWidget">
+                            <property name="editTriggers">
+                             <set>QAbstractItemView::NoEditTriggers</set>
+                            </property>
                             <attribute name="horizontalHeaderCascadingSectionResizes">
                              <bool>true</bool>
                             </attribute>
@@ -2667,11 +2670,6 @@ background-color: rgb(177, 177, 177);</string>
                             </column>
                             <column>
                              <property name="text">
-                              <string>Статус</string>
-                             </property>
-                            </column>
-                            <column>
-                             <property name="text">
                               <string>Официант</string>
                              </property>
                              <property name="font">
@@ -2710,7 +2708,7 @@ background-color: rgb(177, 177, 177);</string>
                               <string/>
                              </property>
                             </item>
-                            <item row="0" column="2">
+                            <item row="0" column="1">
                              <property name="text">
                               <string/>
                              </property>

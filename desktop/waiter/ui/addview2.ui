@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Изменить запись</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -203,41 +203,6 @@ QLabel {
             <property name="bottomMargin">
              <number>10</number>
             </property>
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Статус</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <item>
-               <property name="text">
-                <string>Бронь</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Занят</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Свободен</string>
-               </property>
-              </item>
-             </widget>
-            </item>
             <item>
              <widget class="QLabel" name="label">
               <property name="sizePolicy">

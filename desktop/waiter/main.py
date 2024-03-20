@@ -134,17 +134,19 @@ class MainWindow(QMainWindow):
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
-        widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
+        widgets.pushButton_2.clicked.connect(self.open_new_window)
 
         # 3 ВКЛАДКА
         widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
-        widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
+        widgets.pushButton_8.clicked.connect(self.open_new_window2)
 
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
 
         tab1_column_widths = [80, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
+
+
 
         tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
@@ -218,9 +220,42 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
     def open_new_window(self):
+        selected_row = self.ui.tableWidget.currentRow()
+        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+            # Получаем содержимое каждой ячейки выбранной строки
+            line = self.ui.tableWidget.item(selected_row, 1).text()
+            datetime1 = self.ui.tableWidget.item(selected_row, 2).text()
+            datetime2 = self.ui.tableWidget.item(selected_row, 3).text()
+            line2 = self.ui.tableWidget.item(selected_row, 4).text()
+            combBox = self.ui.tableWidget.item(selected_row, 5).text()
+
+            # Отображаем данные выбранной строки в диалоговом окне перед его открытием
+            self.ui_dialog.lineEdit.setText(line)
+            self.ui_dialog.dateTimeEdit.setDateTime(QDateTime.fromString(datetime1, "yyyy-MM-dd hh:mm:ss"))
+            self.ui_dialog.dateTimeEdit_2.setDateTime(QDateTime.fromString(datetime2, "yyyy-MM-dd hh:mm:ss"))
+            self.ui_dialog.lineEdit_2.setText(line2)
+            self.ui_dialog.comboBox.setCurrentText(combBox)
         self.new_window.show()
 
     def open_new_window2(self):
+        selected_row = self.ui.tableWidget_3.currentRow()
+        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+            # Получаем содержимое каждой ячейки выбранной строки
+            line = self.ui.tableWidget_3.item(selected_row, 1).text()
+            datetime1 = self.ui.tableWidget_3.item(selected_row, 2).text()
+            datetime2 = self.ui.tableWidget_3.item(selected_row, 3).text()
+            line2 = self.ui.tableWidget_3.item(selected_row, 4).text()
+            line3 = self.ui.tableWidget_3.item(selected_row, 5).text()
+            line4 = self.ui.tableWidget_3.item(selected_row, 6).text()
+
+            # Отображаем данные выбранной строки в диалоговом окне перед его открытием
+            self.ui_dialog2.lineEdit.setText(line)
+            self.ui_dialog2.dateTimeEdit.setDateTime(QDateTime.fromString(datetime1, "yyyy-MM-dd hh:mm:ss"))
+            self.ui_dialog2.dateTimeEdit_2.setDateTime(QDateTime.fromString(datetime2, "yyyy-MM-dd hh:mm:ss"))
+            self.ui_dialog2.lineEdit_2.setText(line2)
+            self.ui_dialog2.lineEdit_3.setText(line3)
+            self.ui_dialog2.lineEdit_4.setText(line4)
+
         self.new_window2.show()
 
     def login(self):
@@ -280,6 +315,7 @@ class MainWindow(QMainWindow):
             selected_row = self.ui.tableWidget.currentRow()
 
             if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
@@ -353,6 +389,7 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
                 self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
                 self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
+
                 # TODO: Добавить валидацию
                 data = {
                   "id_table": selected_row+1,

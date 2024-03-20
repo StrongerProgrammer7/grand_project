@@ -1,19 +1,3 @@
-# ///////////////////////////////////////////////////////////////
-#
-# BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
-
 import sys
 import os
 import platform
@@ -355,7 +339,7 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
                 self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
-                # TODO: Добавить валидациюы
+                # TODO: Добавить валидацию
 
                 # Преобразуем данные в JSON
                 dishes_dict = {}  # Предполагается, что line содержит данные в формате "Название:Количество"
@@ -363,21 +347,21 @@ class MainWindow(QMainWindow):
                     name, quantity = dish.split(':')
                     dishes_dict[name.strip()] = int(quantity.strip())
 
+                food_ids = []
+                quantities = []
+                for food_id, quantity in dishes_dict.items():
+                    food_ids.append(int(food_id))
+                    quantities.append(quantity)
+
                 data = {
-                    "id_order": selected_row + 1,
-                    "id_worker": 1,
-                    "dishes": dishes_dict,
-                    "status": combBox,
-                    "formation_date": datetime1,
-                    "giving_date": datetime2
+                    "order_id": selected_row + 1,
+                    "food_id": food_ids,
+                    "quantities": quantities,
+                    "status": combBox
                 }
 
                 # Отправляем данные с помощью функции post_data
-                # if self.api.post_data('orders', data) is not None:
-                #     print(f'УСПЕШНАЯ ПЕРЕДАЧА | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
-                # else:
-                #     print(f'[!] ОШИБКА ПЕРЕДАЧИ | ИЗМЕНЕНИЯ В ЗАКАЗЕ {selected_row + 1}')
-                print(data)
+                self.api.post_data('update_orders', data)
 
             self.new_window.close()
         else:

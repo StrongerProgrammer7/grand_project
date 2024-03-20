@@ -419,7 +419,7 @@ QComboBox{
 	border: 2px solid #6272a4;
 	padding: 5px;
 	padding-left: 10px;
-    color: #f8f8f2;
+    color: rgb(0, 0, 0);
 }
 QComboBox:hover{
 	border: 2px solid #7284b9;

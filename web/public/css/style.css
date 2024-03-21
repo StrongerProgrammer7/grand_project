@@ -17,6 +17,7 @@ a
 	vertical-align:baseline;
 	background:transparent;
 	outline:none;
+    transition: color 0.075s;
 }
 table 
 {						/* устраняем отступы между ячейками таблицы */
@@ -84,6 +85,7 @@ a, a:visited
 { /* порядок правил для ссылок имеет значение */
 	
 	text-decoration: underline;
+    color: black;
 }
 a:hover 
 {
@@ -125,6 +127,8 @@ body {
     
     font-size: 16px;
 
+    
+
 
 }
 
@@ -149,12 +153,14 @@ a {
 }
 
 .shit {
+    opacity: 0;
     position: relative;
     z-index: -100;
     
 }
 
 .shit svg {
+    z-index: -100;
     position: absolute;
     overflow-x: hidden;
 }
@@ -250,7 +256,7 @@ a {
 
 }
 
-.right-header div:nth-child(-n+2) {
+.right-header a:nth-child(-n+2) {
 
     cursor: pointer;
     
@@ -258,6 +264,8 @@ a {
     border-radius: 50px;
     padding: 8px;
     background-color: rgba(255, 255, 255, 0.75);
+
+    font-weight: 600;
 
 }
 
@@ -271,34 +279,44 @@ a {
     background-color: rgba(234, 109, 39, 1);
 }
 
+
+
 .button {
     user-select: none;
-    transition: all 0.15s;
+    transition: all 0.1s;
     cursor: pointer;
     font-weight: 500;
+    font-weight: bold;
     font-style: normal;
     font-size: 20px;
     padding: 18px 8px;
-
+    opacity: 0.9;
     min-width: 96px;
     text-align: center;
-    z-index: 5;
+    z-index: 500;
     color: white;
-    border-radius: 15px 4px 15px 4px;
+    border-radius: 25px 8px 25px 8px;
+    border: none;
 
     -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
     -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
     box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
 }
 
+.black {
+    color: black;
+}
+
 .button:hover {
-    transform: scale(1.02);
-    opacity: 0.95;
+    /* transform: scale(1.01);
+    opacity: 0.975; */
+    opacity: 1;
 }
 
 .button:active {
-    transform: scale(1.05);
-    opacity: 0.9;
+    /* transform: scale(1.02);
+    opacity: 0.95; */
+    opacity: 0.8;
 }
 
 /* .right-header div:last-child {
@@ -386,7 +404,7 @@ a {
 .main .image {
     max-width: 666px;
     position: relative;
-    z-index: 1;
+    z-index: -500;
 
 
 
@@ -571,16 +589,11 @@ a {
     
 }
 
-.dishes {
-    height: 500px;
-    padding-left: 30px;
-    padding-right: 30px;
-    margin-bottom: 60px;
-    margin: auto;
-}
 
 .tables {
+
     width: 1331px;
+    background-color: white;
     
     margin: auto;
     
@@ -589,7 +602,9 @@ a {
     position: relative;
     padding-left: 30px;
     padding-right: 30px;
-    margin-bottom: 30px;
+
+    transition: filter 0.15s;
+    
     
     
 }
@@ -795,3 +810,205 @@ a {
     left: 1218px;
     position: absolute;
 }
+
+.booking {
+    width: 1391px;
+    z-index: -500;
+    margin: auto;
+    margin-bottom: 60px;
+
+    transform-origin: top left;
+
+}
+
+.booking .button {
+    width: 174px;
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.nonclickable {
+    cursor:initial;
+}
+
+.nonclickable:hover {
+    transform: scale(1);
+    opacity: 0.9;
+}
+
+.nonclickable:active {
+    transform: scale(1);
+    opacity: 0.9;
+}
+
+.popup {
+    max-width: 400px;
+    width: 50%;
+    padding: 30px 60px;
+    background-color: #EA6D27;
+    border-radius: 50px;
+    -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    color: black;
+    background-color: white;
+
+    z-index: 1000;
+
+}
+
+.Absolute-Center {
+    /* margin: auto; */
+    position: absolute;
+    /* left: 0; right: 0;
+    top: 300px; */
+
+    transform: translate(-50%,-50%);
+    left: 50%;
+    top: 50%;
+
+    
+ 
+
+
+}
+
+.clickable {
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.clickable:hover {
+    transform: scale(1.1);
+    opacity: 0.95;
+}
+
+.clickable:active {
+    transform: scale(1.2);
+    opacity: 0.90;
+}
+
+.nonvisible {
+    display: none;
+}
+
+.dishes {
+
+    padding-left: 30px;
+    padding-right: 30px;
+    
+    margin: auto;
+    margin-bottom: 60px;
+    max-width: 880px;
+
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dish {
+    box-sizing: border-box;
+    max-width: 214px;
+    width: 100%;
+    background-color: #f8f7f5;
+    border-radius: 24px;
+    padding: 16px 12px;
+}
+
+.dish div {
+    margin-bottom: 4px;
+}
+
+.dish div:first-child {
+    font-weight: bold;
+}
+
+.dish div:nth-child(2) {
+    font-size: 20px;
+    color: rgb(252, 82, 48);
+}
+
+.dish div:nth-child(3) {
+    color: rgb(158, 155, 152);
+}
+
+.date {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.date input {
+    background-color: rgba(234, 109, 39, 1);
+    padding: 15px;
+    color: white;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    
+    border-radius: 25px 8px 25px 8px;
+
+    -webkit-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    -moz-box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 15px 30px 0px rgba(0,0,0,0.15);
+}
+
+.blured {
+    filter: blur(4px);
+}
+
+.popup h1 {
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.popup div, .popup h1, .popup p {
+    margin-bottom: 15px;
+}
+
+.popup div:last-child, h1:last-child {
+    margin-bottom: 0;
+}
+
+.right {
+    display: block;
+    max-width: 172px;
+    margin-left: auto;
+}
+
+.booked {
+   
+    text-align: center;
+    font-weight: bold;
+}
+
+.chosen {
+    display: block;
+    margin-bottom: 15px;
+
+    padding: 15px;
+    color: black;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: rgb(248, 247, 245);
+    border-radius: 24px;
+
+}
+
+.chosen:last-child {
+    margin-bottom: 0;
+}
+
+.popup form {
+    margin-top: 30px;
+}
+
+.popup .button {
+    margin-top: 30px;
+}
+

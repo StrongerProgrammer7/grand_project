@@ -149,6 +149,11 @@ class MainWindow(QMainWindow):
         self.connect_sorting_function(widgets.tableWidget_2)
         self.connect_sorting_function(widgets.tableWidget_3)
 
+        label2Text = widgets.label_2.text()
+        with open('OrderNum', 'r') as file:
+            ordernum = file.read()
+
+        widgets.label_2.setText(f"{label2Text} {ordernum}")
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 

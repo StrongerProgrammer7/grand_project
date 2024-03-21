@@ -7,6 +7,7 @@ const book_table = async (req, res, next) =>
 {
     if (!req.body)
         return next(ApiError.badRequest("Request body is empty!"));
+
     const
         {
             id_table,

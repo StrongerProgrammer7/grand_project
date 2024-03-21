@@ -1,9 +1,8 @@
 const { createLogger, transports, format } = require("winston");
 
-const myFormatLogsInternalError = format.printf(({ level, meta, timestamp }) =>
+const myFormatLogsInternalError = format.printf((data) =>
 {
-    console.log(meta);
-    return `${ timestamp } :: ${ level }: ${ meta.message }`;
+    return `${ data.timestamp } :: ${ data.level }: ${ data.message }`;
 });
 
 const loggerInernalError = createLogger(

@@ -1,7 +1,7 @@
 // @ts-nocheck
 const Router = require('express');
 const router = new Router();
-const { check } = require('express-validator');
+const { body } = require('express-validator');
 
 const add_food = require('../models/Api/POST/add_food');
 const add_food_composition = require('../models/Api/POST/add_food_composition');
@@ -24,6 +24,7 @@ const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_
 const add_order_ingredient = require('../models/Api/POST/add_order_ingredient');
 const update_order = require('../models/Api/POST/update_order');
 const update_worker_salary_and_rate = require('../models/Api/POST/update_worker_salary_and_rate');
+const signIn = require('../models/Api/POST/login');
 
 router.post('/add_food', add_food);
 router.post('/add_food_composition', add_food_composition);
@@ -31,7 +32,20 @@ router.post('/add_food_type', add_food_type);
 router.post('/add_ingredient', add_ingredient);
 router.post('/add_job_role', add_job_role);
 router.post('/add_table', add_table);
-router.post('/registration_worker', registration_worker);
+router.post('/registration_worker',
+    [
+        body('login', 'Login is empty!').isEmpty(),
+        body('password', 'Password length > 4 && < 255!').isLength({ min: 4, max: 255 }),
+        body('email').isEmail()
+    ],
+    registration_worker);
+router.post('/signUp',
+    [
+        body('login', 'Login is empty!').notEmpty(),
+        body('password', 'Password is empty').notEmpty(),
+    ],
+    signIn);
+
 router.post('/book_table', book_table);
 router.post('/add_storehouse', add_storehouse);
 router.post('/add_client', add_client);

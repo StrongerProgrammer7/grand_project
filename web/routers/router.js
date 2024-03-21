@@ -19,7 +19,7 @@ router.use(session(
     }
 ));
 
-router.get('/', (req, res, next) =>
+router.get('/', csrfProtection, (req, res, next) =>
 {
     //logger.info('THIS MESSAGE');
     res.render('pages/index', { title: 'Resturant' });
@@ -45,5 +45,5 @@ const rateLimiter = rateLimit(
     });
 router.use(rateLimiter);
 router.use(helmet());
-router.use(csrfProtection);
+
 module.exports = router;

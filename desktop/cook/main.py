@@ -193,6 +193,11 @@ class MainWindow(QMainWindow):
             # Выводим предупреждение, что сначала нужно добавить заказ
             QMessageBox.warning(self, "Предупреждение", "Сначала добавьте заказ")
 
+    # def insert_tab(self,table):
+    #     self.ui.tableWidget_2
+    #     self.add_order()
+    #     self.add_row_with_combobox()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

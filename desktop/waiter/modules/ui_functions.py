@@ -15,7 +15,7 @@
 # ///////////////////////////////////////////////////////////////
 from PySide6 import QtWidgets
 from PySide6.QtCore import QDateTime, QTimer
-from PySide6.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QLineEdit, QTableWidgetItem, QMessageBox
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from main import *
@@ -246,21 +246,49 @@ class UIFunctions(MainWindow):
         row_index = self.ui.tableWidget_2.rowCount()
         self.ui.tableWidget_2.insertRow(row_index)
 
-        for column_index in range(4):
-            item = QTableWidgetItem("")  # Замените "Text" на желаемый текст
+        # Вставка индекса в первую ячейку строки
+        index_item = QTableWidgetItem(str(row_index + 1))
+        self.ui.tableWidget_2.setItem(row_index, 0, index_item)
+
+        # Заполнение остальных ячеек пустыми значениями
+        for column_index in range(1, 4):  # Начинаем с 1, чтобы пропустить первую колонку с индексом
+            item = QTableWidgetItem("")
             self.ui.tableWidget_2.setItem(row_index, column_index, item)
 
     def delete_row(self):
-        selected_rows = set()
-        for item in self.ui.tableWidget_2.selectedItems():
-            selected_rows.add(item.row())
+        selected_row = self.ui.tableWidget_2.currentRow()
+        if selected_row > 0:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Question)
+            msg_box.setText("Вы уверены, что хотите удалить эту строку?")
+            msg_box.setWindowTitle("Подтверждение удаления")
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+            msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
 
-        for row_index in sorted(selected_rows, reverse=True):
-            self.ui.tableWidget_2.removeRow(row_index)
+            # Показываем сообщение и ждем ответа пользователя
+            response = msg_box.exec()
 
+            if response == QMessageBox.Yes:
+                self.ui.tableWidget_2.removeRow(selected_row)
+                # Обновляем индексы для оставшихся строк
+                for row_index in range(selected_row, self.ui.tableWidget_2.rowCount()):
+                    self.ui.tableWidget_2.item(row_index, 0).setText(str(row_index + 1))
     def clear_table(self):
-        self.ui.tableWidget_2.clearContents()
-        self.ui.tableWidget_2.setRowCount(0)
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Question)
+        msg_box.setText("Вы уверены, что хотите очистить таблицу?")
+        msg_box.setWindowTitle("Подтверждение очищения")
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
+
+        # Показываем сообщение и ждем ответа пользователя
+        response = msg_box.exec()
+
+        if response == QMessageBox.Yes:
+            self.ui.tableWidget_2.clearContents()
+            self.ui.tableWidget_2.setRowCount(0)
 
     def delete_row_content(self, table):
         selected_row = table.currentRow()
@@ -274,22 +302,6 @@ class UIFunctions(MainWindow):
     def set_column_widths(self, table_widget, column_widths):
         for column, width in enumerate(column_widths):
             table_widget.setColumnWidth(column, width)
-
-
-    def commit(self, table):
-        data_dict = {}
-        column_count = table.columnCount()
-
-        for row_index in range(table.rowCount()):
-            item_id = int(table.item(row_index, 0).text())
-            name = table.item(row_index, 1).text()
-            count = int(table.item(row_index, 2).text())
-            comment = table.item(row_index, 3).text()
-
-            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
-
-        json_data = {"data": data_dict}
-        print("Data saved:", json_data)
 
     def load(self):
         pass

@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="images">
-    <file>images/images/PyDracula.png</file>
-    <file>images/images/PyDracula_vertical.png</file>
+    <file>images/images/logo.png</file>
+    <file>images/images/logo_back.png</file>
   </qresource>
   <qresource prefix="icons">
     <file>images/icons/cil-3d.png</file>
@@ -253,12 +253,15 @@
     <file>images/icons/cil-x-circle.png</file>
     <file>images/icons/cil-zoom-in.png</file>
     <file>images/icons/cil-zoom-out.png</file>
+    <file>images/icons/d</file>
     <file>images/icons/icon_close.png</file>
     <file>images/icons/icon_maximize.png</file>
     <file>images/icons/icon_menu.png</file>
     <file>images/icons/icon_minimize.png</file>
     <file>images/icons/icon_restore.png</file>
     <file>images/icons/icon_settings.png</file>
+    <file>images/icons/icons8-key-16.png</file>
+    <file>images/icons/icons8-user-16.png</file>
     <file>images/icons/ingredients.png</file>
     <file>images/icons/moon.png</file>
     <file>images/icons/reservation.png</file>

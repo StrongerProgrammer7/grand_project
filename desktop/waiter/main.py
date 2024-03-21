@@ -50,26 +50,13 @@ class MainWindow(QMainWindow):
 
         self.api = ApiConnect()
 
-
-
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
-        # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
-        # APP NAME
-        # ///////////////////////////////////////////////////////////////
-        title = "SOLIDSIGN - для официантов"
-        description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
-        # APPLY TEXTS
-        #self.setWindowTitle(title)
-        #widgets.titleRightInfo.setText(description)
-
         # TOGGLE MENU
-        # ///////////////////////////////////////////////////////////////
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
         # SET UI DEFINITIONS
-        # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
 
         # LEFT MENUS
@@ -77,22 +64,15 @@ class MainWindow(QMainWindow):
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-        # EXTRA LEFT BOX
-        #def openCloseLeftBox():
-        #    UIFunctions.toggleLeftBox(self, True)
 
-        #widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        #widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
-        # EXTRA RIGHT BOX
-        #def openCloseRightBox():
-        #    UIFunctions.toggleRightBox(self, True)
+        # Открываем файл ordernum и читаем из него текст
+        with open('ordernum', 'r') as file:
+            num = file.read()
+        current_text = widgets.label_2.text()
+        combined_text = f"{current_text} {num}"
+        widgets.label_2.setText(combined_text)
 
-        #widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
-
-        # SHOW APP
-        # ///////////////////////////////////////////////////////////////
-        #self.show()
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
@@ -160,11 +140,8 @@ class MainWindow(QMainWindow):
         self.connect_sorting_function(widgets.tableWidget_3)
 
 
-        # SET HACKS
-        # AppFunctions.setThemeHack(self)
 
         # SET HOME PAGE AND SELECT MENU
-        # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
@@ -194,12 +171,6 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.new_page)  # SET PAGE
             UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
-
-        if btnName == "btn_save":
-            print("Save BTN clicked!")
-
-        # PRINT BTN NAME
-        print(f'Button "{btnName}" pressed!')
 
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
@@ -421,6 +392,25 @@ class MainWindow(QMainWindow):
             for col_idx, cell_data in enumerate(row_data):
                 item = QTableWidgetItem(str(cell_data))
                 tableWidget.setItem(row_idx, col_idx, item)
+
+    def commit(self, table):
+        with open('ordernum', 'r') as file:
+            order_num = file.read() # номер заказа (после нажатия кнопки наверное стоит его увеличить на 1)
+        waiter_id = self.ui.lineEdit.text() # id официанта
+        print(waiter_id)
+        data_dict = {}
+        column_count = table.columnCount()
+
+        for row_index in range(table.rowCount()):
+            item_id = int(table.item(row_index, 0).text())
+            name = table.item(row_index, 1).text()
+            count = int(table.item(row_index, 2).text())
+            comment = table.item(row_index, 3).text()
+
+            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
+
+        json_data = {"data": data_dict}
+        print("Data saved:", json_data)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

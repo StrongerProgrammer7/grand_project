@@ -237,12 +237,7 @@ QLabel {
              <widget class="QComboBox" name="comboBox">
               <item>
                <property name="text">
-                <string>Отдан</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Готов</string>
+                <string>Готово</string>
                </property>
               </item>
               <item>
@@ -252,7 +247,7 @@ QLabel {
               </item>
               <item>
                <property name="text">
-                <string>Отменен</string>
+                <string>Отмена</string>
                </property>
               </item>
              </widget>

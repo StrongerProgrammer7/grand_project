@@ -38,6 +38,7 @@ class MainWindow(QMainWindow):
         # SET API WORK
         # ///////////////////////////////////////////////////////////////
         self.api = ApiConnect()
+        self.api.sio.on('message', self.on_message)
 
         # Запуск обновления данных каждые 10 минут
         schedule.every(3).hours.do(self.update_json_files)
@@ -69,20 +70,6 @@ class MainWindow(QMainWindow):
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-        # EXTRA LEFT BOX
-        # def openCloseLeftBox():
-        #    UIFunctions.toggleLeftBox(self, True)
-
-        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
-
-        # EXTRA RIGHT BOX
-        # def openCloseRightBox():
-        #    UIFunctions.toggleRightBox(self, True)
-
-        # widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
-
-        # SHOW APP
         # ///////////////////////////////////////////////////////////////
         # self.show()
         # SET CUSTOM THEME
@@ -163,6 +150,9 @@ class MainWindow(QMainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
+    # BUTTONS CLICK
+    # Post here your functions for clicked buttons
+    # ///////////////////////////////////////////////////////////////
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
@@ -229,7 +219,8 @@ class MainWindow(QMainWindow):
         self.new_window2.show()
 
     def update_json_files(self):
-        endpoints = ['get_order_history', 'get_all_booked_tables']  # список всех эндпоинтов, которые нужно обновить
+        # список всех эндпоинтов, которые нужно обновить
+        endpoints = ['get_order_history', 'get_all_booked_tables', 'get_menu_sorted_by_type']
 
         for endpoint in endpoints:
             data = self.api.get_data(endpoint)
@@ -289,10 +280,24 @@ class MainWindow(QMainWindow):
         self.column_sort_order[column_index] = new_sort_order
         table.sortItems(column_index, new_sort_order)
 
+    # TODO: Протестить on_message
+    def on_message(self, data):
+        self.update_table(data)
+
+    def update_table(self, data):
+        # Получаем order_id, новый статус и выбранную строку в таблице
+        order_id = data.get("order_id")
+        new_status = data.get("status")
+        selected_row = order_id - 1  # Индексация строк начинается с 0
+
+        if selected_row >= 0:
+            # Устанавливаем новый статус в таблице
+            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
+
     def update_second_table(self):
-        #line = self.ui_dialog.lineEdit.text()
-        #datetime1 = self.ui_dialog.dateTimeEdit.text()
-        #datetime2 = self.ui_dialog.dateTimeEdit_2.text()
+        # line = self.ui_dialog.lineEdit.text()
+        # datetime1 = self.ui_dialog.dateTimeEdit.text()
+        # datetime2 = self.ui_dialog.dateTimeEdit_2.text()
         line2 = self.ui_dialog.lineEdit_2.text()
         combBox = self.ui_dialog.comboBox.currentText()
 
@@ -302,8 +307,6 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        confirm_dialog.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
-        confirm_dialog.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -317,25 +320,27 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                #self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(line))
-                #self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(datetime1))
-                #self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(datetime2))
                 self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
                 self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
                 # TODO: Добавить валидацию
 
-                # Преобразуем данные в JSON
-                dishes_dict = {}  # Предполагается, что line содержит данные в формате "Название:Количество"
-                for dish in line2.split(','):
-                    name, quantity = dish.split(':')
-                    dishes_dict[name.strip()] = int(quantity.strip())
-
                 food_ids = []
                 quantities = []
-                for food_id, quantity in dishes_dict.items():
-                    food_ids.append(int(food_id))
-                    quantities.append(quantity)
+
+                # Загружаем данные меню из JSON файла
+                menu_data = {}
+                with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+                    menu_json = json.load(menu_file)
+                    for item in menu_json['data']:
+                        menu_data[item['food_name']] = item['food_id']
+
+                # Преобразуем данные из строки line2 в список food_ids и quantities
+                for dish in line2.split(','):
+                    dish_name, quantity = dish.split(':')
+                    food_id = menu_data.get(dish_name.strip(), "Unknown")
+                    food_ids.append(food_id)
+                    quantities.append(int(quantity.strip()))
 
                 data = {
                     "order_id": selected_row + 1,
@@ -344,14 +349,22 @@ class MainWindow(QMainWindow):
                     "status": combBox
                 }
 
-                self.api.post_data('update_orders', data)
+                # Отправляем данные
+                self.api.send_message(json.dumps(data, ensure_ascii=False))
+
             self.new_window.close()
         else:
+            # Если пользователь отменил действие, ничего не делаем
             pass
 
     def update_third_table(self):
+        # combBox = self.ui_dialog2.comboBox.currentText()
+        # line1 = self.ui_dialog2.lineEdit.text()
+        # datetime1 = self.ui_dialog2.dateTimeEdit.text()
+        # datetime2 = self.ui_dialog2.dateTimeEdit_2.text()
         line2 = self.ui_dialog2.lineEdit_2.text()
         line3 = self.ui_dialog2.lineEdit_3.text()
+        # line4 = self.ui_dialog2.lineEdit_4.text()
 
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
@@ -359,8 +372,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        confirm_dialog.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
-        confirm_dialog.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
+        # msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        # msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -374,8 +387,24 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget_3.setItem(selected_row, 0,
                                               QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
-                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line3))
+                # self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
+                # self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
+                # self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
+                # self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(datetime2))
+                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
+                self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
+                # self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
+
+                # TODO: Добавить валидацию
+                data = {
+                    "id_table": selected_row + 1,
+                    # "id_worker": line1,
+                    "phone_client": line2,
+                    # "order_time": datetime1,
+                    # "desired_booking_time": datetime2,
+                    "booking_interval": line3
+                }
+                print(data)
 
             self.new_window2.close()
         else:
@@ -399,12 +428,12 @@ class MainWindow(QMainWindow):
                 "№": "table_id",
                 "Официант": "worker_id",
                 "Дата заказа": "booking_date",
-                "Желаема дата": "desired_date",
+                "Дата брони": "start_date",
                 "Номер телефона": "client_number",
-                "Интервал брони": "booking_interval"
+                "Интервал брони": "interval"
             }
             endpoint = 'get_all_booked_tables'
-            date_keys = ['booking_date', 'desired_date']
+            date_keys = ['booking_date', 'start_date']
         else:
             return  # Если таблица не соответствует ни одному известному типу данных, выходим из функции
 
@@ -418,6 +447,13 @@ class MainWindow(QMainWindow):
         tableWidget.setColumnCount(len(field_mapping))
 
         headers = list(field_mapping.keys())
+
+        # Загрузка данных меню
+        menu_data = {}
+        with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+            menu_json = json.load(menu_file)
+            for item in menu_json['data']:
+                menu_data[item['food_id']] = item['food_name']
 
         for row_idx, row_data in enumerate(data):
             for col_idx, header in enumerate(headers):
@@ -439,7 +475,8 @@ class MainWindow(QMainWindow):
                         formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
                         item = QTableWidgetItem(formatted_date)
                     elif key == 'dishes':
-                        dishes_str = ', '.join([f'{dish}: {qty}' for dish, qty in row_data[key].items()])
+                        dishes_str = ', '.join(
+                            [f'{menu_data[int(dish)]}: {qty}' for dish, qty in row_data[key].items()])
                         item = QTableWidgetItem(dishes_str)
                     else:
                         item = QTableWidgetItem(str(row_data[key]))
@@ -448,19 +485,41 @@ class MainWindow(QMainWindow):
                 tableWidget.setItem(row_idx, col_idx, item)
 
     def commit(self, table):
-        data_dict = {}
-        column_count = table.columnCount()
+        data = {}
+        worker_id = 1  # Указываем нужное значение для worker_id
+        food_ids = []
+        quantities = []
+        formation_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для formation_date
+        giving_date = ""  # Указываем нужное значение для giving_date
+        status = "Ожидание"  # Указываем нужное значение для status
 
+        menu_data = {}
+        with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+            menu_json = json.load(menu_file)
+            for item in menu_json['data']:
+                menu_data[item['food_name']] = item['food_id']
+
+        # Замена названий блюд на их идентификаторы
         for row_index in range(table.rowCount()):
-            item_id = int(table.item(row_index, 0).text())
-            name = table.item(row_index, 1).text()
-            count = int(table.item(row_index, 2).text())
-            comment = table.item(row_index, 3).text()
+            food_name = table.item(row_index, 1).text()
+            food_ids.append(menu_data.get(food_name, "Unknown"))
+            quantities.append(int(table.item(row_index, 2).text()))
 
-            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
+        json_data = {
+            "worker_id": worker_id,
+            "food_ids": food_ids,
+            "quantities": quantities,
+            "formation_date": formation_date,
+            "givig_date": giving_date,
+            "status": status
+        }
 
-        json_data = {"data": data_dict}
-        print("Data saved:", json_data)
+        # Преобразуем даты в формат JSON
+        json_data["formation_date"] = datetime.strptime(json_data["formation_date"],
+                                                        "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
+        # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
+
+        self.api.send_message(json.dumps(json_data, ensure_ascii=False))
 
 
 if __name__ == "__main__":

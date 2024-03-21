@@ -3,7 +3,7 @@ import os
 from cx_Freeze import setup, Executable
 
 # ADD FILES
-files = ['icon.ico', 'themes/', 'modules/api/']
+files = ['icon.ico', 'themes/', 'json/']
 
 # TARGET
 target = Executable(
@@ -14,10 +14,10 @@ target = Executable(
 
 # SETUP CX FREEZE
 setup(
-    name="PyDracula",
+    name="SOLIDSIGN",
     version="1.0",
-    description="Modern GUI for Python applications",
-    author="Wanderson M. Pimenta",
+    description="Modern GUI for restaurant applications",
+    author="49/1",
     options={'build_exe': {'include_files': files}},
     executables=[target]
 

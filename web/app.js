@@ -13,6 +13,7 @@ const helmet = require('helmet');
 const toobusy = require('toobusy-js');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
+const csrf = require('csurf');
 
 const pages = require('./routers/router');
 const controller = require('./controller/controller');
@@ -24,6 +25,7 @@ const swaggerDocs = require('./utils/swagger');
 
 const PORT = process.env.PORT || 443;
 const urlencodedParser = express.urlencoded({ extended: true });
+const csrfProtection = csrf({ cookie: true });
 const app = express();
 
 
@@ -75,8 +77,10 @@ app.use('/', pages);
 app.use('/api', controller)
 
 app.use(errorHandler);
-
+app.use(urlencodedParser);
+app.use(csrfProtection);
 app.use(helmet());
+
 app.use(function (req, res, next)
 {
     if (toobusy())
@@ -88,15 +92,16 @@ app.use(function (req, res, next)
     }
 });
 
-const rateLimiter = rateLimit(
+const rateLimiterApi = rateLimit(
     {
         windowMs: 24 * 60 * 60 * 1000, // 24 hrs in milliseconds
-        max: 100, // maximum number of request inside a window
+        max: 300, // maximum number of request inside a window
         message: "You have exceeded the 100 requests in 24 hrs limit!", // the message when they exceed limit
         standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
         legacyHeaders: false, // Disable the `X-RateLimit-*` headers
     });
-app.use(rateLimiter);
+app.use('/api', rateLimiterApi);
+
 app.use(xss());
 
 const optionHTTPS =

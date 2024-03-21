@@ -470,6 +470,8 @@ class MainWindow(QMainWindow):
 
         json_data = {"data": data_dict}
         print("Data saved:", json_data)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

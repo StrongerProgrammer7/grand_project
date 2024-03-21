@@ -306,20 +306,7 @@ class UIFunctions(MainWindow):
             table_widget.setColumnWidth(column, width)
 
 
-    def commit(self, table):
-        data_dict = {}
-        column_count = table.columnCount()
 
-        for row_index in range(table.rowCount()):
-            item_id = int(table.item(row_index, 0).text())
-            name = table.item(row_index, 1).text()
-            count = int(table.item(row_index, 2).text())
-            comment = table.item(row_index, 3).text()
-
-            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
-
-        json_data = {"data": data_dict}
-        print("Data saved:", json_data)
 
     def load(self):
         pass

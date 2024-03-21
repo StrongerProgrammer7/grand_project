@@ -453,7 +453,20 @@ class MainWindow(QMainWindow):
                     continue
                 tableWidget.setItem(row_idx, col_idx, item)
 
+    def commit(self, table):
+        data_dict = {}
+        column_count = table.columnCount()
 
+        for row_index in range(table.rowCount()):
+            item_id = int(table.item(row_index, 0).text())
+            name = table.item(row_index, 1).text()
+            count = int(table.item(row_index, 2).text())
+            comment = table.item(row_index, 3).text()
+
+            data_dict[str(item_id)] = {"name": name, "count": count, "comment": comment}
+
+        json_data = {"data": data_dict}
+        print("Data saved:", json_data)
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

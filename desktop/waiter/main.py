@@ -213,10 +213,23 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
     def open_new_window(self):
+        selected_row = self.ui.tableWidget.currentRow()
+        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+            line2 = self.ui.tableWidget.item(selected_row, 4).text()
+            combBox = self.ui.tableWidget.item(selected_row, 5).text()
+            self.ui_dialog.lineEdit_2.setText(line2)
+            self.ui_dialog.comboBox.setCurrentText(combBox)
         self.new_window.show()
 
     def open_new_window2(self):
+        selected_row = self.ui.tableWidget_3.currentRow()
+        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+            line2 = self.ui.tableWidget_3.item(selected_row, 4).text()
+            line3 = self.ui.tableWidget_3.item(selected_row, 5).text()
+            self.ui_dialog2.lineEdit_2.setText(line2)
+            self.ui_dialog2.lineEdit_3.setText(line3)
         self.new_window2.show()
+
 
     def update_json_files(self):
         endpoints = ['get_order_history', 'get_all_booked_tables']  # список всех эндпоинтов, которые нужно обновить

@@ -122,8 +122,7 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.utvrbtn.clicked.connect(
-            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -288,6 +287,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -351,6 +352,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя

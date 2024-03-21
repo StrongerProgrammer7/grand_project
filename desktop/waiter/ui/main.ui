@@ -1778,7 +1778,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                       <string notr="true">background: transparent;</string>
                      </property>
                      <property name="currentIndex">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2140,8 +2140,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              </sizepolicy>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">background-color: rgb(85, 255, 127);
-background-color: rgb(177, 177, 177);</string>
+                             <string notr="true">background-color: rgb(120, 120, 120);</string>
                             </property>
                             <property name="text">
                              <string>Очистить</string>
@@ -2428,7 +2427,7 @@ background-color: rgb(177, 177, 177);</string>
                        <item>
                         <widget class="QFrame" name="frame_2">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -2458,7 +2457,7 @@ background-color: rgb(177, 177, 177);</string>
                           <item>
                            <widget class="QTableWidget" name="tableWidget_3">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -2844,6 +2843,12 @@ background-color: rgb(177, 177, 177);</string>
                        </item>
                        <item>
                         <widget class="QFrame" name="frame_3">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="minimumSize">
                           <size>
                            <width>0</width>

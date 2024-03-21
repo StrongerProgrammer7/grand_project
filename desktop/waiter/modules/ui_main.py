@@ -1171,8 +1171,7 @@ class Ui_MainWindow(object):
         self.clearbtn.setObjectName(u"clearbtn")
         sizePolicy7.setHeightForWidth(self.clearbtn.sizePolicy().hasHeightForWidth())
         self.clearbtn.setSizePolicy(sizePolicy7)
-        self.clearbtn.setStyleSheet(u"background-color: rgb(85, 255, 127);\n"
-"background-color: rgb(177, 177, 177);")
+        self.clearbtn.setStyleSheet(u"background-color: rgb(120, 120, 120);")
 
         self.horizontalLayout_10.addWidget(self.clearbtn)
 
@@ -1300,8 +1299,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_20.setContentsMargins(10, 10, 10, 10)
         self.frame_2 = QFrame(self.new_page)
         self.frame_2.setObjectName(u"frame_2")
-        sizePolicy8.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
-        self.frame_2.setSizePolicy(sizePolicy8)
+        sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
+        self.frame_2.setSizePolicy(sizePolicy)
         self.frame_2.setFrameShape(QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_6 = QHBoxLayout(self.frame_2)
@@ -1355,8 +1354,11 @@ class Ui_MainWindow(object):
         __qtablewidgetitem26.setFont(font5);
         self.tableWidget_3.setItem(0, 1, __qtablewidgetitem26)
         self.tableWidget_3.setObjectName(u"tableWidget_3")
-        sizePolicy.setHeightForWidth(self.tableWidget_3.sizePolicy().hasHeightForWidth())
-        self.tableWidget_3.setSizePolicy(sizePolicy)
+        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy10.setHorizontalStretch(0)
+        sizePolicy10.setVerticalStretch(0)
+        sizePolicy10.setHeightForWidth(self.tableWidget_3.sizePolicy().hasHeightForWidth())
+        self.tableWidget_3.setSizePolicy(sizePolicy10)
         palette = QPalette()
         brush = QBrush(QColor(221, 221, 221, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -1425,6 +1427,8 @@ class Ui_MainWindow(object):
 
         self.frame_3 = QFrame(self.new_page)
         self.frame_3.setObjectName(u"frame_3")
+        sizePolicy8.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
+        self.frame_3.setSizePolicy(sizePolicy8)
         self.frame_3.setMinimumSize(QSize(0, 70))
         self.frame_3.setFrameShape(QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Raised)
@@ -1603,7 +1607,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

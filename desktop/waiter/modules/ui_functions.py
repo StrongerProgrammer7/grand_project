@@ -248,8 +248,8 @@ class UIFunctions(MainWindow):
 
         # Вставка индекса в первую ячейку строки
         index_item = QTableWidgetItem(str(row_index + 1))
+        index_item.setFlags(index_item.flags() & ~Qt.ItemIsEditable)
         self.ui.tableWidget_2.setItem(row_index, 0, index_item)
-
         # Заполнение остальных ячеек пустыми значениями
         for column_index in range(1, 4):  # Начинаем с 1, чтобы пропустить первую колонку с индексом
             item = QTableWidgetItem("")

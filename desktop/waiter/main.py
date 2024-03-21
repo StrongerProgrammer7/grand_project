@@ -162,9 +162,6 @@ class MainWindow(QMainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
-    # BUTTONS CLICK
-    # Post here your functions for clicked buttons
-    # ///////////////////////////////////////////////////////////////
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
@@ -347,12 +344,9 @@ class MainWindow(QMainWindow):
                     "status": combBox
                 }
 
-                # Отправляем данные с помощью функции post_data
                 self.api.post_data('update_orders', data)
-
             self.new_window.close()
         else:
-            # Если пользователь отменил действие, ничего не делаем
             pass
 
     def update_third_table(self):

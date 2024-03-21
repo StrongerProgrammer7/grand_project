@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-21 14:31:18
+-- Started on 2024-03-21 15:16:43
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1014,7 +1014,7 @@ ALTER TABLE public.client_table OWNER TO postgres;
 
 CREATE TABLE public.food (
     id integer NOT NULL,
-    type character varying NOT NULL,
+    type character varying,
     name character varying NOT NULL,
     weight double precision,
     unit_of_measurement character varying DEFAULT 'грамм'::character varying,
@@ -1520,24 +1520,24 @@ INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VAL
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (21, 'Каши', 'Рисовая молочная каша', 200, 'грамм', 199);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (22, 'Каши', 'Овсяная каша', 200, 'грамм', 199);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (23, 'Каши', 'Манная каша', 200, 'грамм', 199);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (24, 'Рыбные блюда', 'Щука, тушеная в сметане с луком', 400, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (25, 'Рыбные блюда', 'Запеченный осетр', 400, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (26, 'Рыбные блюда', 'Лещ с капустой в духовке', 400, 'грамм', 399);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (27, 'Мясные блюда', 'Нежная тушеная говядина', 400, 'грамм', 399);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (28, 'Мясные блюда', 'Шашлык из баранины', 400, 'грамм', 599);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (29, 'Мясные блюда', 'Свинина в духовке', 400, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (30, 'Горячие напитки', 'Черный чай', 200, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (31, 'Горячие напитки', 'Зеленый чай', 200, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (32, 'Горячие напитки', 'Латте', 300, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (33, 'Горячие напитки', 'Капучино', 300, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (34, 'Горячие напитки', 'Глинтвейн', 300, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (35, 'Прохладительные напитки', 'Квас', 200, 'грамм', 79);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (36, 'Прохладительные напитки', 'Добрый кола', 200, 'грамм', 119);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (37, 'Прохладительные напитки', 'Фрустайл апельсин', 200, 'грамм', 119);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (38, 'Прохладительные напитки', 'Липтон зеленый', 200, 'грамм', 119);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (39, 'Прохладительные напитки', 'Липтон черный', 200, 'грамм', 119);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (40, 'Опционально', 'Хлеб', 200, 'грамм', 59);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (41, 'Опционально', 'Простая вода', 200, 'грамм', 59);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (35, 'Напитки', 'Квас', 200, 'грамм', 79);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (36, 'Напитки', 'Добрый кола', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (37, 'Напитки', 'Фрустайл апельсин', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (38, 'Напитки', 'Липтон зеленый', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (39, 'Напитки', 'Липтон черный', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (30, 'Напитки', 'Черный чай', 200, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (27, 'Мясо', 'Нежная тушеная говядина', 400, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (28, 'Мясо', 'Шашлык из баранины', 400, 'грамм', 599);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (29, 'Мясо', 'Свинина в духовке', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (31, 'Напитки', 'Зеленый чай', 200, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (32, 'Напитки', 'Латте', 300, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (33, 'Напитки', 'Капучино', 300, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (34, 'Напитки', 'Глинтвейн', 300, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (24, 'Рыба', 'Щука, тушеная в сметане с луком', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (25, 'Рыба', 'Запеченный осетр', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (26, 'Рыба', 'Лещ с капустой в духовке', 400, 'грамм', 399);
 
 
 --
@@ -1706,11 +1706,10 @@ INSERT INTO public.food_type (type) VALUES ('Гарниры');
 INSERT INTO public.food_type (type) VALUES ('Салаты');
 INSERT INTO public.food_type (type) VALUES ('Десерты');
 INSERT INTO public.food_type (type) VALUES ('Каши');
-INSERT INTO public.food_type (type) VALUES ('Рыбные блюда');
-INSERT INTO public.food_type (type) VALUES ('Мясные блюда');
-INSERT INTO public.food_type (type) VALUES ('Горячие напитки');
-INSERT INTO public.food_type (type) VALUES ('Прохладительные напитки');
 INSERT INTO public.food_type (type) VALUES ('Опционально');
+INSERT INTO public.food_type (type) VALUES ('Мясо');
+INSERT INTO public.food_type (type) VALUES ('Рыба');
+INSERT INTO public.food_type (type) VALUES ('Напитки');
 
 
 --
@@ -1896,6 +1895,22 @@ INSERT INTO public."table" (id, human_slots) VALUES (1, 4);
 INSERT INTO public."table" (id, human_slots) VALUES (2, 3);
 INSERT INTO public."table" (id, human_slots) VALUES (3, 2);
 INSERT INTO public."table" (id, human_slots) VALUES (4, 5);
+INSERT INTO public."table" (id, human_slots) VALUES (5, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (6, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (7, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (8, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (9, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (10, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (11, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (12, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (13, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (14, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (15, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (16, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (17, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (18, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (19, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (20, 8);
 
 
 --
@@ -1977,7 +1992,7 @@ SELECT pg_catalog.setval('public.requisition_list_id_seq', 10, true);
 -- Name: table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.table_id_seq', 4, true);
+SELECT pg_catalog.setval('public.table_id_seq', 20, true);
 
 
 --
@@ -2329,7 +2344,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-21 14:31:18
+-- Completed on 2024-03-21 15:16:43
 
 --
 -- PostgreSQL database dump complete

@@ -293,9 +293,9 @@ class MainWindow(QMainWindow):
         table.sortItems(column_index, new_sort_order)
 
     def update_second_table(self):
-        line = self.ui_dialog.lineEdit.text()
-        datetime1 = self.ui_dialog.dateTimeEdit.text()
-        datetime2 = self.ui_dialog.dateTimeEdit_2.text()
+        #line = self.ui_dialog.lineEdit.text()
+        #datetime1 = self.ui_dialog.dateTimeEdit.text()
+        #datetime2 = self.ui_dialog.dateTimeEdit_2.text()
         line2 = self.ui_dialog.lineEdit_2.text()
         combBox = self.ui_dialog.comboBox.currentText()
 
@@ -305,8 +305,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
-        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
+        confirm_dialog.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        confirm_dialog.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -320,9 +320,9 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(line))
-                self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(datetime1))
-                self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(datetime2))
+                #self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(line))
+                #self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(datetime1))
+                #self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(datetime2))
                 self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
                 self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
@@ -356,13 +356,8 @@ class MainWindow(QMainWindow):
             pass
 
     def update_third_table(self):
-        combBox = self.ui_dialog2.comboBox.currentText()
-        line1 = self.ui_dialog2.lineEdit.text()
-        datetime1 = self.ui_dialog2.dateTimeEdit.text()
-        datetime2 = self.ui_dialog2.dateTimeEdit_2.text()
         line2 = self.ui_dialog2.lineEdit_2.text()
         line3 = self.ui_dialog2.lineEdit_3.text()
-        line4 = self.ui_dialog2.lineEdit_4.text()
 
         # Создаем диалоговое окно для подтверждения
         confirm_dialog = QMessageBox()
@@ -370,8 +365,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
-        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
+        confirm_dialog.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        confirm_dialog.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -385,24 +380,8 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget_3.setItem(selected_row, 0,
                                               QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
-                self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
-                self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
-                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(datetime2))
-                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
-                self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
-                self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
-
-                # TODO: Добавить валидацию
-                data = {
-                    "id_table": selected_row + 1,
-                    "id_worker": line1,
-                    "phone_client": line2,
-                    "order_time": datetime1,
-                    "desired_booking_time": datetime2,
-                    "booking_interval": line3
-                }
-                print(data)
+                self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(line2))
+                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line3))
 
             self.new_window2.close()
         else:

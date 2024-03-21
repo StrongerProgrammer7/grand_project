@@ -4,12 +4,7 @@ const fs = require('fs');
 const logger = require('../logger/logger');
 const cookierParser = require('cookie-parser');
 const session = require('express-session');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-
 router.use(cookierParser());
-const csrf = require('csurf');
-const csrfProtection = csrf({ cookie: true });
 
 router.use(session(
     {
@@ -19,14 +14,32 @@ router.use(session(
     }
 ));
 
-router.get('/', csrfProtection, (req, res, next) =>
+router.get('/', (req, res,next) =>
 {
     //logger.info('THIS MESSAGE');
-    res.render('pages/index', { title: 'Resturant' });
+    res.render('pages/index', { title: 'Ъ' });
+})
+
+router.get('/about', (req, res,next) =>
+{
+    //logger.info('THIS MESSAGE');
+    res.render('pages/about', { title: 'О нас' });
+})
+
+router.get('/menu', (req, res,next) =>
+{
+    //logger.info('THIS MESSAGE');
+    res.render('pages/menu', { title: 'Меню' });
+})
+
+router.get('/booking', (req, res,next) =>
+{
+    //logger.info('THIS MESSAGE');
+    res.render('pages/booking', { title: 'Бронирование' });
 })
 
 
-router.get('/registration', (req, res, next) =>
+router.get('/registration', (req, res,next) =>
 {
     /*
     res.writeHead(200,{'Content-Type':'text/html; charset=utf8'});
@@ -34,16 +47,5 @@ router.get('/registration', (req, res, next) =>
     registerPage.pipe(res);
     */
 });
-
-const rateLimiter = rateLimit(
-    {
-        windowMs: 15 * 60 * 1000, // 24 hrs in milliseconds
-        max: 30, // maximum number of request inside a window
-        message: "You have exceeded the 30 requests limit , wait  15 min!", // the message when they exceed limit
-        standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-        legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    });
-router.use(rateLimiter);
-router.use(helmet());
 
 module.exports = router;

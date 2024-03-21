@@ -69,20 +69,6 @@ class MainWindow(QMainWindow):
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-        # EXTRA LEFT BOX
-        # def openCloseLeftBox():
-        #    UIFunctions.toggleLeftBox(self, True)
-
-        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
-
-        # EXTRA RIGHT BOX
-        # def openCloseRightBox():
-        #    UIFunctions.toggleRightBox(self, True)
-
-        # widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
-
-        # SHOW APP
         # ///////////////////////////////////////////////////////////////
         # self.show()
         # SET CUSTOM THEME
@@ -232,7 +218,8 @@ class MainWindow(QMainWindow):
         self.new_window2.show()
 
     def update_json_files(self):
-        endpoints = ['get_order_history', 'get_all_booked_tables']  # список всех эндпоинтов, которые нужно обновить
+        # список всех эндпоинтов, которые нужно обновить
+        endpoints = ['get_order_history', 'get_all_booked_tables', 'get_menu_sorted_by_type']
 
         for endpoint in endpoints:
             data = self.api.get_data(endpoint)
@@ -446,6 +433,13 @@ class MainWindow(QMainWindow):
 
         headers = list(field_mapping.keys())
 
+        # Загрузка данных меню
+        menu_data = {}
+        with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+            menu_json = json.load(menu_file)
+            for item in menu_json['data']:
+                menu_data[item['food_id']] = item['food_name']
+
         for row_idx, row_data in enumerate(data):
             for col_idx, header in enumerate(headers):
                 key = field_mapping[header]
@@ -466,7 +460,8 @@ class MainWindow(QMainWindow):
                         formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
                         item = QTableWidgetItem(formatted_date)
                     elif key == 'dishes':
-                        dishes_str = ', '.join([f'{dish}: {qty}' for dish, qty in row_data[key].items()])
+                        dishes_str = ', '.join(
+                            [f'{menu_data[int(dish)]}: {qty}' for dish, qty in row_data[key].items()])
                         item = QTableWidgetItem(dishes_str)
                     else:
                         item = QTableWidgetItem(str(row_data[key]))

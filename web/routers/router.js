@@ -25,6 +25,24 @@ router.get('/', csrfProtection, (req, res, next) =>
     res.render('pages/index', { title: 'Resturant' });
 })
 
+router.get('/about', (req, res,next) =>
+{
+    //logger.info('THIS MESSAGE');
+    res.render('pages/about', { title: 'О нас' });
+})
+
+router.get('/menu', (req, res,next) =>
+{
+    //logger.info('THIS MESSAGE');
+    res.render('pages/menu', { title: 'Меню' });
+})
+
+router.get('/booking', (req, res,next) =>
+{
+    //logger.info('THIS MESSAGE');
+    res.render('pages/booking', { title: 'Бронирование' });
+})
+
 
 router.get('/registration', (req, res, next) =>
 {

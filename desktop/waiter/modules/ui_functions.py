@@ -1,6 +1,21 @@
+# ///////////////////////////////////////////////////////////////
+#
+# BY: WANDERSON M.PIMENTA
+# PROJECT MADE WITH: Qt Designer and PySide6
+# V: 1.0.0
+#
+# This project can be used freely for all uses, as long as they maintain the
+# respective credits only in the Python scripts, any information in the visual
+# interface (GUI) can be modified without any implication.
+#
+# There are limitations on Qt licenses if you want to use your products
+# commercially, I recommend reading them on the official website:
+# https://doc.qt.io/qtforpython/licenses.html
+#
+# ///////////////////////////////////////////////////////////////
 from PySide6 import QtWidgets
 from PySide6.QtCore import QDateTime, QTimer
-from PySide6.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QLineEdit, QMessageBox
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
 from main import *
@@ -208,7 +223,6 @@ class UIFunctions(MainWindow):
 
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
-            self.ui.titleFrame.setStyleSheet("background-color: #5b6996; color: #f8f8f2; border-radius: 5px")
             self.ui.titleFrame.setStyleSheet("background-color: #6272a4; color: #f8f8f2; border-radius: 5px")
             self.ui_dialog.stylesheet.setStyleSheet(add_view_light_stylesheet)
             self.ui_dialog2.stylesheet.setStyleSheet(add_view_light_stylesheet)
@@ -216,8 +230,8 @@ class UIFunctions(MainWindow):
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/sun.png)")
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
-            self.ui_dialog.stylesheet.setStyleSheet(light_stylesheet)
             self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
+            self.ui_dialog.stylesheet.setStyleSheet(light_stylesheet)
             self.themeFile = "themes/py_dracula_dark.qss"
             self.ui_dialog.stylesheet.setStyleSheet(add_view_dark_stylesheet)
             self.ui_dialog2.stylesheet.setStyleSheet(add_view_dark_stylesheet)
@@ -260,6 +274,7 @@ class UIFunctions(MainWindow):
                 # Обновляем индексы для оставшихся строк
                 for row_index in range(selected_row, self.ui.tableWidget_2.rowCount()):
                     self.ui.tableWidget_2.item(row_index, 0).setText(str(row_index + 1))
+
     def clear_table(self):
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Question)
@@ -269,8 +284,15 @@ class UIFunctions(MainWindow):
         msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
         msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
 
+        # Показываем сообщение и ждем ответа пользователя
+        response = msg_box.exec()
 
-def delete_row_content(self, table):
+        if response == QMessageBox.Yes:
+            self.ui.tableWidget_2.clearContents()
+            self.ui.tableWidget_2.setRowCount(0)
+
+
+    def delete_row_content(self, table):
         selected_row = table.currentRow()
         if selected_row != -1:
             column_count = table.columnCount()
@@ -283,41 +305,8 @@ def delete_row_content(self, table):
         for column, width in enumerate(column_widths):
             table_widget.setColumnWidth(column, width)
 
-    def sort_column(logicalIndex):
-        sender = QObject.sender()  # Получаем отправителя события
-        table_widget = sender.parent()  # Получаем ссылку на таблицу, в которой был клик на заголовок столбца
 
-        # Получаем текущий порядок сортировки для данной таблицы и данного столбца
-        order = table_widget.column_sort_order.get(logicalIndex, Qt.AscendingOrder)
 
-        # Переключаем порядок сортировки на противоположный
-        if order == Qt.AscendingOrder:
-            order = Qt.DescendingOrder
-        else:
-            order = Qt.AscendingOrder
-
-        # Сортируем столбец
-        table_widget.sortItems(logicalIndex, order)
-
-        # Сохраняем новый порядок сортировки для данной таблицы и данного столбца
-        table_widget.column_sort_order[logicalIndex] = order
-
-    def commit(self, table):
-        data_dict = {}
-        column_count = table.columnCount()
-
-        for row_index in range(table.rowCount()):
-            item_id = int(table.item(row_index, 0).text())
-            food_id = table.item(row_index, 1).text()
-            food_amount = int(table.item(row_index, 2).text())
-            comment = table.item(row_index, 3).text()
-            formation_date = None
-            givig_date = None
-
-            data_dict[str(item_id)] = {"name": food_id, "count": food_amount, "comment": comment}
-
-        json_data = {"data": data_dict, "status": "In Progress"}
-        print("Data saved:", json_data)
 
     def load(self):
         pass

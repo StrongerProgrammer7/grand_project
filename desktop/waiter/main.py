@@ -45,6 +45,7 @@ class MainWindow(QMainWindow):
         time.sleep(1)
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
+        # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         # APP NAME
@@ -56,9 +57,11 @@ class MainWindow(QMainWindow):
         # widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
+        # ///////////////////////////////////////////////////////////////
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
 
         # SET UI DEFINITIONS
+        # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
 
         # LEFT MENUS
@@ -70,14 +73,18 @@ class MainWindow(QMainWindow):
         # def openCloseLeftBox():
         #    UIFunctions.toggleLeftBox(self, True)
 
+        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
+        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
 
-        # Открываем файл ordernum и читаем из него текст
-        with open('ordernum', 'r') as file:
-            num = file.read()
-        current_text = widgets.label_2.text()
-        combined_text = f"{current_text} {num}"
-        widgets.label_2.setText(combined_text)
+        # EXTRA RIGHT BOX
+        # def openCloseRightBox():
+        #    UIFunctions.toggleRightBox(self, True)
 
+        # widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
+
+        # SHOW APP
+        # ///////////////////////////////////////////////////////////////
+        # self.show()
         # SET CUSTOM THEME
         # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
@@ -115,24 +122,21 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.utvrbtn.clicked.connect(
-            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
-        widgets.pushButton_2.clicked.connect(self.open_new_window)
+        widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
 
         # 3 ВКЛАДКА
         widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
-        widgets.pushButton_8.clicked.connect(self.open_new_window2)
+        widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
 
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
 
         tab1_column_widths = [80, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
-
-
 
         tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
@@ -145,7 +149,6 @@ class MainWindow(QMainWindow):
         self.connect_sorting_function(widgets.tableWidget_2)
         self.connect_sorting_function(widgets.tableWidget_3)
 
-
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 
@@ -153,7 +156,6 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
-
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -206,42 +208,9 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
     def open_new_window(self):
-        selected_row = self.ui.tableWidget.currentRow()
-        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
-            # Получаем содержимое каждой ячейки выбранной строки
-            line = self.ui.tableWidget.item(selected_row, 1).text()
-            datetime1 = self.ui.tableWidget.item(selected_row, 2).text()
-            datetime2 = self.ui.tableWidget.item(selected_row, 3).text()
-            line2 = self.ui.tableWidget.item(selected_row, 4).text()
-            combBox = self.ui.tableWidget.item(selected_row, 5).text()
-
-            # Отображаем данные выбранной строки в диалоговом окне перед его открытием
-            self.ui_dialog.lineEdit.setText(line)
-            self.ui_dialog.dateTimeEdit.setDateTime(QDateTime.fromString(datetime1, "yyyy-MM-dd hh:mm:ss"))
-            self.ui_dialog.dateTimeEdit_2.setDateTime(QDateTime.fromString(datetime2, "yyyy-MM-dd hh:mm:ss"))
-            self.ui_dialog.lineEdit_2.setText(line2)
-            self.ui_dialog.comboBox.setCurrentText(combBox)
         self.new_window.show()
 
     def open_new_window2(self):
-        selected_row = self.ui.tableWidget_3.currentRow()
-        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
-            # Получаем содержимое каждой ячейки выбранной строки
-            line = self.ui.tableWidget_3.item(selected_row, 1).text()
-            datetime1 = self.ui.tableWidget_3.item(selected_row, 2).text()
-            datetime2 = self.ui.tableWidget_3.item(selected_row, 3).text()
-            line2 = self.ui.tableWidget_3.item(selected_row, 4).text()
-            line3 = self.ui.tableWidget_3.item(selected_row, 5).text()
-            line4 = self.ui.tableWidget_3.item(selected_row, 6).text()
-
-            # Отображаем данные выбранной строки в диалоговом окне перед его открытием
-            self.ui_dialog2.lineEdit.setText(line)
-            self.ui_dialog2.dateTimeEdit.setDateTime(QDateTime.fromString(datetime1, "yyyy-MM-dd hh:mm:ss"))
-            self.ui_dialog2.dateTimeEdit_2.setDateTime(QDateTime.fromString(datetime2, "yyyy-MM-dd hh:mm:ss"))
-            self.ui_dialog2.lineEdit_2.setText(line2)
-            self.ui_dialog2.lineEdit_3.setText(line3)
-            self.ui_dialog2.lineEdit_4.setText(line4)
-
         self.new_window2.show()
 
     def update_json_files(self):
@@ -256,7 +225,6 @@ class MainWindow(QMainWindow):
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
-        self.curUser = User.authorization(username, password, self.api)
 
         # self.curUser = User.authorization(username, password, self.api)
         #
@@ -319,6 +287,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -329,7 +299,6 @@ class MainWindow(QMainWindow):
             selected_row = self.ui.tableWidget.currentRow()
 
             if selected_row >= 0:  # Проверяем, что строка действительно выбрана
-
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
@@ -383,6 +352,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -395,7 +366,7 @@ class MainWindow(QMainWindow):
             if selected_row >= 0:  # Проверяем, что строка действительно выбрана
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget_3.setItem(selected_row, 0,
-                                            QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
+                                              QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
                 self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
                 self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
                 self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
@@ -486,10 +457,6 @@ class MainWindow(QMainWindow):
                 tableWidget.setItem(row_idx, col_idx, item)
 
     def commit(self, table):
-        with open('ordernum', 'r') as file:
-            order_num = file.read() # номер заказа (после нажатия кнопки наверное стоит его увеличить на 1)
-        waiter_id = self.ui.lineEdit.text() # id официанта
-        print(waiter_id)
         data_dict = {}
         column_count = table.columnCount()
 
@@ -503,8 +470,6 @@ class MainWindow(QMainWindow):
 
         json_data = {"data": data_dict}
         print("Data saved:", json_data)
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

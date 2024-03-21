@@ -149,6 +149,11 @@ class MainWindow(QMainWindow):
         self.connect_sorting_function(widgets.tableWidget_2)
         self.connect_sorting_function(widgets.tableWidget_3)
 
+        label2Text = widgets.label_2.text()
+        with open('OrderNum', 'r') as file:
+            ordernum = file.read()
+
+        widgets.label_2.setText(f"{label2Text} {ordernum}")
         # SET HACKS
         # AppFunctions.setThemeHack(self)
 
@@ -208,10 +213,23 @@ class MainWindow(QMainWindow):
             print('Mouse click: RIGHT CLICK')
 
     def open_new_window(self):
+        selected_row = self.ui.tableWidget.currentRow()
+        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+            line2 = self.ui.tableWidget.item(selected_row, 4).text()
+            combBox = self.ui.tableWidget.item(selected_row, 5).text()
+            self.ui_dialog.lineEdit_2.setText(line2)
+            self.ui_dialog.comboBox.setCurrentText(combBox)
         self.new_window.show()
 
     def open_new_window2(self):
+        selected_row = self.ui.tableWidget_3.currentRow()
+        if selected_row >= 0:  # Проверяем, что строка действительно выбрана
+            line2 = self.ui.tableWidget_3.item(selected_row, 4).text()
+            line3 = self.ui.tableWidget_3.item(selected_row, 5).text()
+            self.ui_dialog2.lineEdit_2.setText(line2)
+            self.ui_dialog2.lineEdit_3.setText(line3)
         self.new_window2.show()
+
 
     def update_json_files(self):
         endpoints = ['get_order_history', 'get_all_booked_tables']  # список всех эндпоинтов, которые нужно обновить
@@ -219,7 +237,7 @@ class MainWindow(QMainWindow):
         for endpoint in endpoints:
             data = self.api.get_data(endpoint)
             if data:
-                with open(f"../waiter/modules/api/jsons/{endpoint}.json", "w") as file:
+                with open(f"./jsons/{endpoint}.json", "w") as file:
                     json.dump(data, file)
 
     def login(self):
@@ -418,7 +436,7 @@ class MainWindow(QMainWindow):
             return  # Если таблица не соответствует ни одному известному типу данных, выходим из функции
 
         # Загружаем данные из JSON файла
-        with open(f"../waiter/modules/api/jsons/{endpoint}.json", "r") as file:
+        with open(f"./jsons/{endpoint}.json", "r") as file:
             json_data = json.load(file)
 
         data = json_data['data'][0]['view_order_history'] if endpoint == 'get_order_history' else json_data['data']
@@ -470,6 +488,8 @@ class MainWindow(QMainWindow):
 
         json_data = {"data": data_dict}
         print("Data saved:", json_data)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()

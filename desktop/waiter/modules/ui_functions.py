@@ -306,8 +306,6 @@ class UIFunctions(MainWindow):
             table_widget.setColumnWidth(column, width)
 
 
-
-
     def load(self):
         pass
 

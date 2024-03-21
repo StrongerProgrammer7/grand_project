@@ -3,7 +3,7 @@ import os
 from cx_Freeze import setup, Executable
 
 # ADD FILES
-files = ['icon.ico', 'themes/', 'json/']
+files = ['icon.ico', 'themes/', 'jsons/']
 
 # TARGET
 target = Executable(

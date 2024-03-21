@@ -1,5 +1,6 @@
 # MAIN FILE
 # ///////////////////////////////////////////////////////////////
+from PySide6.QtCore import QDateTime
 from main import *
 
 # GLOBALS
@@ -203,12 +204,27 @@ class UIFunctions(MainWindow):
         if current_stylesheet == dark_stylesheet:
             self.ui.styleSheet.setStyleSheet(light_stylesheet)
             self.themeFile = "themes/py_dracula_light.qss"
+            self.ui.titleFrame.setStyleSheet("background-color: #6272a4; color: #f8f8f2; border-radius: 5px")
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/sun.png)")
         else:
             self.ui.styleSheet.setStyleSheet(dark_stylesheet)
             self.themeFile = "themes/py_dracula_dark.qss"
+            self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
             self.ui.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
 
+    def set_column_widths(self, table_widget, column_widths):
+        for column, width in enumerate(column_widths):
+            table_widget.setColumnWidth(column, width)
+
+    def clear_table(self):
+        self.ui.tableWidget_2.clearContents()
+        self.ui.tableWidget_2.setRowCount(0)
+        self.order_count = 0
+
+    def update_time(self):
+        current_time = QDateTime.currentDateTime().toString('hh:mm')
+        current_date = QDateTime.currentDateTime().toString('dd.MM.yyyy')
+        self.ui.time_label.setText(f"{current_time} {current_date}")
     # START - GUI DEFINITIONS
     # ///////////////////////////////////////////////////////////////
     def uiDefinitions(self):

@@ -1768,7 +1768,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                           </size>
                          </property>
                          <property name="styleSheet">
-                          <string notr="true">background-color: rgb(121, 11, 255);</string>
+                          <string notr="true"/>
                          </property>
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
@@ -1843,6 +1843,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
                          <property name="tabletTracking">
                           <bool>false</bool>
                          </property>
+                         <property name="layoutDirection">
+                          <enum>Qt::LeftToRight</enum>
+                         </property>
                          <property name="frameShape">
                           <enum>QFrame::NoFrame</enum>
                          </property>
@@ -1865,7 +1868,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                           <number>0</number>
                          </property>
                          <attribute name="horizontalHeaderVisible">
-                          <bool>true</bool>
+                          <bool>false</bool>
                          </attribute>
                          <attribute name="horizontalHeaderCascadingSectionResizes">
                           <bool>true</bool>
@@ -1880,7 +1883,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                           <bool>false</bool>
                          </attribute>
                          <attribute name="horizontalHeaderStretchLastSection">
-                          <bool>true</bool>
+                          <bool>false</bool>
                          </attribute>
                          <attribute name="verticalHeaderVisible">
                           <bool>false</bool>
@@ -1896,7 +1899,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                          </attribute>
                          <column>
                           <property name="text">
-                           <string>Номер</string>
+                           <string>Заказ</string>
                           </property>
                          </column>
                          <column>
@@ -1904,16 +1907,119 @@ li.checked::marker { content: &quot;\2612&quot;; }
                            <string>Название</string>
                           </property>
                          </column>
-                         <column>
-                          <property name="text">
-                           <string>Количество порций</string>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QFrame" name="frame_2">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>45</height>
+                          </size>
+                         </property>
+                         <property name="frameShape">
+                          <enum>QFrame::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_6">
+                          <property name="spacing">
+                           <number>6</number>
                           </property>
-                         </column>
-                         <column>
-                          <property name="text">
-                           <string>Комментарии</string>
+                          <property name="leftMargin">
+                           <number>0</number>
                           </property>
-                         </column>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QPushButton" name="pushButton">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(0, 170, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>Добавить заказ</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButton_4">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(170, 170, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>Добавить блюдо</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButton_5">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(170, 0, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>Удалить заказ</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButton_6">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(0, 85, 0);</string>
+                            </property>
+                            <property name="text">
+                             <string>Очистить таблицу</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="pushButton_7">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">background-color: rgb(0, 85, 255);</string>
+                            </property>
+                            <property name="text">
+                             <string>Подтвердить</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                       </layout>

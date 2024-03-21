@@ -267,7 +267,7 @@ QLineEdit {
 	padding-left: 10px;
 	selection-color: rgb(255, 255, 255);
 	selection-background-color: rgb(255, 121, 198);
-    color: #f8f8f2;
+    color: rgb(0, 0, 0);
 }
 QLineEdit:hover {
 	border: 2px solid rgb(64, 71, 88);

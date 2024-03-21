@@ -33,11 +33,11 @@ class MainWindow(QMainWindow):
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         # APP NAME
-        #title = "SOLIDSIGN - для официантов"
-        #description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
+        # title = "SOLIDSIGN - для официантов"
+        # description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
         # APPLY TEXTS
-        #self.setWindowTitle(title)
-        #widgets.titleRightInfo.setText(description)
+        # self.setWindowTitle(title)
+        # widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
@@ -87,7 +87,6 @@ class MainWindow(QMainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
-
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
     # ///////////////////////////////////////////////////////////////
@@ -113,7 +112,6 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.new_page)  # SET PAGE
             UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
-
 
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
@@ -197,6 +195,7 @@ class MainWindow(QMainWindow):
     #     self.ui.tableWidget_2
     #     self.add_order()
     #     self.add_row_with_combobox()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

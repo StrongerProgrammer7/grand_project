@@ -224,7 +224,7 @@ class MainWindow(QMainWindow):
         for endpoint in endpoints:
             data = self.api.get_data(endpoint)
             if data:
-                with open(f"../waiter/modules/api/jsons/{endpoint}.json", "w") as file:
+                with open(f"./jsons/{endpoint}.json", "w") as file:
                     json.dump(data, file)
 
     def login(self):
@@ -423,7 +423,7 @@ class MainWindow(QMainWindow):
             return  # Если таблица не соответствует ни одному известному типу данных, выходим из функции
 
         # Загружаем данные из JSON файла
-        with open(f"../waiter/modules/api/jsons/{endpoint}.json", "r") as file:
+        with open(f"./jsons/{endpoint}.json", "r") as file:
             json_data = json.load(file)
 
         data = json_data['data'][0]['view_order_history'] if endpoint == 'get_order_history' else json_data['data']

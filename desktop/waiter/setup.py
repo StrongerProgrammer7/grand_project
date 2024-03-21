@@ -3,11 +3,11 @@ import os
 from cx_Freeze import setup, Executable
 
 # ADD FILES
-files = ['icon.ico', 'themes/']
+files = ['icon.ico', 'themes/', 'modules/api/']
 
 # TARGET
 target = Executable(
-    script="cook_app.py",
+    script="main.py",
     base="Win32GUI",
     icon="icon.ico"
 )

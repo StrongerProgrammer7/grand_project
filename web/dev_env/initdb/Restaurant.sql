@@ -815,18 +815,25 @@ ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN ne
 -- Name: view_all_booked_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.view_all_booked_tables() RETURNS TABLE(table_id integer, booking_date timestamp with time zone, worker_id integer, client_number character varying, desired_date timestamp with time zone, booking_interval interval)
-    LANGUAGE plpgsql
-    AS $$
+CREATE OR REPLACE FUNCTION public.view_all_booked_tables(
+	)
+    RETURNS TABLE(table_id integer, booking_date timestamp with time zone, worker_id integer, client_number character varying, desired_date timestamp with time zone, booking_interval interval) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+
 BEGIN
     RETURN QUERY
-    SELECT ct.id_table, ct.order_date, ct.id_worker, ct.client_phone, ct.desired_booking_date, ct.booking_interval
+    SELECT ct.id_table, ct.order_date, ct.id_worker, ct.client_phone, ct.start_booking_date, ct.end_booking_date
     FROM client_table ct;
 END
-$$;
+$BODY$;
 
-
-ALTER FUNCTION public.view_all_booked_tables() OWNER TO postgres;
+ALTER FUNCTION public.view_all_booked_tables()
+    OWNER TO postgres;
 
 --
 -- TOC entry 260 (class 1255 OID 50553)

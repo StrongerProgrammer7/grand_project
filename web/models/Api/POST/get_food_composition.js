@@ -1,6 +1,7 @@
 const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
+const ApiError = require("../../../HandleAPI/ApiError");
 
 const get_food_composition = async (req, res, next) =>
 {

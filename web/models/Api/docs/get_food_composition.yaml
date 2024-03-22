@@ -34,7 +34,7 @@
                       "ingredient_id": 2,
                       "ingredient_name": "Огурцы",
                       "ingredient_measurement": "кг",
-                      "weight": 300,
+                      "ingredient_quantity": 300,
                     },
                   ]
                 message: Success!
@@ -56,5 +56,5 @@ components:
             type: string
           ingredient_measurement:
             type: string
-          weight:
+          ingredient_quantity:
             type: integer

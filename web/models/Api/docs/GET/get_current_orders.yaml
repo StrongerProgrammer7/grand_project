@@ -21,7 +21,6 @@
                     {
                       "id_order": 1,
                       "id_worker": 1,
-                      "id_food": 3,
                       "dishes": { "1": 2, "2": 7, "3": 5 },
                       "formation_date": "2024-03-04T10:15:52.909Z",
                       "giving_date": "2024-03-04T10:15:52.909Z",
@@ -42,8 +41,6 @@ components:
           id_order:
             type: integer
           id_worker:
-            type: integer
-          id_food:
             type: integer
           dishes:
             type: object

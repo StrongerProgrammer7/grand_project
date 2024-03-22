@@ -3,19 +3,20 @@ const errorHandler = require('../errorHandler');
 const db = require('../../db');
 const ApiError = require("../../../HandleAPI/ApiError");
 
-const get_all_tables_on_date = async (req, res, next) =>
+const get_time_for_booked_table_on_date = async (req, res, next) =>
 {
     if (!req.body)
         return next(ApiError.badRequest("Request body is empty!"));
     const
         {
+            id_table,
             date,
 
         } = req.body;
-    if (!date)
+    if (!(date && id_table))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('SELECT * FROM get_all_tables_on_date($1);', [date])
+    db.query('SELECT * FROM get_time_for_booked_table_on_date($1,$2);', [id_table, date])
         .then((data) =>
         {
             return next(DataApi.success(data.rows, "Success!"));
@@ -35,4 +36,4 @@ const get_all_tables_on_date = async (req, res, next) =>
 
 }
 
-module.exports = get_all_tables_on_date;
+module.exports = get_time_for_booked_table_on_date;

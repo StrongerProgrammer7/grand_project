@@ -19,7 +19,7 @@ const record_giving_time = require('../models/Api/POST/record_giving_time');
 const cancel_booking = require('../models/Api/POST/cancel_booking');
 const order_ingredient = require('../models/Api/POST/order_ingredient');
 const get_food_composition = require('../models/Api/POST/get_food_composition');
-const get_all_tables_on_date = require('../models/Api/POST/get_all_tables_on_date');
+const get_time_for_booked_table_on_date = require('../models/Api/POST/get_time_for_booked_table_on_date');
 const get_booked_tables_on_date = require('../models/Api/POST/get_booked_tables_on_date');
 const add_order_ingredient = require('../models/Api/POST/add_order_ingredient');
 const update_order = require('../models/Api/POST/update_order');
@@ -39,7 +39,7 @@ router.post('/registration_worker',
         body('email').isEmail()
     ],
     registration_worker);
-router.post('/signUp',
+router.post('/signIn',
     [
         body('login', 'Login is empty!').notEmpty(),
         body('password', 'Password is empty').notEmpty(),
@@ -56,7 +56,7 @@ router.post('/cancel_booking', cancel_booking);
 router.post('/order_ingredient', order_ingredient);
 router.post('/get_food_composition', get_food_composition);
 router.post('/get_booked_tables_on_date', get_booked_tables_on_date);
-router.post('/get_all_tables_on_date', get_all_tables_on_date);
+router.post('/get_all_tables_on_date', get_time_for_booked_table_on_date);
 router.post('/add_order_ingredient', add_order_ingredient);
 router.post('/update_order', update_order);
 router.post('/update_worker_salary_and_rate', update_worker_salary_and_rate);

@@ -24,7 +24,7 @@ DROP DATABASE IF EXISTS "Restaurant";
 -- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
+CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'ru_RU.utf8';
 
 
 ALTER DATABASE "Restaurant" OWNER TO postgres;

@@ -13,8 +13,8 @@ const helmet = require('helmet');
 const toobusy = require('toobusy-js');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
-const csrf = require('csurf');
-
+// const csrf = require('csurf');
+// const csrfProtection = csrf({ cookie: true });
 const pages = require('./routers/router');
 const controller = require('./controller/controller');
 const errorHandler = require('./middleware/HadnlingMiddleware');
@@ -25,7 +25,7 @@ const swaggerDocs = require('./utils/swagger');
 
 const PORT = process.env.PORT || 443;
 const urlencodedParser = express.urlencoded({ extended: true });
-const csrfProtection = csrf({ cookie: true });
+
 const app = express();
 
 
@@ -78,7 +78,6 @@ app.use('/api', controller)
 
 app.use(errorHandler);
 app.use(urlencodedParser);
-app.use(csrfProtection);
 app.use(helmet());
 
 app.use(function (req, res, next)

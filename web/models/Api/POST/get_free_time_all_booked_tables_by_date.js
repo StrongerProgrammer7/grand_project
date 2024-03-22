@@ -113,10 +113,11 @@ const get_all_booked_tables = async (req, res, next) =>
     if (!date)
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('Select  id as table_id, start_booking_date as start_date ,end_booking_date as end_date from get_booked_tables_on_date($1) ORDER BY start_date ASC;')
+    db.query('Select  id as table_id, start_booking_date as start_date ,end_booking_date as end_date from get_booked_tables_on_date($1) ORDER BY start_date ASC;', [date])
         .then((data) =>
         {
             const all_tables = data.rows;
+
             return next(DataApi.success(get_free_time_all_booked_tables_by_date(all_tables), "Success!"));
         })
         .catch(err =>

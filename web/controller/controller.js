@@ -58,7 +58,7 @@ router.post('/record_giving_time', record_giving_time);
 router.post('/cancel_booking', cancel_booking);
 router.post('/get_food_composition', get_food_composition);
 router.post('/get_booked_tables_on_date', get_booked_tables_on_date);
-router.post('/get_all_tables_on_date', get_time_for_booked_table_on_date);
+router.post('/get_time_for_booked_table_on_date', get_time_for_booked_table_on_date);
 router.post('/add_order_ingredient', add_order_ingredient);
 router.post('/update_order', update_order);
 router.post('/update_worker_salary_and_rate', update_worker_salary_and_rate);

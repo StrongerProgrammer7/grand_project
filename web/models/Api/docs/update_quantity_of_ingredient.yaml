@@ -1,0 +1,28 @@
+"/api/update_quantity_of_ingredient":
+  post:
+    tags:
+      - Food
+    summary: Update quantity of ingredient
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ingredient_id:
+                type: integer
+              quantitie:
+                type: integer
+            required:
+              - ingredient_id
+              - quantitie
+            example:
+              ingredient_id: 7
+              quantitie: 100
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

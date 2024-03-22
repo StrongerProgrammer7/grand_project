@@ -817,7 +817,7 @@ ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN ne
 
 CREATE OR REPLACE FUNCTION public.view_all_booked_tables(
 	)
-    RETURNS TABLE(table_id integer, booking_date timestamp with time zone, worker_id integer, client_number character varying, desired_date timestamp with time zone, booking_interval interval) 
+    RETURNS TABLE(table_id integer, booking_date timestamp with time zone, worker_id integer, client_number character varying, start_date timestamp with time zone, end_date timestamp with time zone) 
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE PARALLEL UNSAFE

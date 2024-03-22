@@ -59,7 +59,7 @@ function swaggerDocs(app, port)
         res.send(swaggerSpec);
     });
 
-    logger.info(`Docs available at https://grandproject.k-lab.su/docs`);
+    // logger.info(`Docs available at https://grandproject.k-lab.su/docs`);
 };
 
 module.exports = swaggerDocs;

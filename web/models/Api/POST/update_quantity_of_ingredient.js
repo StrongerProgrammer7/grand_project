@@ -16,7 +16,7 @@ const update_quantity_of_ingredient = async (req, res, next) =>
     if (!(quantitie && ingredient_id))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL update_order($1,$2)', [
+    db.query('CALL update_quantity_of_ingredient($1,$2)', [
         ingredient_id,
         quantitie
     ])

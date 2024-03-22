@@ -11,15 +11,14 @@ const book_table_client = async (req, res, next) =>
     const
         {
             id_table,
-            id_worker,
             phone_client,
             order_time,
             start_booking_date,
             end_booking_date
         } = req.body;
-    if (!(id_table && id_worker && order_time && phone_client && start_booking_date))
+    if (!(id_table && order_time && phone_client && start_booking_date))
         return next(ApiError.badRequest("Don't enought data!"));
-    db.query('CALL book_table($1,$2,$3,$4,$5)', [
+    db.query('CALL book_table_from_web($1,$2,$3,$4,$5)', [
         id_table,
         phone_client,
         order_time,
@@ -37,7 +36,7 @@ const book_table_client = async (req, res, next) =>
                 "Error with book table client",
                 ["23505"],
                 "Table is already book or don't exists table/worker, check your data",
-                "Internal error with book_table_client!",
+                "Client or table doens't exists!",
                 err,
                 next
             );

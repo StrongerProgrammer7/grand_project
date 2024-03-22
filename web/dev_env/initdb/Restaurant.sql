@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-17 07:43:22
+-- Started on 2024-03-21 15:16:43
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,51 +43,67 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 245 (class 1255 OID 58714)
--- Name: add_client(character varying, character varying, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 273 (class 1255 OID 58852)
+-- Name: add_client(character varying, character varying, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.add_client(IN _phone character varying, IN _how_to_appeal character varying, IN _last_contact_date timestamp with time zone)
+CREATE PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
 	INSERT INTO client
-		(phone, how_to_appeal, last_contact_date)
+		(phone, "name", last_contact_date, email)
 	VALUES
-		(_name, _how_to_appeal, date_trunc('second', now()));
+		(_phone, _name, date_trunc('second', now()), _email);
 END
 $$;
 
 
-ALTER PROCEDURE public.add_client(IN _phone character varying, IN _how_to_appeal character varying, IN _last_contact_date timestamp with time zone) OWNER TO postgres;
+ALTER PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying) OWNER TO postgres;
 
 --
--- TOC entry 276 (class 1255 OID 58826)
+-- TOC entry 284 (class 1255 OID 67143)
 -- Name: add_client_order(integer, integer[], integer[], timestamp with time zone, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_ids integer[], IN _quantities integer[], IN _formation_date timestamp with time zone, IN _issue_date timestamp with time zone, IN _status character varying DEFAULT NULL::character varying)
+CREATE PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_ids integer[], IN _quantities integer[], IN _formation_date timestamp with time zone, IN _issue_date timestamp with time zone, IN _status character varying)
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    order_id INTEGER;
-    i INTEGER;
+    order_id INT;
+    ingredient_row RECORD;
 BEGIN
-    -- Вставка записи в таблицу order_directory
-    INSERT INTO order_directory
-        (id_worker, formation_date, issue_date, status)
-    VALUES
-        (_worker_id, _formation_date, _issue_date, _status)
+    -- Добавляем заказ в таблицу order_directory
+    INSERT INTO order_directory (id_worker, formation_date, issue_date, status)
+    VALUES (_worker_id, _formation_date, _issue_date, _status)
     RETURNING id INTO order_id;
 
-    -- Вставка записей в таблицу order_food для каждого блюда в заказе
+    -- Для каждого блюда в заказе
     FOR i IN 1..array_length(_food_ids, 1) LOOP
-        INSERT INTO order_food
-            (id_order, id_food, quantity)
-        VALUES
-            (order_id, _food_ids[i], _quantities[i]);
+        -- Проверяем существование блюда
+        IF EXISTS (SELECT 1 FROM food WHERE id = _food_ids[i]) THEN
+            -- Добавляем запись о блюде в таблицу order_food
+            INSERT INTO order_food (id_order, id_food, quantity)
+            VALUES (order_id, _food_ids[i], _quantities[i]);
+
+            -- Для каждого ингредиента в блюде
+            FOR ingredient_row IN
+                SELECT fc.id_ingredient, fc.weight * _quantities[i] AS total_weight
+                FROM food_composition fc
+                WHERE fc.id_food = _food_ids[i]
+            LOOP
+                -- Обновляем количество ингредиента в ingredient_storage
+                UPDATE ingredient_storage
+                SET weight = weight - ingredient_row.total_weight
+                WHERE id_ingredient = ingredient_row.id_ingredient;
+            END LOOP;
+        ELSE
+            RAISE EXCEPTION 'Блюдо с ID % не найдено', _food_ids[i];
+        END IF;
     END LOOP;
-END
+
+    COMMIT;
+END;
 $$;
 
 
@@ -113,7 +129,7 @@ $$;
 ALTER PROCEDURE public.add_food(IN _food_type character varying, IN _name character varying, IN _unit_of_measurement character varying, IN _price double precision, IN _weight double precision) OWNER TO postgres;
 
 --
--- TOC entry 244 (class 1255 OID 50453)
+-- TOC entry 262 (class 1255 OID 67127)
 -- Name: add_food_composition(character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -128,6 +144,11 @@ BEGIN
 	SELECT "id" INTO _food_id FROM food WHERE "name" = _food_name;
 
 	SELECT "id" INTO _ingredient_id FROM ingredient WHERE "name" = _ingredient_name;
+
+	-- Проверка, найден ли ингредиент
+	IF _ingredient_id IS NULL THEN
+		RAISE EXCEPTION 'Ингредиент с именем % не найден', _ingredient_name;
+	END IF;
 
 	INSERT INTO food_composition
 		(id_food, id_ingredient, weight)
@@ -159,7 +180,7 @@ $$;
 ALTER PROCEDURE public.add_food_type(IN _type character varying) OWNER TO postgres;
 
 --
--- TOC entry 264 (class 1255 OID 42263)
+-- TOC entry 263 (class 1255 OID 42263)
 -- Name: add_ingredient(character varying, character varying, integer, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -235,7 +256,7 @@ $$;
 ALTER PROCEDURE public.add_table(IN _human_slots integer) OWNER TO postgres;
 
 --
--- TOC entry 269 (class 1255 OID 58725)
+-- TOC entry 267 (class 1255 OID 58725)
 -- Name: add_worker(character varying, character varying, character varying, character varying, character varying, double precision, character varying, character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -264,46 +285,72 @@ $$;
 ALTER PROCEDURE public.add_worker(IN _login character varying, IN _password character varying, IN _job_role character varying, IN _surname character varying, IN _first_name character varying, IN _salary double precision, IN _patronymic character varying, IN _email character varying, IN _phone character varying, IN _job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 282 (class 1255 OID 58784)
--- Name: book_table(integer, integer, character varying, timestamp with time zone, timestamp with time zone, interval); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 274 (class 1255 OID 67044)
+-- Name: book_table(integer, integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _desired_booking_date timestamp with time zone, IN _booking_interval interval)
+CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone)
     LANGUAGE plpgsql
     AS $$
-DECLARE
-    v_booking_start TIMESTAMP WITH TIME ZONE;
-    v_booking_end TIMESTAMP WITH TIME ZONE;
 BEGIN
-    -- Check if the table exists
+    -- Существует ли таблица
     IF NOT EXISTS (SELECT 1 FROM public."table" WHERE id = _id_table) THEN
         RAISE EXCEPTION 'Table with id % does not exist', _id_table;
     END IF;
 
-    -- Check if the worker exists
+    -- Существует ли рабочий
     IF NOT EXISTS (SELECT 1 FROM public.worker WHERE id = _id_worker) THEN
         RAISE EXCEPTION 'Worker with id % does not exist', _id_worker;
     END IF;
 
-    -- Check if the client exists
+    -- Существует ли клиент
     IF NOT EXISTS (SELECT 1 FROM public.client WHERE phone = _client_phone) THEN
         RAISE EXCEPTION 'Client with phone number % does not exist', _client_phone;
     END IF;
 
-    -- Insert the booking into the client_table
     INSERT INTO public.client_table
-        (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval)
+        (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date)
     VALUES
-        (_id_table, _order_date, _id_worker, _client_phone, _desired_booking_date, _booking_interval);
+        (_id_table, _order_date, _id_worker, _client_phone, _start_booking_date, _end_booking_date);
 
 END
 $$;
 
 
-ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _desired_booking_date timestamp with time zone, IN _booking_interval interval) OWNER TO postgres;
+ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 263 (class 1255 OID 58717)
+-- TOC entry 277 (class 1255 OID 67046)
+-- Name: book_table_from_web(integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Существует ли таблица
+    IF NOT EXISTS (SELECT 1 FROM public."table" WHERE id = _id_table) THEN
+        RAISE EXCEPTION 'Table with id % does not exist', _id_table;
+    END IF;
+
+    -- Существует ли клиент
+    IF NOT EXISTS (SELECT 1 FROM public.client WHERE phone = _client_phone) THEN
+        RAISE EXCEPTION 'Client with phone number % does not exist', _client_phone;
+    END IF;
+
+    INSERT INTO public.client_table
+        (id_table, order_date, client_phone, start_booking_date, end_booking_date)
+    VALUES
+        (_id_table, _order_date, _client_phone, _start_booking_date, _end_booking_date);
+
+END
+$$;
+
+
+ALTER PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
+
+--
+-- TOC entry 261 (class 1255 OID 58717)
 -- Name: cancel_booking(integer, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -325,7 +372,7 @@ $$;
 ALTER PROCEDURE public.cancel_booking(IN _table_id integer, IN _desired_booking_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 265 (class 1255 OID 50536)
+-- TOC entry 264 (class 1255 OID 50536)
 -- Name: change_order_status(integer, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -343,27 +390,7 @@ $$;
 ALTER PROCEDURE public.change_order_status(IN _order_id integer, IN _new_status character varying) OWNER TO postgres;
 
 --
--- TOC entry 262 (class 1255 OID 50563)
--- Name: check_ingredient_amount(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.check_ingredient_amount() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-    IF NEW.quantity < NEW.critical_rate THEN
-        PERFORM public.get_reorder_ingredients_list();
-    END IF;
-
-    RETURN NEW;
-END;
-$$;
-
-
-ALTER FUNCTION public.check_ingredient_amount() OWNER TO postgres;
-
---
--- TOC entry 275 (class 1255 OID 58808)
+-- TOC entry 271 (class 1255 OID 58808)
 -- Name: delete_ingredient(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -386,7 +413,7 @@ $$;
 ALTER PROCEDURE public.delete_ingredient(IN ingredient_id integer) OWNER TO postgres;
 
 --
--- TOC entry 273 (class 1255 OID 58735)
+-- TOC entry 269 (class 1255 OID 58735)
 -- Name: delete_order(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -403,7 +430,7 @@ $$;
 ALTER PROCEDURE public.delete_order(IN order_id integer) OWNER TO postgres;
 
 --
--- TOC entry 281 (class 1255 OID 58848)
+-- TOC entry 279 (class 1255 OID 58848)
 -- Name: delete_worker(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -434,11 +461,31 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 271 (class 1255 OID 58799)
--- Name: get_all_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
+-- TOC entry 280 (class 1255 OID 67047)
+-- Name: get_booked_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.get_all_tables_on_date(input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer)
+CREATE FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer, start_booking_date timestamp with time zone, end_booking_date timestamp with time zone)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT t.id, t.human_slots, ct.start_booking_date, ct.end_booking_date
+    FROM public.client_table ct
+    INNER JOIN public."table" t ON ct.id_table = t.id
+    WHERE ct.start_booking_date::date = input_date::date;
+END;
+$$;
+
+
+ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
+
+--
+-- TOC entry 276 (class 1255 OID 58854)
+-- Name: get_count_place_all_tables(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_count_place_all_tables() RETURNS TABLE(id integer, human_slots integer)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -449,30 +496,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.get_all_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
+ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
 
 --
--- TOC entry 272 (class 1255 OID 58801)
--- Name: get_booked_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer, desired_booking_date timestamp with time zone, booking_interval interval)
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN QUERY
-    SELECT t.id, t.human_slots, ct.desired_booking_date, ct.booking_interval
-    FROM public.client_table ct
-    INNER JOIN public."table" t ON ct.id_table = t.id
-    WHERE ct.desired_booking_date::date = input_date::date;
-END;
-$$;
-
-
-ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
-
---
--- TOC entry 278 (class 1255 OID 58827)
+-- TOC entry 282 (class 1255 OID 67130)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -498,7 +525,7 @@ BEGIN
         JOIN
             order_food ofd ON od.id = ofd.id_order
         WHERE
-            od.status <> 'Выполнен' -- Фильтрация по текущему статусу заказа
+            od.status <> 'Отдано' -- Фильтрация по текущему статусу заказа
         GROUP BY
             od.id
     LOOP
@@ -521,7 +548,7 @@ $$;
 ALTER FUNCTION public.get_current_orders() OWNER TO postgres;
 
 --
--- TOC entry 247 (class 1255 OID 58727)
+-- TOC entry 245 (class 1255 OID 58727)
 -- Name: get_ingredients_info(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -559,7 +586,28 @@ $$;
 ALTER FUNCTION public.get_reorder_ingredients_list() OWNER TO postgres;
 
 --
--- TOC entry 246 (class 1255 OID 58723)
+-- TOC entry 281 (class 1255 OID 67050)
+-- Name: get_time_for_booked_table_on_date(integer, timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.get_time_for_booked_table_on_date(id_table integer, input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer, start_booking_date timestamp with time zone, end_booking_date timestamp with time zone)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT t.id, t.human_slots, ct.start_booking_date, ct.end_booking_date
+    FROM public.client_table ct
+    INNER JOIN public."table" t ON ct.id_table = t.id
+    WHERE ct.start_booking_date::date = input_date::date
+    AND t.id = ct.id_table;
+END;
+$$;
+
+
+ALTER FUNCTION public.get_time_for_booked_table_on_date(id_table integer, input_date timestamp with time zone) OWNER TO postgres;
+
+--
+-- TOC entry 244 (class 1255 OID 58723)
 -- Name: get_worker_list(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -578,7 +626,7 @@ $$;
 ALTER FUNCTION public.get_worker_list() OWNER TO postgres;
 
 --
--- TOC entry 267 (class 1255 OID 58719)
+-- TOC entry 283 (class 1255 OID 67134)
 -- Name: order_ingredient(integer, character varying, integer, integer, double precision, timestamp with time zone, timestamp with time zone, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -587,9 +635,9 @@ CREATE PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name c
     AS $$
 DECLARE
     request_id INT;
-	current_request_date TIMESTAMP WITH TIME ZONE;
+    current_request_date TIMESTAMP WITH TIME ZONE;
 BEGIN
-	-- Получаем текущую дату с округлением до секунд
+    -- Получаем текущую дату с округлением до секунд
     current_request_date := date_trunc('second', NOW());
 
     -- Добавляем запись о заявке в таблицу списка заявок
@@ -598,16 +646,27 @@ BEGIN
     RETURNING id INTO request_id;
 
     -- Добавляем запись о заявленных ингредиентах в таблицу ингредиент_заявка
-    INSERT INTO requisition (id_request, id_ingredient, weight, quantity)
+    INSERT INTO requisition (id, id_ingredient, weight, quantity)
     VALUES (request_id, ingredient_id, ingredient_weight, ingredient_quantity);
 
-    -- Добавляем запись о поступлении ингредиента на склад
-    INSERT INTO ingredient_storage (id_ingredient, delivery_date, id_request, valid_until, weight, quantity)
-    VALUES (ingredient_id, supplied_date, request_id, ingredient_expiry_date, supplied_weight, supplied_quantity);
+    -- Проверяем, есть ли ингредиент в таблице ingredient_storage
+    PERFORM id_ingredient FROM ingredient_storage WHERE id_ingredient = ingredient_id;
+
+    -- Если ингредиент уже существует в таблице ingredient_storage, обновляем его вес
+    IF FOUND THEN
+        UPDATE ingredient_storage
+        SET weight = weight + supplied_weight,
+            quantity = quantity + supplied_quantity
+        WHERE id_ingredient = ingredient_id;
+    ELSE
+        -- Добавляем запись о поступлении ингредиента на склад
+        INSERT INTO ingredient_storage (id_ingredient, delivery_date, id_request, valid_until, weight, quantity)
+        VALUES (ingredient_id, supplied_date, request_id, ingredient_expiry_date, supplied_weight, supplied_quantity);
+    END IF;
 
     -- Обновляем статус заявки на "В процессе"
-    UPDATE requests
-    SET status = 'В процессе'
+    UPDATE requisition_list
+    SET status = 'Ожидание'
     WHERE id = request_id;
 
     COMMIT;
@@ -618,7 +677,7 @@ $$;
 ALTER PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name character varying, IN ingredient_id integer, IN ingredient_quantity integer, IN ingredient_weight double precision, IN ingredient_expiry_date timestamp with time zone, IN supplied_date timestamp with time zone, IN supplied_weight double precision, IN supplied_quantity integer) OWNER TO postgres;
 
 --
--- TOC entry 266 (class 1255 OID 50537)
+-- TOC entry 265 (class 1255 OID 50537)
 -- Name: record_giving_time(integer, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -636,7 +695,7 @@ $$;
 ALTER PROCEDURE public.record_giving_time(IN _order_id integer, IN _giving_time timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 270 (class 1255 OID 58731)
+-- TOC entry 268 (class 1255 OID 58731)
 -- Name: update_ingredient(integer, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -655,7 +714,7 @@ $$;
 ALTER PROCEDURE public.update_ingredient(IN p_ingredient_id integer, IN p_price double precision, IN p_critical_rate integer) OWNER TO postgres;
 
 --
--- TOC entry 274 (class 1255 OID 58809)
+-- TOC entry 270 (class 1255 OID 58809)
 -- Name: update_issue_date(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -674,7 +733,7 @@ $$;
 ALTER FUNCTION public.update_issue_date() OWNER TO postgres;
 
 --
--- TOC entry 280 (class 1255 OID 58831)
+-- TOC entry 278 (class 1255 OID 58831)
 -- Name: update_order(integer, integer[], integer[], character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -714,7 +773,26 @@ $$;
 ALTER PROCEDURE public.update_order(IN _order_id integer, IN _food_id integer[], IN _quantities integer[], IN _new_status character varying) OWNER TO postgres;
 
 --
--- TOC entry 268 (class 1255 OID 58724)
+-- TOC entry 257 (class 1255 OID 67056)
+-- Name: update_quantity_of_ingredient(integer, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.update_quantity_of_ingredient(IN p_ingredient_id integer, IN p_quantity integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Обновляем количество ингредиентов на складе
+    UPDATE ingredient_storage
+    SET quantity = quantity + p_quantity
+    WHERE id_ingredient = p_ingredient_id;
+END;
+$$;
+
+
+ALTER PROCEDURE public.update_quantity_of_ingredient(IN p_ingredient_id integer, IN p_quantity integer) OWNER TO postgres;
+
+--
+-- TOC entry 266 (class 1255 OID 58724)
 -- Name: update_worker_salary_and_rate(integer, double precision, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -733,7 +811,7 @@ $$;
 ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN new_salary double precision, IN new_job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 259 (class 1255 OID 50548)
+-- TOC entry 258 (class 1255 OID 50548)
 -- Name: view_all_booked_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -751,7 +829,7 @@ $$;
 ALTER FUNCTION public.view_all_booked_tables() OWNER TO postgres;
 
 --
--- TOC entry 261 (class 1255 OID 50553)
+-- TOC entry 260 (class 1255 OID 50553)
 -- Name: view_food_with_composition(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -771,7 +849,7 @@ $$;
 ALTER FUNCTION public.view_food_with_composition(_food_id integer) OWNER TO postgres;
 
 --
--- TOC entry 260 (class 1255 OID 50551)
+-- TOC entry 259 (class 1255 OID 50551)
 -- Name: view_menu_sorted_by_type(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -791,7 +869,7 @@ $$;
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 58828)
+-- TOC entry 275 (class 1255 OID 58828)
 -- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -838,7 +916,7 @@ $$;
 ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
--- TOC entry 277 (class 1255 OID 58844)
+-- TOC entry 272 (class 1255 OID 58844)
 -- Name: worker_history_trigger_function(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -902,7 +980,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.client (
     phone character varying(32) NOT NULL,
-    how_to_appeal character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
     last_contact_date timestamp with time zone NOT NULL,
     email character varying(255) NOT NULL,
     CONSTRAINT valid_email_format CHECK (((email)::text ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'::text)),
@@ -920,10 +998,10 @@ ALTER TABLE public.client OWNER TO postgres;
 CREATE TABLE public.client_table (
     id_table integer NOT NULL,
     order_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    id_worker integer NOT NULL,
+    id_worker integer,
     client_phone character varying(32) NOT NULL,
-    desired_booking_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
-    booking_interval interval DEFAULT '03:00:00'::interval NOT NULL
+    start_booking_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
+    end_booking_date timestamp with time zone NOT NULL
 );
 
 
@@ -936,7 +1014,7 @@ ALTER TABLE public.client_table OWNER TO postgres;
 
 CREATE TABLE public.food (
     id integer NOT NULL,
-    type character varying NOT NULL,
+    type character varying,
     name character varying NOT NULL,
     weight double precision,
     unit_of_measurement character varying DEFAULT 'грамм'::character varying,
@@ -1333,7 +1411,7 @@ ALTER SEQUENCE public.worker_id_seq OWNED BY public.worker.id;
 
 
 --
--- TOC entry 4738 (class 2604 OID 33934)
+-- TOC entry 4740 (class 2604 OID 33934)
 -- Name: food id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1341,7 +1419,7 @@ ALTER TABLE ONLY public.food ALTER COLUMN id SET DEFAULT nextval('public.food_id
 
 
 --
--- TOC entry 4734 (class 2604 OID 33880)
+-- TOC entry 4736 (class 2604 OID 33880)
 -- Name: ingredient id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1349,7 +1427,7 @@ ALTER TABLE ONLY public.ingredient ALTER COLUMN id SET DEFAULT nextval('public.i
 
 
 --
--- TOC entry 4742 (class 2604 OID 34037)
+-- TOC entry 4744 (class 2604 OID 34037)
 -- Name: ingredient_storage id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1357,7 +1435,7 @@ ALTER TABLE ONLY public.ingredient_storage ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 4743 (class 2604 OID 50461)
+-- TOC entry 4745 (class 2604 OID 50461)
 -- Name: order_directory id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1365,7 +1443,7 @@ ALTER TABLE ONLY public.order_directory ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- TOC entry 4740 (class 2604 OID 33964)
+-- TOC entry 4742 (class 2604 OID 33964)
 -- Name: requisition_list id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1373,7 +1451,7 @@ ALTER TABLE ONLY public.requisition_list ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 4736 (class 2604 OID 33909)
+-- TOC entry 4738 (class 2604 OID 33909)
 -- Name: table id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1381,7 +1459,7 @@ ALTER TABLE ONLY public."table" ALTER COLUMN id SET DEFAULT nextval('public.tabl
 
 
 --
--- TOC entry 4737 (class 2604 OID 33916)
+-- TOC entry 4739 (class 2604 OID 33916)
 -- Name: worker id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1394,10 +1472,11 @@ ALTER TABLE ONLY public.worker ALTER COLUMN id SET DEFAULT nextval('public.worke
 -- Data for Name: client; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51+03', 'john@example.com');
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51+03', 'john1@example.com');
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51+03', 'john12@example.com');
-INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51+03', 'john123@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513678', 'Максим', '2024-03-17 15:42:22+03', 'maks123@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51+03', 'anatol@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51+03', 'glebus@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51+03', 'valya@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51+03', 'konstantinus@example.com');
 
 
 --
@@ -1406,11 +1485,11 @@ INSERT INTO public.client (phone, how_to_appeal, last_contact_date, email) VALUE
 -- Data for Name: client_table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (3, '2024-03-04 13:11:31.718063+03', 6, '+79637259702', '2024-03-04 13:11:31.718063+03', '03:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 12:00:00+03', 3, '+79389513658', '2024-03-23 10:00:00+03', '05:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 13:00:00+03', 3, '+79389513658', '2024-03-23 16:00:00+03', '02:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 15:00:00+03', 3, '+79389513658', '2024-03-23 17:00:00+03', '02:00:00');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, desired_booking_date, booking_interval) VALUES (1, '2024-03-18 14:00:00+03', 3, '+79389513658', '2024-03-23 17:00:00+03', '02:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 10:00:00+03', 1, '+79389513678', '2024-03-23 10:00:00+03', '2024-03-23 12:00:00+03');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 12:00:00+03', 3, '+79848718618', '2024-03-23 13:00:00+03', '2024-03-23 15:00:00+03');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-17 14:00:00+03', 2, '+79330339678', '2024-03-23 17:00:00+03', '2024-03-23 19:00:00+03');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (2, '2024-03-19 11:00:00+03', 4, '+79637259702', '2024-03-24 18:00:00+03', '2024-03-24 19:00:00+03');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-20 14:00:00+03', 5, '+79389513658', '2024-03-25 10:00:00+03', '2024-03-25 19:00:00+03');
 
 
 --
@@ -1419,9 +1498,46 @@ INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, 
 -- Data for Name: food; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (1, 'Напитки', 'Бурбон', 200, 'Грамм', 300);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (2, 'Пицца', 'Карбонара', 800, 'Грамм', 800);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (3, 'Салаты', 'Цезарь', 400, 'Грамм', 600);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (1, 'Супы', 'Борщ', 500, 'грамм', 350);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (2, 'Супы', 'Гороховый', 500, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (3, 'Супы', 'Харчо', 500, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (4, 'Супы', 'Куриный суп с домашней лапшой', 500, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (5, 'Супы', 'Грибной', 500, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (6, 'Домашнее', 'Пюре с котлетой', 400, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (7, 'Домашнее', 'Пельмени', 500, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (9, 'Блины', 'Блины с красной икрой', 300, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (10, 'Блины', 'Блины с говядиной', 300, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (11, 'Блины', 'Блины с черной икрой', 300, 'грамм', 600);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (12, 'Гарниры', 'Макароны стандартные', 400, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (13, 'Гарниры', 'Рис длиннозерный', 300, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (14, 'Гарниры', 'Печеный картофель', 400, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (15, 'Салаты', 'Салат крабовый', 400, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (16, 'Салаты', 'Салат оливье', 400, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (17, 'Салаты', 'Сельдь под шубой', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (18, 'Десерты', 'Печеные яблоки', 200, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (19, 'Десерты', 'Ватрушки', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (20, 'Десерты', 'Сырники', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (21, 'Каши', 'Рисовая молочная каша', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (22, 'Каши', 'Овсяная каша', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (23, 'Каши', 'Манная каша', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (40, 'Опционально', 'Хлеб', 200, 'грамм', 59);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (41, 'Опционально', 'Простая вода', 200, 'грамм', 59);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (35, 'Напитки', 'Квас', 200, 'грамм', 79);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (36, 'Напитки', 'Добрый кола', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (37, 'Напитки', 'Фрустайл апельсин', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (38, 'Напитки', 'Липтон зеленый', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (39, 'Напитки', 'Липтон черный', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (30, 'Напитки', 'Черный чай', 200, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (27, 'Мясо', 'Нежная тушеная говядина', 400, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (28, 'Мясо', 'Шашлык из баранины', 400, 'грамм', 599);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (29, 'Мясо', 'Свинина в духовке', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (31, 'Напитки', 'Зеленый чай', 200, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (32, 'Напитки', 'Латте', 300, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (33, 'Напитки', 'Капучино', 300, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (34, 'Напитки', 'Глинтвейн', 300, 'грамм', 99);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (24, 'Рыба', 'Щука, тушеная в сметане с луком', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (25, 'Рыба', 'Запеченный осетр', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (26, 'Рыба', 'Лещ с капустой в духовке', 400, 'грамм', 399);
 
 
 --
@@ -1430,8 +1546,151 @@ INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VAL
 -- Data for Name: food_composition; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 2, 300);
-INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (2, 3, 500);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 1, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 2, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 3, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 5, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (1, 6, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (2, 1, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (2, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (2, 7, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (3, 8, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (3, 9, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (3, 10, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (3, 11, 10);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (4, 12, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (4, 5, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (4, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (4, 14, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (5, 15, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (5, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (5, 5, 40);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (5, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (6, 16, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (6, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (6, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (7, 17, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (7, 18, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (7, 19, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (7, 20, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (10, 21, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (10, 16, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (10, 19, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (10, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (9, 21, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (9, 22, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (9, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (11, 21, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (11, 23, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (11, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (12, 24, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (13, 25, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (14, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (15, 26, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (15, 27, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (15, 28, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (15, 29, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (15, 13, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 5, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 26, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 30, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 7, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 28, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 31, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (16, 8, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 2, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 26, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 28, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 19, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 4, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 32, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (17, 5, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (18, 33, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (18, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (19, 35, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (19, 36, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (19, 37, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (19, 34, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (19, 26, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (20, 35, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (20, 37, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (20, 34, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (20, 26, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (21, 9, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (21, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (21, 59, 20);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (21, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (21, 38, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (22, 39, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (22, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (22, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (22, 38, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (23, 40, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (23, 59, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (23, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (23, 38, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (23, 31, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (24, 41, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (24, 20, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (24, 19, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (24, 31, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (24, 42, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (24, 43, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (25, 44, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (25, 45, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (25, 19, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (25, 31, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (25, 28, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (25, 43, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 46, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 3, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 5, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 19, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 13, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 45, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 42, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (26, 31, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 8, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 19, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 38, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 36, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 31, 30);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 34, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 48, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (27, 47, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (28, 49, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (28, 19, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (28, 31, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (28, 42, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (29, 1, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (29, 43, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (29, 31, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (29, 42, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (30, 50, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (30, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (30, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (31, 51, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (31, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (31, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (32, 59, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (32, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (32, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (32, 52, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (33, 59, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (33, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (33, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (33, 52, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (34, 45, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (34, 36, 100);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (34, 34, 50);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (35, 53, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (36, 54, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (37, 55, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (38, 56, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (39, 57, 200);
+INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (40, 58, 300);
 
 
 --
@@ -1440,12 +1699,17 @@ INSERT INTO public.food_composition (id_food, id_ingredient, weight) VALUES (2, 
 -- Data for Name: food_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.food_type (type) VALUES ('Пицца');
-INSERT INTO public.food_type (type) VALUES ('Суши');
+INSERT INTO public.food_type (type) VALUES ('Супы');
+INSERT INTO public.food_type (type) VALUES ('Домашнее');
+INSERT INTO public.food_type (type) VALUES ('Блины');
+INSERT INTO public.food_type (type) VALUES ('Гарниры');
 INSERT INTO public.food_type (type) VALUES ('Салаты');
+INSERT INTO public.food_type (type) VALUES ('Десерты');
+INSERT INTO public.food_type (type) VALUES ('Каши');
+INSERT INTO public.food_type (type) VALUES ('Опционально');
+INSERT INTO public.food_type (type) VALUES ('Мясо');
+INSERT INTO public.food_type (type) VALUES ('Рыба');
 INSERT INTO public.food_type (type) VALUES ('Напитки');
-INSERT INTO public.food_type (type) VALUES ('Спиртные напитки');
-INSERT INTO public.food_type (type) VALUES ('Соусы');
 
 
 --
@@ -1454,8 +1718,65 @@ INSERT INTO public.food_type (type) VALUES ('Соусы');
 -- Data for Name: ingredient; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (2, 'Огурцы', 'кг', 100, 3);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (3, 'Мука', 'кг', 50, 5);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (1, 'Свинина', 'грамм', 499, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (2, 'Свекла', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (3, 'Капуста', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (4, 'Картофель', 'грамм', 299, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (5, 'Морковь', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (6, 'Чеснок', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (7, 'Горох', 'грамм', 199, 3000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (8, 'Говядина', 'грамм', 499, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (9, 'Рис', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (10, 'Помидоры', 'грамм', 299, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (11, 'Специи', 'грамм', 199, 2000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (12, 'Курица', 'грамм', 299, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (13, 'Зелень', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (14, 'Лапша', 'грамм', 199, 3000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (15, 'Шампиньоны', 'грамм', 399, 2000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (16, 'Говяжий фарш', 'грамм', 399, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (17, 'Тесто', 'грамм', 199, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (18, 'Свиной фарш', 'грамм', 399, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (19, 'Лук', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (20, 'Сметана', 'грамм', 299, 3000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (21, 'Блины', 'грамм', 199, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (22, 'Икра кета', 'грамм', 599, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (23, 'Черная осетровая икра', 'грамм', 799, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (24, 'Макароны стандартные', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (25, 'Рис длиннозерный', 'грамм', 199, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (26, 'Куриное яйцо', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (27, 'Крабовые палочки', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (28, 'Майонез', 'грамм', 399, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (29, 'Кукуруза', 'грамм', 199, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (30, 'Соленые огурцы', 'грамм', 199, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (31, 'Соль', 'грамм', 99, 3000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (32, 'Сельдь', 'грамм', 399, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (33, 'Яблоки', 'грамм', 199, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (34, 'Сахар', 'грамм', 159, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (35, 'Мука пшеничная', 'грамм', 159, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (36, 'Вода', 'грамм', 59, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (37, 'Творог', 'грамм', 159, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (38, 'Сливочное масло', 'грамм', 159, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (39, 'Овсяные хлопья', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (40, 'Манная крупа', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (41, 'Щука', 'грамм', 99, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (42, 'Перец', 'грамм', 99, 3000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (43, 'Подсолнечное масло', 'грамм', 99, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (44, 'Осетр', 'грамм', 399, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (45, 'Лимон', 'грамм', 199, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (46, 'Лещ', 'грамм', 399, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (47, 'Лавровый лист', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (48, 'Уксус', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (49, 'Баранина', 'грамм', 499, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (50, 'Черный чай', 'грамм', 199, 2000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (51, 'Зеленый чай', 'грамм', 199, 2000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (52, 'Кофейные зерна', 'грамм', 399, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (53, 'Квас', 'грамм', 99, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (54, 'Добрый кола', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (55, 'Фрустайл апельсин', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (56, 'Липтон зеленый', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (57, 'Липтон черный', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (58, 'Хлеб', 'грамм', 99, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (59, 'Молоко', 'грамм', 500, 6000);
 
 
 --
@@ -1464,8 +1785,11 @@ INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALU
 -- Data for Name: ingredient_storage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (2, 2, '2024-02-18 02:55:51+03', 2, '2024-02-18 02:55:51+03', 1, 654);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (3, 3, '2024-02-18 02:55:51+03', 3, '2024-02-18 02:55:51+03', 3, 700);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (3, 2, '2024-03-28 13:57:44.339475+03', 5, '2024-04-20 13:57:44.339475+03', 6000, 6);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (4, 54, '2024-03-28 14:12:48.84737+03', 7, '2024-04-20 14:12:48.84737+03', 2600, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (2, 1, '2024-03-28 13:50:04.458523+03', 3, '2024-04-20 13:50:04.458523+03', 17600, 9);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (5, 4, '2024-03-28 14:25:10.330282+03', 9, '2024-04-20 14:25:10.330282+03', 11800, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (6, 7, '2024-03-28 14:25:20.310606+03', 10, '2024-04-20 14:25:20.310606+03', 11900, 3);
 
 
 --
@@ -1474,10 +1798,10 @@ INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_requ
 -- Data for Name: job_role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Старший Повар', 70000, 80000);
-INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Младший Повар', 40000, 60000);
-INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Шеф-Повар', 2000000, 5000000);
+INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Главный повар', 50000, 60000);
+INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Повар', 40000, 50000);
 INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Официант', 30000, 40000);
+INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Менеджер', 40000, 50000);
 
 
 --
@@ -1486,7 +1810,13 @@ INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Официа
 -- Data for Name: order_directory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (7, 2, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Готовится');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (1, 2, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (2, 5, '2024-03-17 11:00:00+03', '2024-03-17 12:00:00+03', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (3, 6, '2024-03-17 11:00:00+03', '2024-03-17 12:00:00+03', 'Отдано');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (4, 6, '2024-03-17 13:00:00+03', '2024-03-17 13:30:00+03', 'Отдано');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (8, 5, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (9, 5, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (10, 5, '2024-03-18 11:00:00+03', '2024-03-18 13:00:00+03', 'Рассматривается');
 
 
 --
@@ -1495,9 +1825,21 @@ INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, s
 -- Data for Name: order_food; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (7, 1, 2);
-INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (7, 3, 5);
-INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (7, 2, 7);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (1, 1, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (1, 2, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (1, 3, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (2, 4, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (2, 5, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (2, 7, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (3, 11, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (3, 2, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (3, 6, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (4, 13, 5);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (4, 4, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (4, 5, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (8, 36, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (9, 36, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (10, 2, 2);
 
 
 --
@@ -1506,7 +1848,14 @@ INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (7, 2, 7);
 -- Data for Name: requisition; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (3, 3, 10, 50);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (3, 1, 3000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (4, 1, 3000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (5, 2, 3000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (6, 2, 3000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (7, 54, 3000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (8, 1, 12000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (9, 4, 12000, 3);
+INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (10, 7, 12000, 3);
 
 
 --
@@ -1515,8 +1864,14 @@ INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (3, 
 -- Data for Name: requisition_list; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (2, 2, 'Рундук', '2024-02-18 02:55:51+03', 'Выполнено');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (3, 3, 'Ларец', '2024-02-18 02:55:51+03', 'В процессе');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (3, 1, 'Рундук', '2024-03-21 13:50:04+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (4, 1, 'Рундук', '2024-03-21 13:57:12+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (5, 1, 'Рундук', '2024-03-21 13:57:44+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (6, 1, 'Рундук', '2024-03-21 13:57:53+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (7, 1, 'Рундук', '2024-03-21 14:12:48+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (8, 1, 'Рундук', '2024-03-21 14:24:51+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (9, 1, 'Рундук', '2024-03-21 14:25:10+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (10, 1, 'Рундук', '2024-03-21 14:25:20+03', 'Ожидание');
 
 
 --
@@ -1540,6 +1895,22 @@ INSERT INTO public."table" (id, human_slots) VALUES (1, 4);
 INSERT INTO public."table" (id, human_slots) VALUES (2, 3);
 INSERT INTO public."table" (id, human_slots) VALUES (3, 2);
 INSERT INTO public."table" (id, human_slots) VALUES (4, 5);
+INSERT INTO public."table" (id, human_slots) VALUES (5, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (6, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (7, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (8, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (9, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (10, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (11, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (12, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (13, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (14, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (15, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (16, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (17, 2);
+INSERT INTO public."table" (id, human_slots) VALUES (18, 4);
+INSERT INTO public."table" (id, human_slots) VALUES (19, 6);
+INSERT INTO public."table" (id, human_slots) VALUES (20, 8);
 
 
 --
@@ -1548,14 +1919,12 @@ INSERT INTO public."table" (id, human_slots) VALUES (4, 5);
 -- Data for Name: worker; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (2, 'alexxxanders_basket', '$pbkdf2-sha256$29000$TMm5dw4hhDAGIGRMae39nw$nmTEpKSwzg2LCnn3SC23PziGvP1G9QDisQKJVi4TXbs', 'Младший Повар', 'Александров', 'Олег', '', NULL, '+79028759088', 50000, NULL);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (3, 'x_vasya_x', '$pbkdf2-sha256$29000$h5ASYkzpvZeSEqJU6h3jnA$sByoqbnOyttRGUfRdU63Qse/vz4SQ7Yhmcy75VeuPAw', 'Шеф-Повар', 'Васильев', 'Михаил', '', NULL, '+79028759088', 50000, NULL);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (4, 'zufar_eto_ne_prochitaet', '$pbkdf2-sha256$29000$6h2D0HovpdR6j1Eq5TyHcA$SYPAkLWb3RNyox7wD/YQEFoWOeKMe3hozhT/3SR9Ux4', 'Официант', 'Иванов', 'Олег', '', NULL, '+79028759088', 50000, NULL);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (6, 'john_doe', 'password123', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (9, 'john_does', 'password123', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (11, 'john_doesss', 'password123', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (12, 'john_doessss', 'password123', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (13, 'john_doessssz', 'password123', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, 1);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (2, 'gerar_pero', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Повар', 'Герасимов', 'Глеб', 'Константинович', 'gera@mail.ru', '+79707551380', 45000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (3, 'ivanova_ivanova', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Повар', 'Иванова Виктория Артёмовна', 'Виктория', 'Артёмовна', 'ivanova@mail.ru', '+79718551380', 46000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (4, 'pastux133', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Менеджер', 'Пастухова', 'Александра', 'Максимовна', 'pastuxova@mail.ru', '+79718552580', 56000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (5, 'popova424', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Официант', 'Попова', 'Дарья', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (6, 'boriska', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Официант', 'Борисов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (1, 'alex_kol', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Главный повар', 'Баженов', 'Данила', 'Филиппович', 'bajenov@mail.ru', '+79807551380', 56000, 5);
 
 
 --
@@ -1564,15 +1933,12 @@ INSERT INTO public.worker (id, login, password, job_role, surname, first_name, p
 -- Data for Name: worker_history; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (1, '2024-02-18 02:55:51+03', '2024-02-18 02:55:51+03', 'Шеф-Повар', 'Александров', 'Олег', NULL, NULL, '+79637259702', 50000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-02-18 02:55:51+03', '2024-02-18 02:55:51+03', 'Младший Повар', 'Васильев', 'Олег', NULL, NULL, '+79637259702', 30000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-02-18 02:55:51+03', '2024-02-18 02:55:51+03', 'Младший Повар', 'Иванов', 'Михаил', NULL, NULL, '+79637259702', 60000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (9, '2024-02-28 07:43:54.652174+03', '2024-02-28 07:43:54.652174+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (11, '2024-02-28 07:46:19.819254+03', '2024-02-28 07:46:19.819254+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (12, '2024-02-28 07:49:40+03', '2024-02-28 07:49:40+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (13, '2024-02-28 08:10:17+03', '2024-02-28 08:10:17+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (15, '2024-03-16 16:37:12+03', '2024-03-16 16:37:12+03', 'Младший Повар', 'Дуйэн', 'Джонсон', 'Патрикович', 'john@example.com', '+79028759087', 50000, '{"new": {"id": 15, "email": "john@example.com", "login": "john_does123", "phone": "+79028759087", "salary": 50000, "surname": "Дуйэн", "job_rate": 3, "job_role": "Младший Повар", "password": "password123", "first_name": "Джонсон", "patronymic": "Патрикович"}, "old": {"id": 15, "email": "john@example.com", "login": "john_does123", "phone": "+79028759087", "salary": 60000, "surname": "Дуйэн", "job_rate": 5, "job_role": "Младший Повар", "password": "password123", "first_name": "Джонсон", "patronymic": "Патрикович"}}');
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (18, '2024-03-16 20:30:46+03', '2024-03-17 07:15:51+03', 'Старший Повар', 'Чехов', 'Андрей', 'Павлович', 'chehow@gmail.com', '+79028888888', 30000, '{"new": {"id": 18, "email": "chehow@gmail.com", "login": "aufff", "phone": "+79028888888", "salary": 30000, "surname": "Чехов", "job_rate": 5, "job_role": "Старший Повар", "password": "password123", "first_name": "Андрей", "patronymic": "Павлович"}, "old": {"id": 18, "email": "chehow@gmail.com", "login": "aufff", "phone": "+79028888888", "salary": 60000, "surname": "Чехов", "job_rate": 3, "job_role": "Старший Повар", "password": "password123", "first_name": "Андрей", "patronymic": "Павлович"}}');
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-03-21 13:18:49+03', '2024-03-21 13:18:49+03', 'Повар', 'Герасимов', 'Глеб', 'Константинович', 'gera@mail.ru', '+79707551380', 45000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-03-21 13:19:05+03', '2024-03-21 13:19:05+03', 'Повар', 'Иванова Виктория Артёмовна', 'Виктория', 'Артёмовна', 'ivanova@mail.ru', '+79718551380', 46000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (4, '2024-03-21 13:19:08+03', '2024-03-21 13:19:08+03', 'Менеджер', 'Пастухова', 'Александра', 'Максимовна', 'pastuxova@mail.ru', '+79718552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (5, '2024-03-21 13:19:10+03', '2024-03-21 13:19:10+03', 'Официант', 'Попова', 'Дарья', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (6, '2024-03-21 13:19:13+03', '2024-03-21 13:19:13+03', 'Официант', 'Борисов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (1, '2024-03-21 13:11:27+03', '2024-03-21 13:11:27+03', 'Главный повар', 'Баженов', 'Данила', 'Филиппович', 'bajenov@mail.ru', '+79807551380', 56000, '{"new": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 56000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}, "old": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 55000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}}');
 
 
 --
@@ -1581,7 +1947,7 @@ INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role,
 -- Name: food_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.food_id_seq', 3, true);
+SELECT pg_catalog.setval('public.food_id_seq', 41, true);
 
 
 --
@@ -1590,7 +1956,7 @@ SELECT pg_catalog.setval('public.food_id_seq', 3, true);
 -- Name: ingredient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ingredient_id_seq', 3, true);
+SELECT pg_catalog.setval('public.ingredient_id_seq', 59, true);
 
 
 --
@@ -1599,7 +1965,7 @@ SELECT pg_catalog.setval('public.ingredient_id_seq', 3, true);
 -- Name: ingredient_storage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 3, true);
+SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 6, true);
 
 
 --
@@ -1608,7 +1974,7 @@ SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 3, true);
 -- Name: order_directory_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.order_directory_id_seq', 8, true);
+SELECT pg_catalog.setval('public.order_directory_id_seq', 10, true);
 
 
 --
@@ -1617,7 +1983,7 @@ SELECT pg_catalog.setval('public.order_directory_id_seq', 8, true);
 -- Name: requisition_list_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.requisition_list_id_seq', 3, true);
+SELECT pg_catalog.setval('public.requisition_list_id_seq', 10, true);
 
 
 --
@@ -1626,7 +1992,7 @@ SELECT pg_catalog.setval('public.requisition_list_id_seq', 3, true);
 -- Name: table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.table_id_seq', 4, true);
+SELECT pg_catalog.setval('public.table_id_seq', 20, true);
 
 
 --
@@ -1635,11 +2001,11 @@ SELECT pg_catalog.setval('public.table_id_seq', 4, true);
 -- Name: worker_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.worker_id_seq', 18, true);
+SELECT pg_catalog.setval('public.worker_id_seq', 6, true);
 
 
 --
--- TOC entry 4768 (class 2606 OID 50532)
+-- TOC entry 4769 (class 2606 OID 50532)
 -- Name: client client_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1648,7 +2014,7 @@ ALTER TABLE ONLY public.client
 
 
 --
--- TOC entry 4770 (class 2606 OID 33904)
+-- TOC entry 4771 (class 2606 OID 33904)
 -- Name: client client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1657,7 +2023,7 @@ ALTER TABLE ONLY public.client
 
 
 --
--- TOC entry 4792 (class 2606 OID 50504)
+-- TOC entry 4793 (class 2606 OID 50504)
 -- Name: client_table client_table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1666,7 +2032,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4784 (class 2606 OID 34000)
+-- TOC entry 4785 (class 2606 OID 34000)
 -- Name: food_composition food_composition_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1675,7 +2041,7 @@ ALTER TABLE ONLY public.food_composition
 
 
 --
--- TOC entry 4778 (class 2606 OID 33938)
+-- TOC entry 4779 (class 2606 OID 33938)
 -- Name: food food_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1684,7 +2050,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 4766 (class 2606 OID 33898)
+-- TOC entry 4767 (class 2606 OID 33898)
 -- Name: food_type food_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1693,7 +2059,7 @@ ALTER TABLE ONLY public.food_type
 
 
 --
--- TOC entry 4758 (class 2606 OID 42261)
+-- TOC entry 4759 (class 2606 OID 42261)
 -- Name: ingredient ingredient_name_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1702,7 +2068,7 @@ ALTER TABLE ONLY public.ingredient
 
 
 --
--- TOC entry 4760 (class 2606 OID 33882)
+-- TOC entry 4761 (class 2606 OID 33882)
 -- Name: ingredient ingredient_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1711,7 +2077,7 @@ ALTER TABLE ONLY public.ingredient
 
 
 --
--- TOC entry 4786 (class 2606 OID 34039)
+-- TOC entry 4787 (class 2606 OID 34039)
 -- Name: ingredient_storage ingredient_storage_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1720,7 +2086,7 @@ ALTER TABLE ONLY public.ingredient_storage
 
 
 --
--- TOC entry 4764 (class 2606 OID 33893)
+-- TOC entry 4765 (class 2606 OID 33893)
 -- Name: job_role job_role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1729,7 +2095,7 @@ ALTER TABLE ONLY public.job_role
 
 
 --
--- TOC entry 4790 (class 2606 OID 50466)
+-- TOC entry 4791 (class 2606 OID 50466)
 -- Name: order_directory order_directory_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1738,7 +2104,7 @@ ALTER TABLE ONLY public.order_directory
 
 
 --
--- TOC entry 4794 (class 2606 OID 58815)
+-- TOC entry 4795 (class 2606 OID 58815)
 -- Name: order_food order_food_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1747,7 +2113,7 @@ ALTER TABLE ONLY public.order_food
 
 
 --
--- TOC entry 4780 (class 2606 OID 33966)
+-- TOC entry 4781 (class 2606 OID 33966)
 -- Name: requisition_list requisition_list_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1756,7 +2122,7 @@ ALTER TABLE ONLY public.requisition_list
 
 
 --
--- TOC entry 4788 (class 2606 OID 34054)
+-- TOC entry 4789 (class 2606 OID 34054)
 -- Name: requisition requisition_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1765,7 +2131,7 @@ ALTER TABLE ONLY public.requisition
 
 
 --
--- TOC entry 4762 (class 2606 OID 33888)
+-- TOC entry 4763 (class 2606 OID 33888)
 -- Name: storehouse storage_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1774,7 +2140,7 @@ ALTER TABLE ONLY public.storehouse
 
 
 --
--- TOC entry 4772 (class 2606 OID 33911)
+-- TOC entry 4773 (class 2606 OID 33911)
 -- Name: table table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1783,7 +2149,7 @@ ALTER TABLE ONLY public."table"
 
 
 --
--- TOC entry 4782 (class 2606 OID 33985)
+-- TOC entry 4783 (class 2606 OID 33985)
 -- Name: worker_history worker_history_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1792,7 +2158,7 @@ ALTER TABLE ONLY public.worker_history
 
 
 --
--- TOC entry 4774 (class 2606 OID 33924)
+-- TOC entry 4775 (class 2606 OID 33924)
 -- Name: worker worker_login_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1801,20 +2167,12 @@ ALTER TABLE ONLY public.worker
 
 
 --
--- TOC entry 4776 (class 2606 OID 33922)
+-- TOC entry 4777 (class 2606 OID 33922)
 -- Name: worker worker_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 4813 (class 2620 OID 50564)
--- Name: ingredient_storage critical_amount_ingredient_trigger; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER critical_amount_ingredient_trigger AFTER INSERT OR UPDATE ON public.ingredient_storage FOR EACH ROW EXECUTE FUNCTION public.check_ingredient_amount();
 
 
 --
@@ -1826,7 +2184,7 @@ CREATE TRIGGER update_issue_date_trigger BEFORE UPDATE ON public.order_directory
 
 
 --
--- TOC entry 4812 (class 2620 OID 58845)
+-- TOC entry 4813 (class 2620 OID 58845)
 -- Name: worker worker_history_trigger; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1834,7 +2192,7 @@ CREATE TRIGGER worker_history_trigger AFTER UPDATE ON public.worker FOR EACH ROW
 
 
 --
--- TOC entry 4807 (class 2606 OID 50515)
+-- TOC entry 4808 (class 2606 OID 50515)
 -- Name: client_table client_table_client_phone_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1843,7 +2201,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4808 (class 2606 OID 50505)
+-- TOC entry 4809 (class 2606 OID 50505)
 -- Name: client_table client_table_id_table_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1852,7 +2210,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4809 (class 2606 OID 50510)
+-- TOC entry 4810 (class 2606 OID 50510)
 -- Name: client_table client_table_id_worker_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1861,7 +2219,7 @@ ALTER TABLE ONLY public.client_table
 
 
 --
--- TOC entry 4800 (class 2606 OID 34001)
+-- TOC entry 4801 (class 2606 OID 34001)
 -- Name: food_composition food_composition_id_food_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1870,7 +2228,7 @@ ALTER TABLE ONLY public.food_composition
 
 
 --
--- TOC entry 4801 (class 2606 OID 34006)
+-- TOC entry 4802 (class 2606 OID 34006)
 -- Name: food_composition food_composition_id_ingredient_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1879,7 +2237,7 @@ ALTER TABLE ONLY public.food_composition
 
 
 --
--- TOC entry 4796 (class 2606 OID 33939)
+-- TOC entry 4797 (class 2606 OID 33939)
 -- Name: food food_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1888,7 +2246,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 4802 (class 2606 OID 34040)
+-- TOC entry 4803 (class 2606 OID 34040)
 -- Name: ingredient_storage ingredient_storage_id_ingredient_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1897,7 +2255,7 @@ ALTER TABLE ONLY public.ingredient_storage
 
 
 --
--- TOC entry 4803 (class 2606 OID 34045)
+-- TOC entry 4804 (class 2606 OID 34045)
 -- Name: ingredient_storage ingredient_storage_id_request_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1906,7 +2264,7 @@ ALTER TABLE ONLY public.ingredient_storage
 
 
 --
--- TOC entry 4806 (class 2606 OID 50467)
+-- TOC entry 4807 (class 2606 OID 50467)
 -- Name: order_directory order_directory_id_worker_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1915,7 +2273,7 @@ ALTER TABLE ONLY public.order_directory
 
 
 --
--- TOC entry 4810 (class 2606 OID 58821)
+-- TOC entry 4811 (class 2606 OID 58821)
 -- Name: order_food order_food_fk_food; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1924,7 +2282,7 @@ ALTER TABLE ONLY public.order_food
 
 
 --
--- TOC entry 4811 (class 2606 OID 58816)
+-- TOC entry 4812 (class 2606 OID 58816)
 -- Name: order_food order_food_fk_order; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1933,7 +2291,7 @@ ALTER TABLE ONLY public.order_food
 
 
 --
--- TOC entry 4804 (class 2606 OID 34055)
+-- TOC entry 4805 (class 2606 OID 34055)
 -- Name: requisition requisition_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1942,7 +2300,7 @@ ALTER TABLE ONLY public.requisition
 
 
 --
--- TOC entry 4805 (class 2606 OID 34060)
+-- TOC entry 4806 (class 2606 OID 34060)
 -- Name: requisition requisition_id_ingredient_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1951,7 +2309,7 @@ ALTER TABLE ONLY public.requisition
 
 
 --
--- TOC entry 4797 (class 2606 OID 33967)
+-- TOC entry 4798 (class 2606 OID 33967)
 -- Name: requisition_list requisition_list_id_worker_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1960,7 +2318,7 @@ ALTER TABLE ONLY public.requisition_list
 
 
 --
--- TOC entry 4798 (class 2606 OID 33972)
+-- TOC entry 4799 (class 2606 OID 33972)
 -- Name: requisition_list requisition_list_storage_name_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1969,7 +2327,7 @@ ALTER TABLE ONLY public.requisition_list
 
 
 --
--- TOC entry 4799 (class 2606 OID 33991)
+-- TOC entry 4800 (class 2606 OID 33991)
 -- Name: worker_history worker_history_id_job_role_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1978,7 +2336,7 @@ ALTER TABLE ONLY public.worker_history
 
 
 --
--- TOC entry 4795 (class 2606 OID 33925)
+-- TOC entry 4796 (class 2606 OID 33925)
 -- Name: worker worker_job_role_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1986,7 +2344,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-17 07:43:22
+-- Completed on 2024-03-21 15:16:43
 
 --
 -- PostgreSQL database dump complete

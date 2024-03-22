@@ -26,7 +26,7 @@ const add_order_ingredient = require('../models/Api/POST/add_order_ingredient');
 const update_order = require('../models/Api/POST/update_order');
 const update_worker_salary_and_rate = require('../models/Api/POST/update_worker_salary_and_rate');
 const update_quantity_of_ingredient = require('../models/Api/POST/update_quantity_of_ingredient');
-
+const get_free_time_all_booked_tables_by_date = require('../models/Api/POST/get_free_time_all_booked_tables_by_date');
 const signIn = require('../models/Api/POST/login');
 
 router.post('/add_food', add_food);
@@ -64,6 +64,8 @@ router.post('/update_order', update_order);
 router.post('/update_worker_salary_and_rate', update_worker_salary_and_rate);
 router.post('/book_table_client', book_table_client);
 router.post('/update_quantity_of_ingredient', update_quantity_of_ingredient)
+router.post('/get_free_time_all_booked_tables_by_date', get_free_time_all_booked_tables_by_date);
+
 //DELETE
 const delete_ingredient = require('../models/Api/DELETE/delete_ingredient');
 const delete_order = require('../models/Api/DELETE/delete_order');

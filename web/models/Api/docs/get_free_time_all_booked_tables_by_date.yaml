@@ -1,0 +1,46 @@
+"/api/get_free_time_all_booked_tables_by_date":
+  post:
+    tags:
+      - Table
+    summary: Get list free time every booked tables by date
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              date:
+                type: Date
+            required:
+              - date
+          example:
+            date: "2024-03-23"
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/AllTables"
+                message:
+                  type: string
+              example:
+                data: [{ "id_table": 4, "free_time": "8-10,12-13,15-17,19-23" }]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    AllTables:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          free_time:
+            type: string

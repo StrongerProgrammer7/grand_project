@@ -11,15 +11,17 @@ const add_client = async (req, res, next) =>
         {
             phone,
             name_client,
-            last_contact_date
+            last_contact_date,
+            email
         } = req.body;
-    if (!(phone && name_client && last_contact_date))
+    if (!(phone && name_client && last_contact_date && email))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query('CALL add_client($1,$2,$3)', [
+    db.query('CALL add_client($1,$2,$3,$2)', [
         phone,
-        name_client, //Имя контактного лица
-        last_contact_date
+        name_client,
+        last_contact_date,
+        email
     ]).then(() =>
     {
         return next(DataApi.success({}, "Client added!"));

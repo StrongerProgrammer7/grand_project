@@ -11,8 +11,8 @@
             properties:
               worker_id:
                 type: integer
-              food_id:
-                type: integer
+              food_ids:
+                type: array
               food_amount:
                 type: integer
               formation_date:
@@ -23,10 +23,10 @@
                 type: string
             example:
               worker_id: 1
-              food_id: 1
+              food_ids: [1, 2]
               food_amount: 2
-              formation_date: 2024-03-04T10:11:31.718Z
-              givig_date: 2024-03-04T10:11:31.718Z
+              formation_date: "2024-03-04T10:11:31.718Z"
+              givig_date: "2024-03-04T10:11:31.718Z"
               status: In Progress
     responses:
       "201":

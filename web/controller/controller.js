@@ -11,6 +11,7 @@ const add_job_role = require('../models/Api/POST/add_job_role');
 const add_table = require('../models/Api/POST/add_table');
 const registration_worker = require('../models/Api/POST/registration_worker');
 const book_table = require('../models/Api/POST/book_table');
+const book_table_client = require('../models/Api/POST/book_table_client');
 const add_storehouse = require('../models/Api/POST/add_storehouse');
 const add_client = require('../models/Api/POST/add_client');
 const add_client_order = require('../models/Api/POST/add_client_order');
@@ -60,6 +61,7 @@ router.post('/get_all_tables_on_date', get_time_for_booked_table_on_date);
 router.post('/add_order_ingredient', add_order_ingredient);
 router.post('/update_order', update_order);
 router.post('/update_worker_salary_and_rate', update_worker_salary_and_rate);
+router.post('/book_table_client', book_table_client);
 //DELETE
 const delete_ingredient = require('../models/Api/DELETE/delete_ingredient');
 const delete_order = require('../models/Api/DELETE/delete_order');

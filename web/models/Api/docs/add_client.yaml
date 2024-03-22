@@ -14,15 +14,19 @@
               name_client:
                 type: string
               last_contact_date:
-                type: timestamp
+                type: Date
+              email:
+                type: string
             required:
               - phone
               - name_client
               - last_contact_date
+              - email
             example:
               phone: "+1234567890"
               name_client: Глеб
               last_contact_date: "2024-02-18 02:55:51"
+              email: "exampl@mail.ru"
     responses:
       "201":
         $ref: "#/components/responses/201Success"

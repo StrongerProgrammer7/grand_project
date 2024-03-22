@@ -1,8 +1,8 @@
-"/api/book_table":
+"/api/book_table_client":
   post:
     tags:
       - Table
-    summary: Booking table
+    summary: Client is booking table
     requestBody:
       content:
         application/json:
@@ -10,8 +10,6 @@
             type: object
             properties:
               id_table:
-                type: integer
-              id_worker:
                 type: integer
               phone_client:
                 type: string
@@ -23,14 +21,12 @@
                 type: timestamp
             required:
               - id_table
-              - id_worker
               - phone_client
               - order_time
               - start_booking_date
               - end_booking_date
           example:
             id_table: 1
-            id_worker: 3
             phone_client: "+79848718618"
             order_time: "2024-03-24 13:11:31"
             start_booking_date: "2024-03-26 13:11:31"

@@ -19,6 +19,8 @@
                 type: double
               update:
                 type: boolean
+              id:
+                tyep: integer
             required:
               - type
               - measurement

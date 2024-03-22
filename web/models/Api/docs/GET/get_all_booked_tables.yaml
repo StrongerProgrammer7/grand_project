@@ -25,6 +25,7 @@
                       "client_number": "+79389513658",
                       "start_date": "2024-03-04T10:11:31.718Z",
                       "end_date": "2024-03-04T10:11:31.718Z",
+                      "interval" : "3 hours"
                     },
                   ]
                 message: Success!
@@ -49,4 +50,6 @@ components:
           start_date:
             type: string
           end_date:
+            type: string
+           interval:
             type: string

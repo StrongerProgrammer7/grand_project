@@ -6,4 +6,7 @@ COPY ./ ./
 
 RUN npm install
 
-CMD ["sleep","30","&&","node","app.js"]
+ADD start.sh /
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]

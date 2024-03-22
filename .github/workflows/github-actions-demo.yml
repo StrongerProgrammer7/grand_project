@@ -1,10 +1,10 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: 
-    push:
-        branches: [main, dev, pre-prod]
-    pull_request:
-        branches: [main,dev,pre-prod,web]
+on:
+  push:
+    branches: [main, dev, pre-prod]
+  pull_request:
+    branches: [main, dev, pre-prod, web]
 jobs:
   init:
     runs-on: ubuntu-latest
@@ -23,5 +23,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Run Docker compose
         run: docker-compose up -d
-        working-directory: ./web/dev_env
-
+        working-directory: ./web/dev_env/github-actions

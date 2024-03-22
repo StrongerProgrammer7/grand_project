@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-22 19:54:19
+-- Started on 2024-03-23 02:00:40
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -62,7 +62,7 @@ $$;
 ALTER PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying) OWNER TO postgres;
 
 --
--- TOC entry 284 (class 1255 OID 67143)
+-- TOC entry 282 (class 1255 OID 67143)
 -- Name: add_client_order(integer, integer[], integer[], timestamp with time zone, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -320,7 +320,7 @@ $$;
 ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 277 (class 1255 OID 67046)
+-- TOC entry 276 (class 1255 OID 67046)
 -- Name: book_table_from_web(integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -430,7 +430,7 @@ $$;
 ALTER PROCEDURE public.delete_order(IN order_id integer) OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 58848)
+-- TOC entry 278 (class 1255 OID 58848)
 -- Name: delete_worker(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -461,7 +461,7 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 280 (class 1255 OID 67047)
+-- TOC entry 279 (class 1255 OID 67047)
 -- Name: get_booked_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -481,7 +481,7 @@ $$;
 ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
 
 --
--- TOC entry 276 (class 1255 OID 58854)
+-- TOC entry 275 (class 1255 OID 58854)
 -- Name: get_count_place_all_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -499,7 +499,7 @@ $$;
 ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
 
 --
--- TOC entry 282 (class 1255 OID 67130)
+-- TOC entry 284 (class 1255 OID 75250)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -510,6 +510,7 @@ DECLARE
     order_record RECORD;
     order_data JSON;
     dish_data JSON;
+	orders_array JSON[] := '{}';
     result JSON := '[]'::JSON;
 BEGIN
     FOR order_record IN
@@ -537,8 +538,10 @@ BEGIN
             'giving_date', order_record.giving_date,
             'status', order_record.status
         );
-        result := json_agg(dish_data);
+        orders_array := array_append(orders_array, dish_data);
     END LOOP;
+
+	result := json_agg(orders_array);
 
     RETURN result;
 END;
@@ -586,7 +589,7 @@ $$;
 ALTER FUNCTION public.get_reorder_ingredients_list() OWNER TO postgres;
 
 --
--- TOC entry 281 (class 1255 OID 67050)
+-- TOC entry 280 (class 1255 OID 67050)
 -- Name: get_time_for_booked_table_on_date(integer, timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -626,7 +629,7 @@ $$;
 ALTER FUNCTION public.get_worker_list() OWNER TO postgres;
 
 --
--- TOC entry 283 (class 1255 OID 67134)
+-- TOC entry 281 (class 1255 OID 67134)
 -- Name: order_ingredient(integer, character varying, integer, integer, double precision, timestamp with time zone, timestamp with time zone, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -733,7 +736,7 @@ $$;
 ALTER FUNCTION public.update_issue_date() OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 58831)
+-- TOC entry 277 (class 1255 OID 58831)
 -- Name: update_order(integer, integer[], integer[], character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -869,7 +872,7 @@ $$;
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
 
 --
--- TOC entry 275 (class 1255 OID 58828)
+-- TOC entry 283 (class 1255 OID 75249)
 -- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -880,6 +883,7 @@ DECLARE
     order_record RECORD;
     order_data JSON;
     dish_data JSON;
+	orders_array JSON[] := '{}';
     result JSON := '[]'::JSON;
 BEGIN
     FOR order_record IN
@@ -905,8 +909,10 @@ BEGIN
             'giving_date', order_record.giving_date,
             'status', order_record.status
         );
-        result := json_agg(dish_data);
+        orders_array := array_append(orders_array, dish_data);
     END LOOP;
+
+	result := json_agg(orders_array);
 
     RETURN result;
 END;
@@ -1784,11 +1790,11 @@ INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALU
 -- Data for Name: ingredient_storage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (3, 2, '2024-03-28 13:57:44.339475+03', 5, '2024-04-20 13:57:44.339475+03', 6000, 6);
 INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (4, 54, '2024-03-28 14:12:48.84737+03', 7, '2024-04-20 14:12:48.84737+03', 2600, 3);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (2, 1, '2024-03-28 13:50:04.458523+03', 3, '2024-04-20 13:50:04.458523+03', 17600, 9);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (5, 4, '2024-03-28 14:25:10.330282+03', 9, '2024-04-20 14:25:10.330282+03', 11800, 3);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (6, 7, '2024-03-28 14:25:20.310606+03', 10, '2024-04-20 14:25:20.310606+03', 11900, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (3, 2, '2024-03-28 13:57:44.339475+03', 5, '2024-04-20 13:57:44.339475+03', 5800, 6);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (2, 1, '2024-03-28 13:50:04.458523+03', 3, '2024-04-20 13:50:04.458523+03', 16400, 9);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (5, 4, '2024-03-28 14:25:10.330282+03', 9, '2024-04-20 14:25:10.330282+03', 11000, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (6, 7, '2024-03-28 14:25:20.310606+03', 10, '2024-04-20 14:25:20.310606+03', 11800, 3);
 
 
 --
@@ -1816,6 +1822,9 @@ INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, s
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (8, 5, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Рассматривается');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (9, 5, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Рассматривается');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (10, 5, '2024-03-18 11:00:00+03', '2024-03-18 13:00:00+03', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (11, 2, '2024-03-18 11:00:00+03', '2024-03-18 13:00:00+03', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (12, 2, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (13, 2, '2024-03-17 10:00:00+03', NULL, 'Ожидание');
 
 
 --
@@ -1839,6 +1848,15 @@ INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (4, 5, 1);
 INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (8, 36, 1);
 INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (9, 36, 1);
 INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (10, 2, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (11, 5, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (11, 3, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (11, 15, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (12, 1, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (12, 2, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (12, 3, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (13, 1, 2);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (13, 2, 1);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (13, 3, 3);
 
 
 --
@@ -1973,7 +1991,7 @@ SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 6, true);
 -- Name: order_directory_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.order_directory_id_seq', 10, true);
+SELECT pg_catalog.setval('public.order_directory_id_seq', 13, true);
 
 
 --
@@ -2343,7 +2361,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-22 19:54:20
+-- Completed on 2024-03-23 02:00:40
 
 --
 -- PostgreSQL database dump complete

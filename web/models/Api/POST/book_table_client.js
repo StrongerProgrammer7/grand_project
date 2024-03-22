@@ -18,6 +18,14 @@ const book_table_client = async (req, res, next) =>
         } = req.body;
     if (!(id_table && order_time && phone_client && start_booking_date))
         return next(ApiError.badRequest("Don't enought data!"));
+
+    db.query("SELECT * from client where phone = '$1'", [phone_client])
+        .then((data) =>
+        {
+            const res = data.rows;
+            if (res.length === 0)
+                return next(DataApi.notlucky("Client not exists!"));
+        });
     db.query('CALL book_table_from_web($1,$2,$3,$4,$5)', [
         id_table,
         phone_client,
@@ -34,8 +42,8 @@ const book_table_client = async (req, res, next) =>
 
             errorHandler(
                 "Error with book table client",
-                ["23505"],
-                "Table is already book or don't exists table/worker, check your data",
+                ["23505", "P0001"],
+                "Table is already book or don't exists table/client, check your data",
                 "Client or table doens't exists!",
                 err,
                 next

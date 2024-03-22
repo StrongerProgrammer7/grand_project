@@ -32,6 +32,14 @@ function formatDatefromIsoString(dateISOString)
     return formattedDate;
 }
 
+const get_interval = (start_date, end_date) =>
+{
+    const start = new Date(start_date).getHours();
+    const end = new Date(end_date).getHours();
+
+    return end - start;
+}
+
 function combineDateAndTime(dateString, timeString)
 {
     // Разбиваем дату на компоненты
@@ -157,7 +165,9 @@ dateControl.onchange = async () =>
                 {
                     let div = document.createElement('div');
                     div.className = 'booked';
-                    div.innerText = `${ seats[i].list[j].desired_booking_date } на ${ seats[i].list[j].booking_interval.hours } hours`;
+
+                    const interval = get_interval(seats[i].list[j].start_booking_date, seats[i].list[j].end_booking_date);
+                    div.innerText = `${ convertDateFormat(new Date(seats[i].list[j].start_booking_date)) } на ${ interval } часа`;
                     popup.appendChild(div);
                 }
             }

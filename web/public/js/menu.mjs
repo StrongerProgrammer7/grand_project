@@ -1,4 +1,7 @@
 // @ts-nocheck
+
+
+
 let response = await fetch("/api/get_menu_sorted_by_type");
 let result = await response.json();
 
@@ -53,6 +56,7 @@ let dishes = document.querySelector('.dishes');
 
 let clicked = buttons[1];
 
+
 for (let i = 0; i < buttons.length; i++)
 {
     buttons[i].addEventListener('click', () =>
@@ -68,18 +72,32 @@ for (let i = 0; i < buttons.length; i++)
 
         dishes.innerHTML = "";
 
+
+
         for (let j = 0; j < menu[i].length; j++)
         {
             let div = document.createElement('div');
             div.className = 'dish';
-            div.innerHTML = `<div>${ menu[i][j].food_name }</div>
+            div.innerHTML = `<img src="/images/${menu[i][j].food_id}.jpg" alt="${ menu[i][j].food_name }"/>
+            <div>${ menu[i][j].food_name }</div>
             <div>${ menu[i][j].price } ₽</div>
             <div>${ menu[i][j].weight } ${ menu[i][j].unit_of_measurement }</div>`
 
             dishes.appendChild(div);
+            // let img = document.querySelector(`img[src="/images/${menu[i][j].food_id}.jpg"]`);
+            // img.addEventListener('click',(e)=>{
+            //     e.stopPropagation();
+            //     let popup = document.createElement('div');
+            //     popup.className = 'center-screen';
+            //     popup.innerHTML = `<img src="/images/${menu[i][j].food_id}.jpg" alt="${ menu[i][j].food_name }"/>`;
+            //     document.querySelector('.bodyContent').appendChild(popup);
+ 
+
+                
+            // });
+            
 
         }
-
-
+        
     });
 }

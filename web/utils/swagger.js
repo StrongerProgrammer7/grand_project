@@ -3,6 +3,8 @@ const swaggerUI = require('swagger-ui-express');
 const { version, description } = require('../package.json');
 const logger = require('../logger/logger');
 
+const BASE_URL = 'grandproject.k-lab.su';
+const TEST_URL = 'localhost:5000'
 const options =
 {
     definition:
@@ -16,7 +18,7 @@ const options =
         },
         servers: [
             {
-                url: 'https://grandproject.k-lab.su',
+                url: `https://${ process.env.NODE_ENV === 'development' ? TEST_URL : BASE_URL }`,
                 description: 'Deveopment server'
             }
         ],
@@ -59,7 +61,7 @@ function swaggerDocs(app, port)
         res.send(swaggerSpec);
     });
 
-    // logger.info(`Docs available at https://grandproject.k-lab.su/docs`);
+    console.log(`Docs available at https://${ process.env.NODE_ENV === 'development' ? TEST_URL : BASE_URL }/docs`);
 };
 
 module.exports = swaggerDocs;

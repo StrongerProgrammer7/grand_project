@@ -17,15 +17,11 @@ const add_client = async (req, res, next) =>
     if (!(phone && name_client && last_contact_date && email))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    db.query("SELECT * from client where phone = '$1'", [phone])
-        .then((data) =>
-        {
-            const res = data.rows;
-            if (res.length > 0)
-                return next(DataApi.notlucky("Client is exists!"));
-        });
-
-    db.query('CALL add_client($1,$2,$3,$2)', [
+    const data = await db.query("SELECT * from client WHERE phone LIKE $1;", [phone]);
+    if (data.rows.length > 0)
+        return next(DataApi.notlucky("Client is exists!"));
+    console.log(req.body);
+    db.query('CALL add_client($1,$2,$3,$4)', [
         phone,
         name_client,
         last_contact_date,

@@ -173,3 +173,5 @@ const startServer = async function ()
     }
 }
 startServer();
+
+module.exports = app;

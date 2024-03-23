@@ -2,6 +2,7 @@ const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
+const { isExistsClient, checkbooking, isExistsWorker, checkFormatDate } = require("../utils");
 
 const book_table = async (req, res, next) =>
 {
@@ -19,6 +20,20 @@ const book_table = async (req, res, next) =>
         } = req.body;
     if (!(id_table && id_worker && order_time && phone_client && end_booking_date && start_booking_date))
         return next(ApiError.badRequest("Don't enought data!"));
+
+    if (checkFormatDate(start_booking_date) === false || checkFormatDate(end_booking_date) === false)
+        return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31]T[00-24]:[00-60]:{2}.d+Z!"));
+
+    if (await isExistsClient(db, phone_client) === false)
+        return next(DataApi.notlucky("Client is not exists!"));
+
+    if (await isExistsWorker(db, id_worker) === false)
+        return next(DataApi.notlucky("Worker is not exists!"));
+
+    const checkbook = await checkbooking(id_table, start_booking_date, end_booking_date);
+    if (checkbook === false)
+        return next(DataApi.notlucky("Current table booked, change datetime"));
+
     db.query('CALL book_table($1,$2,$3,$4,$5,$6)', [
         id_table,
         id_worker,

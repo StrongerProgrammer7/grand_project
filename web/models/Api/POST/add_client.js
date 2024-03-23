@@ -2,6 +2,7 @@ const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
+const { isExistsClient } = require('../utils');
 
 const add_client = async (req, res, next) =>
 {
@@ -17,9 +18,9 @@ const add_client = async (req, res, next) =>
     if (!(phone && name_client && last_contact_date && email))
         return next(ApiError.badRequest("Don't enought data!"));
 
-    const data = await db.query("SELECT * from client WHERE phone LIKE $1;", [phone]);
-    if (data.rows.length > 0)
+    if (await isExistsClient(db, phone, false) === false)
         return next(DataApi.notlucky("Client is exists!"));
+
     console.log(req.body);
     db.query('CALL add_client($1,$2,$3,$4)', [
         phone,

@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-23 19:12:34
+-- Started on 2024-03-23 19:33:37
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -320,7 +320,7 @@ $$;
 ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp without time zone, IN _start_booking_date timestamp without time zone, IN _end_booking_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 272 (class 1255 OID 75261)
+-- TOC entry 273 (class 1255 OID 75261)
 -- Name: book_table_from_web(integer, character varying, timestamp without time zone, timestamp without time zone, timestamp without time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -430,7 +430,7 @@ $$;
 ALTER PROCEDURE public.delete_order(IN order_id integer) OWNER TO postgres;
 
 --
--- TOC entry 275 (class 1255 OID 58848)
+-- TOC entry 276 (class 1255 OID 58848)
 -- Name: delete_worker(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -461,7 +461,7 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 277 (class 1255 OID 75313)
+-- TOC entry 278 (class 1255 OID 75313)
 -- Name: get_booked_tables_on_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -481,7 +481,7 @@ $$;
 ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 273 (class 1255 OID 58854)
+-- TOC entry 274 (class 1255 OID 58854)
 -- Name: get_count_place_all_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -589,7 +589,7 @@ $$;
 ALTER FUNCTION public.get_reorder_ingredients_list() OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 75314)
+-- TOC entry 272 (class 1255 OID 75324)
 -- Name: get_time_for_booked_table_on_date(integer, timestamp without time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -602,7 +602,7 @@ BEGIN
     FROM public.client_table ct
     INNER JOIN public."table" t ON ct.id_table = t.id
     WHERE ct.start_booking_date::date = input_date::date
-    AND t.id = ct.id_table;
+    AND t.id = get_time_for_booked_table_on_date.id_table;
 END;
 $$;
 
@@ -736,7 +736,7 @@ $$;
 ALTER FUNCTION public.update_issue_date() OWNER TO postgres;
 
 --
--- TOC entry 274 (class 1255 OID 58831)
+-- TOC entry 275 (class 1255 OID 58831)
 -- Name: update_order(integer, integer[], integer[], character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -922,7 +922,7 @@ $$;
 ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
--- TOC entry 276 (class 1255 OID 58844)
+-- TOC entry 277 (class 1255 OID 58844)
 -- Name: worker_history_trigger_function(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1497,6 +1497,14 @@ INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, 
 INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (2, '2024-03-19 11:00:00', 4, '+79637259702', '2024-03-24 18:00:00', '2024-03-24 19:00:00');
 INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-19 14:00:00', NULL, '+79389513658', '2024-04-24 10:00:00', '2024-04-24 14:00:00');
 INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-21 09:00:00', NULL, '+79389513678', '2024-04-24 09:00:00', '2024-04-24 13:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 09:00:00', NULL, '+79389513678', '2024-04-23 11:00:00', '2024-04-23 12:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 10:00:00', NULL, '+79389513678', '2024-04-23 15:00:00', '2024-04-23 16:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 11:00:00', NULL, '+79389513678', '2024-04-23 20:31:00', '2024-04-23 21:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:00:00', NULL, '+79389513678', '2024-04-23 12:31:00', '2024-04-23 14:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 08:00:00', NULL, '+79389513678', '2024-03-23 11:31:00', '2024-03-23 12:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:01:00', NULL, '+79389513678', '2024-03-23 15:31:00', '2024-03-23 16:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:02:00', NULL, '+79389513678', '2024-03-23 20:31:00', '2024-03-23 21:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:03:00', NULL, '+79389513678', '2024-03-23 12:31:00', '2024-03-23 14:31:00');
 
 
 --
@@ -2367,7 +2375,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-23 19:12:35
+-- Completed on 2024-03-23 19:33:38
 
 --
 -- PostgreSQL database dump complete

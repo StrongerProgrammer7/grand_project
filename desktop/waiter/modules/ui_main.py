@@ -26,13 +26,13 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1280, 720)
+        MainWindow.resize(647, 516)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QSize(1280, 720))
+        MainWindow.setMinimumSize(QSize(500, 500))
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
         self.styleSheet.setMinimumSize(QSize(0, 0))
@@ -1425,52 +1425,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_20.addWidget(self.frame_2)
 
-        self.frame_3 = QFrame(self.new_page)
-        self.frame_3.setObjectName(u"frame_3")
-        sizePolicy8.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
-        self.frame_3.setSizePolicy(sizePolicy8)
-        self.frame_3.setMinimumSize(QSize(0, 70))
-        self.frame_3.setFrameShape(QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_13 = QHBoxLayout(self.frame_3)
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.horizontalLayout_13.setContentsMargins(10, 10, 10, 10)
-        self.frame_5 = QFrame(self.frame_3)
-        self.frame_5.setObjectName(u"frame_5")
-        sizePolicy9.setHeightForWidth(self.frame_5.sizePolicy().hasHeightForWidth())
-        self.frame_5.setSizePolicy(sizePolicy9)
-        self.frame_5.setMinimumSize(QSize(0, 50))
-        self.frame_5.setStyleSheet(u"")
-        self.frame_5.setFrameShape(QFrame.StyledPanel)
-        self.frame_5.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_11 = QHBoxLayout(self.frame_5)
-        self.horizontalLayout_11.setSpacing(50)
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.horizontalLayout_11.setContentsMargins(10, 5, 10, 5)
-        self.pushButton_8 = QPushButton(self.frame_5)
-        self.pushButton_8.setObjectName(u"pushButton_8")
-        sizePolicy4.setHeightForWidth(self.pushButton_8.sizePolicy().hasHeightForWidth())
-        self.pushButton_8.setSizePolicy(sizePolicy4)
-        self.pushButton_8.setMinimumSize(QSize(150, 0))
-        self.pushButton_8.setStyleSheet(u"background-color: rgb(121, 121, 121);")
-
-        self.horizontalLayout_11.addWidget(self.pushButton_8)
-
-        self.pushButton_9 = QPushButton(self.frame_5)
-        self.pushButton_9.setObjectName(u"pushButton_9")
-        sizePolicy4.setHeightForWidth(self.pushButton_9.sizePolicy().hasHeightForWidth())
-        self.pushButton_9.setSizePolicy(sizePolicy4)
-        self.pushButton_9.setMinimumSize(QSize(150, 0))
-        self.pushButton_9.setStyleSheet(u"background-color: rgb(170, 0, 0);")
-
-        self.horizontalLayout_11.addWidget(self.pushButton_9)
-
-
-        self.horizontalLayout_13.addWidget(self.frame_5)
-
-
-        self.verticalLayout_20.addWidget(self.frame_3)
-
         self.stackedWidget.addWidget(self.new_page)
 
         self.verticalLayout_15.addWidget(self.stackedWidget)
@@ -1730,8 +1684,6 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setSortingEnabled(False)
         self.tableWidget_3.setSortingEnabled(__sortingEnabled)
 
-        self.pushButton_8.setText(QCoreApplication.translate("MainWindow", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c", None))
-        self.pushButton_9.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))

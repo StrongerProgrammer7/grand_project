@@ -119,6 +119,8 @@ class MainWindow(QMainWindow):
         self.ui_dialog3.checkBox.stateChanged.connect(self.change_password_visibility)
         self.ui_dialog3.pushButton.clicked.connect(self.login)
 
+        self.fill_table_with_menu(file_path="./jsons/get_menu_sorted_by_type.json")
+
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
@@ -129,8 +131,8 @@ class MainWindow(QMainWindow):
         widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
 
         # 3 ВКЛАДКА
-        widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
-        widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
+        #widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
+        #widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
 
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
@@ -142,6 +144,7 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
         self.fill_table_widget(self.ui.tableWidget)
+
 
         # Сортировка таблиц
         self.column_sort_order = {}
@@ -277,14 +280,13 @@ class MainWindow(QMainWindow):
         else:
             self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Password)
 
+
     def connect_sorting_function(self, table_widget):
         table_widget.horizontalHeader().sectionClicked.connect(
             lambda index: self.sort_table_column(table_widget, index))
 
     def sort_table_column(self, table, column_index):
-        # Получаем текущее направление сортировки для столбца
         current_sort_order = self.column_sort_order.get(column_index, Qt.AscendingOrder)
-        # Переключаем направление сортировки
         if current_sort_order == Qt.AscendingOrder:
             new_sort_order = Qt.DescendingOrder
         else:
@@ -370,8 +372,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
-        msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
+        msg_box.button(QMessageBox.Yes).setText("Да")
+        msg_box.button(QMessageBox.No).setText("Нет")
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -477,7 +479,8 @@ class MainWindow(QMainWindow):
     def commit(self, table):
         data_dict = {}
         column_count = table.columnCount()
-
+        workerID = self.ui.label_2.text()
+        print(workerID)
         for row_index in range(table.rowCount()):
             item_id = int(table.item(row_index, 0).text())
             name = table.item(row_index, 1).text()
@@ -489,6 +492,25 @@ class MainWindow(QMainWindow):
         json_data = {"data": data_dict}
         print("Data saved:", json_data)
 
+    def fill_table_with_menu(self, file_path):
+        self.ui.tableWidget_2.clearContents()
+
+        with open(file_path, "r") as menu_file:
+            menu_json = json.load(menu_file)
+            for item in menu_json['data']:
+                food_name = item['food_name']
+                food_id = item['food_id']
+
+                row_index = self.ui.tableWidget_2.rowCount()
+                self.ui.tableWidget_2.insertRow(row_index)
+
+                # Вставка числа, а не строки
+                self.ui.tableWidget_2.setItem(row_index, 0, QTableWidgetItem())
+                self.ui.tableWidget_2.item(row_index, 0).setData(Qt.DisplayRole, row_index + 1)
+
+                self.ui.tableWidget_2.setItem(row_index, 1, QTableWidgetItem(food_name))
+                self.ui.tableWidget_2.setItem(row_index, 2, QTableWidgetItem())
+                self.ui.tableWidget_2.item(row_index, 2).setData(Qt.DisplayRole, food_id)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

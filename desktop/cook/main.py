@@ -13,23 +13,19 @@ from widgets import *
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 
 # SET AS GLOBAL WIDGETS
-# ///////////////////////////////////////////////////////////////
 widgets = None
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
         # SET AS GLOBAL WIDGETS
-        # ///////////////////////////////////////////////////////////////
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         global widgets
         widgets = self.ui
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
-        # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         self.api = ApiConnect()
@@ -61,7 +57,6 @@ class MainWindow(QMainWindow):
         self.show()
 
         # SET CUSTOM THEME
-        # ///////////////////////////////////////////////////////////////
         self.themeFile = "themes/py_dracula_dark.qss"
         widgets.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
         self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
@@ -92,7 +87,6 @@ class MainWindow(QMainWindow):
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
-    # ///////////////////////////////////////////////////////////////
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
@@ -117,13 +111,11 @@ class MainWindow(QMainWindow):
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
 
     # RESIZE EVENTS
-    # ///////////////////////////////////////////////////////////////
     def resizeEvent(self, event):
         # Update Size Grips
         UIFunctions.resize_grips(self)
 
     # MOUSE CLICK EVENTS
-    # ///////////////////////////////////////////////////////////////
     def mousePressEvent(self, event):
         # SET DRAG POS WINDOW
         self.dragPos = event.globalPos()

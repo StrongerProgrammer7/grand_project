@@ -1,67 +1,74 @@
 import json
 import os
-
+import urllib3
 import requests
-from secret_file import *
+import socketio
+from .secret_file import DOMEN
+
+urllib3.disable_warnings()
 
 
 class ApiConnect:
-    api_url = f'https://{DOMEN}/api/'
+    api_url = f'https://{DOMEN}/api'
+    # Создаем сокет-клиент и подключаемся
+    sio = socketio.Client()
+    sio.connect('http://localhost:8080')
 
-    def get(self, model: int, id: int):
-        if model and id:
-            url = f'{self.api_url}/{model}/{id}'
+    def get_data(self, endpoint: str):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.get(url, verify=False)
 
-            if response.status_code == 200:
+            if response.status_code == 201:
+                print(f'get_data | {endpoint} | ', response.status_code)
                 return response.json()
+        print('None')
         return None
 
-    def post_data(self, model: int, data: json):
-        if model:
-            url = f'{self.api_url}/{model}'
+    def post_data(self, endpoint: str, data: json):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.post(url, json=data, verify=False)
 
-            if response.status_code == 200:
+            print(f'post_data | {endpoint} | ', response.status_code)
+            if response.status_code == 201:
                 return response.json()
         return None
 
-    def put_data(self, model: str, id: int, data: json):
-        if model and id:
-            url = f'{self.api_url}/{model}/{id}'
-            response = requests.put(url, json=data, verify=False)
+    def put_data(self, endpoint: str):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
+            response = requests.put(url, verify=False)
 
-            if response.status_code == 200:
+            if response.status_code == 201:
                 return response.json()
         return None
 
-    def delete_data(self, model: str, id: int):
-        if model and id:
-            url = f'{self.api_url}/{model}/{id}'
+    def delete_data(self, endpoint: str):
+        if endpoint:
+            url = f'{self.api_url}/{endpoint}'
             response = requests.delete(url, verify=False)
 
-            if response.status_code == 200:
+            if response.status_code == 201:
                 return response.json()
         return None
 
-    @staticmethod
-    def test_get(model: str):
-        if model:
-            file_path = os.path.join("jsons", f"{model}.json")
+    # WEBSOCKET MOMENT
+    def send_message(self, data):
+        # Создаем JSON-сообщение
+        message = {"text": "Hello from PyQt button!"}
+        # Отправляем сообщение через сокет
+        self.sio.emit('message', data)
+        print("Message sent:", message)
 
-            if os.path.exists(file_path):
-                with open(file_path, 'r') as file:
-                    json_data = json.load(file)
-                return json_data
-        return None
-    @staticmethod
-    def test_data():
-        response = requests.post('https://grandproject.k-lab.su/api/test', verify=False)
+    @sio.event
+    def connect(self):
+        print("Connected to the server")
 
-        if response.status_code == 200:
-            print('Ответ от сервера Node.js:', response.json())
-        else:
-            print(response.text)
+    @sio.event
+    def disconnect(self):
+        print("Disconnected from the server")
 
-
-print(ApiConnect.test_data())
+    @sio.on('message')
+    def on_message(self, data):
+        print('Message from server:', data)

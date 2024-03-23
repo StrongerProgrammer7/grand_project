@@ -32,6 +32,9 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
+        self.api = ApiConnect()
+
+
         # APP NAME
         # title = "SOLIDSIGN - для официантов"
         # description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."

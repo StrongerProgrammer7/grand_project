@@ -1,14 +1,17 @@
+#!/bin/sh
+
 import sys
 import os
 from cx_Freeze import setup, Executable
 
 # ADD FILES
-files = ['icon.ico', 'themes/']
+files = ['icon.ico', 'themes/', 'jsons/']
+base = "Win32GUI" if sys.platform == "win32" else None
 
 # TARGET
 target = Executable(
     script="main.py",
-    base="Win32GUI",
+    base=base,
     icon="icon.ico"
 )
 
@@ -16,9 +19,8 @@ target = Executable(
 setup(
     name="SOLIDSIGN",
     version="1.0",
-    description="SOLIDSIGN APP",
+    description="Modern GUI for restaurant applications",
     author="49/1",
     options={'build_exe': {'include_files': files}},
     executables=[target]
-
 )

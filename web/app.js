@@ -1,6 +1,10 @@
 // @ts-nocheck
 const https = require('https');
+const httpProxy = require('http-proxy');
+var apiProxy = httpProxy.createProxyServer();
+
 const express = require('express');
+
 const expressWinston = require('express-winston');
 const cors = require('cors');
 
@@ -22,6 +26,7 @@ const logger = require('./logger/logger');
 const loggerInernalError = require('./logger/loggerInernalError');
 
 const swaggerDocs = require('./utils/swagger');
+const connectSoket = require('./utils/socket');
 
 const PORT = process.env.PORT || 443;
 const urlencodedParser = express.urlencoded({ extended: true });
@@ -106,22 +111,41 @@ app.use(xss());
 const optionHTTPS =
 {
     key: fs.readFileSync('./certificate/cert-key.pem'),
-    cert: fs.readFileSync('./certificate/cert.pem')
+    cert: fs.readFileSync('./certificate/fullchain.pem')
+}
+
+const optionHTTPS_dev =
+{
+    key: fs.readFileSync('./certificate/certificate_localhost/cert-key.pem'),
+    cert: fs.readFileSync('./certificate/certificate_localhost/fullchain.pem')
 }
 
 const HOST = "0.0.0.0";
+app.all("/api/*", function (req, res)
+{
+    apiProxy.web(req, res, { target: 'https://localhost:5000' });
+});
 
+const httpsServer = https.createServer(process.env.NODE_ENV === 'development' ? optionHTTPS_dev : optionHTTPS, app);
+
+httpsServer.on('upgrade', function (req, socket, head)
+{
+    apiProxy.ws(req, socket, head, {
+        target: 'https://localhost:5000'
+    });
+});
 
 const startServer = async function ()
 {
     try
     {
-        https.createServer(optionHTTPS, app)
-            .listen(PORT, HOST, () =>
-            {
-                console.log(`Server has been started on the port ${ PORT } and HTTPS. Env=${ process.env.NODE_ENV }`);
-            });
 
+        httpsServer.listen(PORT, HOST, () =>
+        {
+            console.log(`Server has been started on the port ${ PORT } and HTTPS. Env=${ process.env.NODE_ENV }`);
+        });
+
+        connectSoket(httpsServer);
         // let opts = {
         //     method: 'GET',
         //     hostname: "grandproject.k-lab.su",
@@ -149,5 +173,3 @@ const startServer = async function ()
     }
 }
 startServer();
-
-module.exports = app;

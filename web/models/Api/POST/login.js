@@ -1,4 +1,6 @@
+// @ts-nocheck
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
 const logger = require('../../../logger/logger');
@@ -20,7 +22,7 @@ const signIn = async (req, res, next) =>
     if (resultCheckers.isEmpty() == false)
         return badRequestHandler(resultCheckers, next);
 
-    await db.query(`Select id,password FROM worker WHERE login = $1`, [login])
+    db.query(`Select id,password FROM worker WHERE login = $1`, [login])
         .then((result) =>
         {
             console.log(result);
@@ -39,7 +41,7 @@ const signIn = async (req, res, next) =>
                 return next(ApiError.badRequest('Bad request pass is not correct!'));
             } else
             {
-                const token = jwt.sign({ id: human[0].id }, process.env.JWT_SECRET,
+                const token = jwt.sign({ id: human[0].id, login }, process.env.JWT_SECRET,
                     {
                         expiresIn: process.env.JWT_EXPIRES
                     });

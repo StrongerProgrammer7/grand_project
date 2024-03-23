@@ -1,7 +1,6 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const { version, description } = require('../package.json');
-const logger = require('../logger/logger');
 
 const BASE_URL = 'grandproject.k-lab.su';
 const TEST_URL = 'localhost:5000'

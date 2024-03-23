@@ -1,3 +1,8 @@
+const db = require('../db');
+
+const workingHoursStart = 8; // Начало рабочего дня
+const workingHoursEnd = 23; // Конец рабочего дня
+
 function getDate(datetime)
 {
     return datetime.split('T')[0];
@@ -92,8 +97,7 @@ function generateStartDay(workingHoursStart, workingHoursEnd)
     }
     return freeTimeByTable;
 }
-const workingHoursStart = 8; // Начало рабочего дня
-const workingHoursEnd = 23; // Конец рабочего дня
+
 const get_free_time_all_booked_tables_by_date = (bookings) =>
 {
     const tableIds = new Set(bookings.map(booking => booking.table_id));
@@ -121,8 +125,8 @@ const get_free_time_all_booked_tables_by_date = (bookings) =>
         console.log(allDateCurrentBook);
         allDateCurrentBook.forEach((time) =>
         {
-            const startBooked = time.start_date - 3;
-            const endBooked = time.end_date - 3;
+            const startBooked = time.start_date;
+            const endBooked = time.end_date;
             let potentialFreeEnd = null;
             let potentialFreeStart = null;
             for (let k = 0; k < freeTimeByTable.length; k++) 
@@ -184,4 +188,19 @@ const get_free_time_all_booked_tables_by_date = (bookings) =>
 
 }
 
-module.exports = { isExistsClient, checkbooking, isExistsWorker, checkFormatDate, get_free_time_all_booked_tables_by_date }
+const deleteTimzoneDatafromdb = (data) =>
+{
+    for (let i = 0; i < data.length; i++)
+    {
+        const elem = data[i];
+        console.log(elem);
+        elem.start_booking_date = new Date(elem.start_booking_date).toLocaleString();
+        elem.end_booking_date = new Date(elem.end_booking_date).toLocaleDateString();
+        console.log(elem.start_booking_date);
+        data[i] = elem;
+    }
+    return data;
+}
+
+
+module.exports = { isExistsClient, checkbooking, isExistsWorker, checkFormatDate, get_free_time_all_booked_tables_by_date, deleteTimzoneDatafromdb, workDay: { workingHoursEnd, workingHoursStart } }

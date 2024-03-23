@@ -2,7 +2,7 @@ const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
 const ApiError = require("../../../HandleAPI/ApiError");
-const { checkFormatDate } = require("../utils");
+const { checkFormatDate, deleteTimzoneDatafromdb } = require("../utils");
 
 const get_time_for_booked_table_on_date = async (req, res, next) =>
 {
@@ -22,7 +22,7 @@ const get_time_for_booked_table_on_date = async (req, res, next) =>
     db.query('SELECT * FROM get_time_for_booked_table_on_date($1,$2);', [id_table, date])
         .then((data) =>
         {
-            console.log(data);
+            // console.log(data);
             return next(DataApi.success(data.rows, "Success!"));
         })
         .catch(err =>

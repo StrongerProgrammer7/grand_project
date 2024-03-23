@@ -217,15 +217,15 @@ dateControl.onchange = async () =>
             {
                 e.preventDefault();
                 let phone = document.querySelector('input[type="tel"]').value;
-                let orderTime = new Date().toISOString();
+                let orderTime = new Date().toLocaleString();
                 let booked_date = combineDateAndTime(dateControl.value, document.querySelector('input[type="time"]').value);
                 let interval = Number(document.querySelector('input[type="number"]').value);
-
-                let start_date = new Date(booked_date).toISOString();
+                //console.log(booked_date);
+                let start_date = new Date(booked_date);
                 booked_date = new Date(booked_date);
                 booked_date.setHours(booked_date.getHours() + interval);
-                booked_date = booked_date.toISOString();
 
+                //console.log(booked_date);
                 req = {
                     "id_table": i + 1,
                     "phone_client": phone,
@@ -254,7 +254,7 @@ dateControl.onchange = async () =>
                     setTimeout(() =>
                     {
                         popup.innerHTML = "";
-                        h1.innerHTML = `Успешно забронирован стол №${ i + 1 } ${ formatDatefromIsoString(start_date) } по ${ formatDatefromIsoString(booked_date) }!`;
+                        h1.innerHTML = `Успешно забронирован стол №${ i + 1 } ${ start_date.toLocaleDateString() } ${ start_date.toLocaleTimeString() } по ${ booked_date.toLocaleDateString() } ${ booked_date.toLocaleTimeString() }!`;
                         popup.appendChild(h1);
                     }, 3000);
                 }

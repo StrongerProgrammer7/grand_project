@@ -1,8 +1,9 @@
+// @ts-nocheck
 const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
-const { isExistsClient, checkbooking, isExistsWorker, checkFormatDate } = require("../utils");
+const { isExistsClient, checkbooking, isExistsWorker, checkFormatDate, workDay } = require("../utils");
 
 const book_table = async (req, res, next) =>
 {
@@ -23,6 +24,10 @@ const book_table = async (req, res, next) =>
 
     if (checkFormatDate(start_booking_date) === false || checkFormatDate(end_booking_date) === false)
         return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31]T[00-24]:[00-60]:{2}.d+Z!"));
+    const start_day = workDay.workingHoursStart;
+    const end_day = workDay.workingHoursEnd;
+    if ((new Date((start_booking_date).getHours() < start_day || start_booking_date).getHours() >= end_day) || (new Date(end_booking_date) > end_day || new Date(end_booking_date) <= start_day))
+        return next(DataApi.notlucky("Check work restaurant and change booked!"));
 
     if (await isExistsClient(db, phone_client) === false)
         return next(DataApi.notlucky("Client is not exists!"));
@@ -39,8 +44,8 @@ const book_table = async (req, res, next) =>
         id_worker,
         phone_client,
         order_time,
-        start_booking_date,
-        end_booking_date
+        new Date(start_booking_date).toLocaleString(),
+        new Date(end_booking_date).toLocaleString()
     ])
         .then(() =>
         {

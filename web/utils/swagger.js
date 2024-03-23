@@ -1,6 +1,8 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const { version, description } = require('../package.json');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 
 const BASE_URL = 'grandproject.k-lab.su';
 const TEST_URL = 'localhost:5000'
@@ -54,7 +56,7 @@ function swaggerDocs(app, port)
 
     //Json
 
-    app.get("docs.json", (req, res, next) =>
+    app.get("docs.json", csrfProtection, (req, res, next) =>
     {
         res.setHeader("Content-Type", "application/json");
         res.send(swaggerSpec);

@@ -17,7 +17,7 @@ const book_table = async (req, res, next) =>
             start_booking_date,
             end_booking_date
         } = req.body;
-    if (!(id_table && id_worker && order_time && phone_client && end_booking_date))
+    if (!(id_table && id_worker && order_time && phone_client && end_booking_date && start_booking_date))
         return next(ApiError.badRequest("Don't enought data!"));
     db.query('CALL book_table($1,$2,$3,$4,$5,$6)', [
         id_table,

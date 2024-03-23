@@ -1,20 +1,20 @@
 class DataApi 
 {
-    constructor(status,data,message) 
+    constructor(status, data, message) 
     {
         this.data = data;
         this.message = message;
         this.status = status;
     }
 
-    static success(data,message)
+    static success(data, message)
     {
-        return new DataApi(201,data,message);
+        return new DataApi(201, data, message);
     }
 
     static notlucky(message)
     {
-        return new DataApi(201,{},message);
+        return new DataApi(409, {}, message);
     }
 
 }

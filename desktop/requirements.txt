@@ -19,3 +19,10 @@ schedule==1.2.1
 shiboken6==6.6.1
 typing_extensions==4.10.0
 urllib3==2.2.1
+bidict==0.23.1
+h11==0.14.0
+python-engineio==4.9.0
+python-socketio==5.11.1
+simple-websocket==1.0.0
+wsproto==1.2.0
+websocket-client==1.7.0

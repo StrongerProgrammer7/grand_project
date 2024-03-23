@@ -8,8 +8,8 @@ const addFieldInterval = (data) =>
     for (let i = 0; i < data.length; i++)
     {
         let elem = data[i];
-        const start_date = new Date(elem.start_date).getHours();
-        const end_date = new Date(elem.end_date).getHours();
+        const start_date = new Date(elem.start_booking_date).getHours();
+        const end_date = new Date(elem.end_booking_date).getHours();
         const interval = end_date - start_date;
         elem['interval'] = interval;
         data[i] = elem;

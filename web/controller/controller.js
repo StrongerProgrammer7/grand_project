@@ -84,6 +84,7 @@ const get_ingredients_info = require('../models/Api/GET/get_ingredients_info');
 const get_worker_list = require('../models/Api/GET/get_worker_list');
 const get_order_history = require('../models/Api/GET/get_order_history');
 const get_name_storehouse = require('../models/Api/GET/get_name_storehouse');
+const get_count_place_all_tables = require('../models/Api/GET/get_count_place_all_tables');
 
 router.get('/get_current_orders', get_current_orders);
 router.get('/get_reorder_ingredients_list', get_reorder_ingredients_list);
@@ -93,6 +94,7 @@ router.get('/get_order_history', get_order_history);
 router.get('/get_ingredients_info', get_ingredients_info);
 router.get('/get_worker_list', get_worker_list);
 router.get('/get_name_storehouse', get_name_storehouse);
+router.get('/get_count_place_all_tables', get_count_place_all_tables);
 
 module.exports = router;
 

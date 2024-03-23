@@ -13,15 +13,8 @@ class ApiConnect:
     # Создаем сокет-клиент и подключаемся
     sio = socketio.Client()
 
-    try:
-        r = requests.get(f'{api_url}')
-        r.raise_for_status()
-    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-        print("Сервер не запущен")
-    except requests.exceptions.HTTPError:
-        print("4xx, 5xx")
-    else:
-        sio.connect('http://localhost:8080')
+    sio.connect('http://localhost:8080')
+    # sio.connect(api_url)
 
     def get_data(self, endpoint: str):
         if endpoint:
@@ -81,3 +74,5 @@ class ApiConnect:
     @sio.on('message')
     def on_message(self, data):
         print('Message from server:', data)
+
+

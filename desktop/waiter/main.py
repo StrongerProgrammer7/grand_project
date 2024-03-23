@@ -70,6 +70,20 @@ class MainWindow(QMainWindow):
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
+        # EXTRA LEFT BOX
+        # def openCloseLeftBox():
+        #    UIFunctions.toggleLeftBox(self, True)
+
+        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
+        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
+
+        # EXTRA RIGHT BOX
+        # def openCloseRightBox():
+        #    UIFunctions.toggleRightBox(self, True)
+
+        # widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
+
+        # SHOW APP
         # ///////////////////////////////////////////////////////////////
         # self.show()
         # SET CUSTOM THEME
@@ -106,6 +120,8 @@ class MainWindow(QMainWindow):
         self.ui_dialog3.checkBox.stateChanged.connect(self.change_password_visibility)
         self.ui_dialog3.pushButton.clicked.connect(self.login)
 
+        self.fill_table_with_menu(file_path="./jsons/get_menu_sorted_by_type.json")
+
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
@@ -117,8 +133,8 @@ class MainWindow(QMainWindow):
         widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
 
         # 3 ВКЛАДКА
-        widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
-        widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
+        # widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
+        # widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
 
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
         self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
@@ -219,7 +235,6 @@ class MainWindow(QMainWindow):
         self.new_window2.show()
 
     def update_json_files(self):
-        # список всех эндпоинтов, которые нужно обновить
         endpoints = ['get_order_history', 'get_all_booked_tables', 'get_menu_sorted_by_type']
 
         for endpoint in endpoints:
@@ -270,9 +285,7 @@ class MainWindow(QMainWindow):
             lambda index: self.sort_table_column(table_widget, index))
 
     def sort_table_column(self, table, column_index):
-        # Получаем текущее направление сортировки для столбца
         current_sort_order = self.column_sort_order.get(column_index, Qt.AscendingOrder)
-        # Переключаем направление сортировки
         if current_sort_order == Qt.AscendingOrder:
             new_sort_order = Qt.DescendingOrder
         else:
@@ -307,6 +320,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Заказы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        # msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
+        # msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -320,11 +335,13 @@ class MainWindow(QMainWindow):
                 # Устанавливаем значения в каждом столбце выбранной строки
                 self.ui.tableWidget.setItem(selected_row, 0,
                                             QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
+                # self.ui.tableWidget.setItem(selected_row, 1, QTableWidgetItem(line))
+                # self.ui.tableWidget.setItem(selected_row, 2, QTableWidgetItem(datetime1))
+                # self.ui.tableWidget.setItem(selected_row, 3, QTableWidgetItem(datetime2))
                 self.ui.tableWidget.setItem(selected_row, 4, QTableWidgetItem(line2))
                 self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(combBox))
 
                 # TODO: Добавить валидацию
-
                 food_ids = []
                 quantities = []
 
@@ -352,10 +369,9 @@ class MainWindow(QMainWindow):
                 # Отправляем данные
                 self.api.send_message(json.dumps(data, ensure_ascii=False))
 
-            self.new_window.close()
-        else:
-            # Если пользователь отменил действие, ничего не делаем
-            pass
+                self.new_window.close()
+            else:
+                pass
 
     def update_third_table(self):
         # combBox = self.ui_dialog2.comboBox.currentText()
@@ -372,8 +388,8 @@ class MainWindow(QMainWindow):
         confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
         confirm_dialog.setWindowTitle("Подтверждение")
         confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        # msg_box.button(QMessageBox.Yes).setText("Да")  # Замена текста кнопки "Да"
-        # msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
+        # msg_box.button(QMessageBox.Yes).setText("Да")
+        # msg_box.button(QMessageBox.No).setText("Нет")
         confirm_dialog.setDefaultButton(QMessageBox.No)
 
         # Показываем диалоговое окно и ждем ответа пользователя
@@ -520,6 +536,26 @@ class MainWindow(QMainWindow):
         # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
 
         self.api.send_message(json.dumps(json_data, ensure_ascii=False))
+
+    def fill_table_with_menu(self, file_path):
+        self.ui.tableWidget_2.clearContents()
+
+        with open(file_path, "r") as menu_file:
+            menu_json = json.load(menu_file)
+            for item in menu_json['data']:
+                food_name = item['food_name']
+                food_id = item['food_id']
+
+                row_index = self.ui.tableWidget_2.rowCount()
+                self.ui.tableWidget_2.insertRow(row_index)
+
+                # Вставка числа, а не строки
+                self.ui.tableWidget_2.setItem(row_index, 0, QTableWidgetItem())
+                self.ui.tableWidget_2.item(row_index, 0).setData(Qt.DisplayRole, row_index + 1)
+
+                self.ui.tableWidget_2.setItem(row_index, 1, QTableWidgetItem(food_name))
+                self.ui.tableWidget_2.setItem(row_index, 2, QTableWidgetItem())
+                self.ui.tableWidget_2.item(row_index, 2).setData(Qt.DisplayRole, food_id)
 
 
 if __name__ == "__main__":

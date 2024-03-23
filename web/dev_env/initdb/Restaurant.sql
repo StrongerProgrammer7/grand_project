@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-23 02:00:40
+-- Started on 2024-03-23 19:33:37
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,11 +43,11 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 273 (class 1255 OID 58852)
--- Name: add_client(character varying, character varying, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 243 (class 1255 OID 75316)
+-- Name: add_client(character varying, character varying, timestamp without time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying)
+CREATE PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp without time zone, IN _email character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -59,14 +59,14 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp with time zone, IN _email character varying) OWNER TO postgres;
+ALTER PROCEDURE public.add_client(IN _phone character varying, IN _name character varying, IN _last_contact_date timestamp without time zone, IN _email character varying) OWNER TO postgres;
 
 --
--- TOC entry 282 (class 1255 OID 67143)
--- Name: add_client_order(integer, integer[], integer[], timestamp with time zone, timestamp with time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 282 (class 1255 OID 75317)
+-- Name: add_client_order(integer, integer[], integer[], timestamp without time zone, timestamp without time zone, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_ids integer[], IN _quantities integer[], IN _formation_date timestamp with time zone, IN _issue_date timestamp with time zone, IN _status character varying)
+CREATE PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_ids integer[], IN _quantities integer[], IN _formation_date timestamp without time zone, IN _issue_date timestamp without time zone, IN _status character varying)
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -107,10 +107,10 @@ END;
 $$;
 
 
-ALTER PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_ids integer[], IN _quantities integer[], IN _formation_date timestamp with time zone, IN _issue_date timestamp with time zone, IN _status character varying) OWNER TO postgres;
+ALTER PROCEDURE public.add_client_order(IN _worker_id integer, IN _food_ids integer[], IN _quantities integer[], IN _formation_date timestamp without time zone, IN _issue_date timestamp without time zone, IN _status character varying) OWNER TO postgres;
 
 --
--- TOC entry 243 (class 1255 OID 50452)
+-- TOC entry 244 (class 1255 OID 50452)
 -- Name: add_food(character varying, character varying, character varying, double precision, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -129,7 +129,7 @@ $$;
 ALTER PROCEDURE public.add_food(IN _food_type character varying, IN _name character varying, IN _unit_of_measurement character varying, IN _price double precision, IN _weight double precision) OWNER TO postgres;
 
 --
--- TOC entry 260 (class 1255 OID 67127)
+-- TOC entry 261 (class 1255 OID 67127)
 -- Name: add_food_composition(character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -180,7 +180,7 @@ $$;
 ALTER PROCEDURE public.add_food_type(IN _type character varying) OWNER TO postgres;
 
 --
--- TOC entry 261 (class 1255 OID 42263)
+-- TOC entry 263 (class 1255 OID 42263)
 -- Name: add_ingredient(character varying, character varying, integer, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -256,7 +256,7 @@ $$;
 ALTER PROCEDURE public.add_table(IN _human_slots integer) OWNER TO postgres;
 
 --
--- TOC entry 265 (class 1255 OID 58725)
+-- TOC entry 266 (class 1255 OID 58725)
 -- Name: add_worker(character varying, character varying, character varying, character varying, character varying, double precision, character varying, character varying, character varying, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -285,11 +285,11 @@ $$;
 ALTER PROCEDURE public.add_worker(IN _login character varying, IN _password character varying, IN _job_role character varying, IN _surname character varying, IN _first_name character varying, IN _salary double precision, IN _patronymic character varying, IN _email character varying, IN _phone character varying, IN _job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 274 (class 1255 OID 67044)
--- Name: book_table(integer, integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 283 (class 1255 OID 75318)
+-- Name: book_table(integer, integer, character varying, timestamp without time zone, timestamp without time zone, timestamp without time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone)
+CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp without time zone, IN _start_booking_date timestamp without time zone, IN _end_booking_date timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -317,14 +317,14 @@ END
 $$;
 
 
-ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
+ALTER PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, IN _client_phone character varying, IN _order_date timestamp without time zone, IN _start_booking_date timestamp without time zone, IN _end_booking_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 276 (class 1255 OID 67046)
--- Name: book_table_from_web(integer, character varying, timestamp with time zone, timestamp with time zone, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 273 (class 1255 OID 75261)
+-- Name: book_table_from_web(integer, character varying, timestamp without time zone, timestamp without time zone, timestamp without time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone)
+CREATE PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp without time zone, IN _start_booking_date timestamp without time zone, IN _end_booking_date timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -347,14 +347,14 @@ END
 $$;
 
 
-ALTER PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp with time zone, IN _start_booking_date timestamp with time zone, IN _end_booking_date timestamp with time zone) OWNER TO postgres;
+ALTER PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_phone character varying, IN _order_date timestamp without time zone, IN _start_booking_date timestamp without time zone, IN _end_booking_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 272 (class 1255 OID 75241)
--- Name: cancel_booking(integer, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 262 (class 1255 OID 75319)
+-- Name: cancel_booking(integer, timestamp without time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.cancel_booking(IN _table_id integer, IN _start_booking_date timestamp with time zone)
+CREATE PROCEDURE public.cancel_booking(IN _table_id integer, IN _start_booking_date timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -369,10 +369,10 @@ END;
 $$;
 
 
-ALTER PROCEDURE public.cancel_booking(IN _table_id integer, IN _start_booking_date timestamp with time zone) OWNER TO postgres;
+ALTER PROCEDURE public.cancel_booking(IN _table_id integer, IN _start_booking_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 262 (class 1255 OID 50536)
+-- TOC entry 264 (class 1255 OID 50536)
 -- Name: change_order_status(integer, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -390,7 +390,7 @@ $$;
 ALTER PROCEDURE public.change_order_status(IN _order_id integer, IN _new_status character varying) OWNER TO postgres;
 
 --
--- TOC entry 270 (class 1255 OID 58808)
+-- TOC entry 271 (class 1255 OID 58808)
 -- Name: delete_ingredient(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -413,7 +413,7 @@ $$;
 ALTER PROCEDURE public.delete_ingredient(IN ingredient_id integer) OWNER TO postgres;
 
 --
--- TOC entry 267 (class 1255 OID 58735)
+-- TOC entry 268 (class 1255 OID 58735)
 -- Name: delete_order(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -430,7 +430,7 @@ $$;
 ALTER PROCEDURE public.delete_order(IN order_id integer) OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 58848)
+-- TOC entry 276 (class 1255 OID 58848)
 -- Name: delete_worker(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -461,11 +461,11 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 67047)
--- Name: get_booked_tables_on_date(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
+-- TOC entry 278 (class 1255 OID 75313)
+-- Name: get_booked_tables_on_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer, start_booking_date timestamp with time zone, end_booking_date timestamp with time zone)
+CREATE FUNCTION public.get_booked_tables_on_date(input_date timestamp without time zone) RETURNS TABLE(id integer, human_slots integer, start_booking_date timestamp without time zone, end_booking_date timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -478,10 +478,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp with time zone) OWNER TO postgres;
+ALTER FUNCTION public.get_booked_tables_on_date(input_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 275 (class 1255 OID 58854)
+-- TOC entry 274 (class 1255 OID 58854)
 -- Name: get_count_place_all_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -499,7 +499,7 @@ $$;
 ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
 
 --
--- TOC entry 284 (class 1255 OID 75250)
+-- TOC entry 281 (class 1255 OID 75250)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -551,7 +551,7 @@ $$;
 ALTER FUNCTION public.get_current_orders() OWNER TO postgres;
 
 --
--- TOC entry 245 (class 1255 OID 58727)
+-- TOC entry 246 (class 1255 OID 58727)
 -- Name: get_ingredients_info(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -589,11 +589,11 @@ $$;
 ALTER FUNCTION public.get_reorder_ingredients_list() OWNER TO postgres;
 
 --
--- TOC entry 280 (class 1255 OID 67050)
--- Name: get_time_for_booked_table_on_date(integer, timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
+-- TOC entry 272 (class 1255 OID 75324)
+-- Name: get_time_for_booked_table_on_date(integer, timestamp without time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.get_time_for_booked_table_on_date(id_table integer, input_date timestamp with time zone) RETURNS TABLE(id integer, human_slots integer, start_booking_date timestamp with time zone, end_booking_date timestamp with time zone)
+CREATE FUNCTION public.get_time_for_booked_table_on_date(id_table integer, input_date timestamp without time zone) RETURNS TABLE(id integer, human_slots integer, start_booking_date timestamp without time zone, end_booking_date timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -602,15 +602,15 @@ BEGIN
     FROM public.client_table ct
     INNER JOIN public."table" t ON ct.id_table = t.id
     WHERE ct.start_booking_date::date = input_date::date
-    AND t.id = ct.id_table;
+    AND t.id = get_time_for_booked_table_on_date.id_table;
 END;
 $$;
 
 
-ALTER FUNCTION public.get_time_for_booked_table_on_date(id_table integer, input_date timestamp with time zone) OWNER TO postgres;
+ALTER FUNCTION public.get_time_for_booked_table_on_date(id_table integer, input_date timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 244 (class 1255 OID 58723)
+-- TOC entry 245 (class 1255 OID 58723)
 -- Name: get_worker_list(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -629,16 +629,16 @@ $$;
 ALTER FUNCTION public.get_worker_list() OWNER TO postgres;
 
 --
--- TOC entry 281 (class 1255 OID 67134)
--- Name: order_ingredient(integer, character varying, integer, integer, double precision, timestamp with time zone, timestamp with time zone, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 284 (class 1255 OID 75320)
+-- Name: order_ingredient(integer, character varying, integer, integer, double precision, timestamp without time zone, timestamp without time zone, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name character varying, IN ingredient_id integer, IN ingredient_quantity integer, IN ingredient_weight double precision, IN ingredient_expiry_date timestamp with time zone, IN supplied_date timestamp with time zone, IN supplied_weight double precision, IN supplied_quantity integer)
+CREATE PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name character varying, IN ingredient_id integer, IN ingredient_quantity integer, IN ingredient_weight double precision, IN ingredient_expiry_date timestamp without time zone, IN supplied_date timestamp without time zone, IN supplied_weight double precision, IN supplied_quantity integer)
     LANGUAGE plpgsql
     AS $$
 DECLARE
     request_id INT;
-    current_request_date TIMESTAMP WITH TIME ZONE;
+    current_request_date TIMESTAMP WITHOUT TIME ZONE;
 BEGIN
     -- Получаем текущую дату с округлением до секунд
     current_request_date := date_trunc('second', NOW());
@@ -677,14 +677,14 @@ END;
 $$;
 
 
-ALTER PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name character varying, IN ingredient_id integer, IN ingredient_quantity integer, IN ingredient_weight double precision, IN ingredient_expiry_date timestamp with time zone, IN supplied_date timestamp with time zone, IN supplied_weight double precision, IN supplied_quantity integer) OWNER TO postgres;
+ALTER PROCEDURE public.order_ingredient(IN worker_id integer, IN storage_name character varying, IN ingredient_id integer, IN ingredient_quantity integer, IN ingredient_weight double precision, IN ingredient_expiry_date timestamp without time zone, IN supplied_date timestamp without time zone, IN supplied_weight double precision, IN supplied_quantity integer) OWNER TO postgres;
 
 --
--- TOC entry 263 (class 1255 OID 50537)
--- Name: record_giving_time(integer, timestamp with time zone); Type: PROCEDURE; Schema: public; Owner: postgres
+-- TOC entry 270 (class 1255 OID 75321)
+-- Name: record_giving_time(integer, timestamp without time zone); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.record_giving_time(IN _order_id integer, IN _giving_time timestamp with time zone)
+CREATE PROCEDURE public.record_giving_time(IN _order_id integer, IN _giving_time timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -695,10 +695,10 @@ END
 $$;
 
 
-ALTER PROCEDURE public.record_giving_time(IN _order_id integer, IN _giving_time timestamp with time zone) OWNER TO postgres;
+ALTER PROCEDURE public.record_giving_time(IN _order_id integer, IN _giving_time timestamp without time zone) OWNER TO postgres;
 
 --
--- TOC entry 266 (class 1255 OID 58731)
+-- TOC entry 267 (class 1255 OID 58731)
 -- Name: update_ingredient(integer, double precision, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -717,7 +717,7 @@ $$;
 ALTER PROCEDURE public.update_ingredient(IN p_ingredient_id integer, IN p_price double precision, IN p_critical_rate integer) OWNER TO postgres;
 
 --
--- TOC entry 268 (class 1255 OID 58809)
+-- TOC entry 269 (class 1255 OID 58809)
 -- Name: update_issue_date(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -736,7 +736,7 @@ $$;
 ALTER FUNCTION public.update_issue_date() OWNER TO postgres;
 
 --
--- TOC entry 277 (class 1255 OID 58831)
+-- TOC entry 275 (class 1255 OID 58831)
 -- Name: update_order(integer, integer[], integer[], character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -776,7 +776,7 @@ $$;
 ALTER PROCEDURE public.update_order(IN _order_id integer, IN _food_id integer[], IN _quantities integer[], IN _new_status character varying) OWNER TO postgres;
 
 --
--- TOC entry 257 (class 1255 OID 67056)
+-- TOC entry 258 (class 1255 OID 67056)
 -- Name: update_quantity_of_ingredient(integer, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -795,7 +795,7 @@ $$;
 ALTER PROCEDURE public.update_quantity_of_ingredient(IN p_ingredient_id integer, IN p_quantity integer) OWNER TO postgres;
 
 --
--- TOC entry 264 (class 1255 OID 58724)
+-- TOC entry 265 (class 1255 OID 58724)
 -- Name: update_worker_salary_and_rate(integer, double precision, double precision); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -814,11 +814,11 @@ $$;
 ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN new_salary double precision, IN new_job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 269 (class 1255 OID 75240)
+-- TOC entry 279 (class 1255 OID 75315)
 -- Name: view_all_booked_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.view_all_booked_tables() RETURNS TABLE(table_id integer, booking_date timestamp with time zone, worker_id integer, client_number character varying, start_booking_date timestamp with time zone, end_booking_date timestamp with time zone)
+CREATE FUNCTION public.view_all_booked_tables() RETURNS TABLE(table_id integer, booking_date timestamp without time zone, worker_id integer, client_number character varying, start_booking_date timestamp without time zone, end_booking_date timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -832,7 +832,7 @@ $$;
 ALTER FUNCTION public.view_all_booked_tables() OWNER TO postgres;
 
 --
--- TOC entry 259 (class 1255 OID 50553)
+-- TOC entry 260 (class 1255 OID 50553)
 -- Name: view_food_with_composition(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -852,7 +852,7 @@ $$;
 ALTER FUNCTION public.view_food_with_composition(_food_id integer) OWNER TO postgres;
 
 --
--- TOC entry 258 (class 1255 OID 50551)
+-- TOC entry 259 (class 1255 OID 50551)
 -- Name: view_menu_sorted_by_type(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -872,7 +872,7 @@ $$;
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
 
 --
--- TOC entry 283 (class 1255 OID 75249)
+-- TOC entry 280 (class 1255 OID 75249)
 -- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -922,7 +922,7 @@ $$;
 ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
--- TOC entry 271 (class 1255 OID 58844)
+-- TOC entry 277 (class 1255 OID 58844)
 -- Name: worker_history_trigger_function(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -932,8 +932,8 @@ CREATE FUNCTION public.worker_history_trigger_function() RETURNS trigger
 DECLARE
     old_data jsonb;
     new_data jsonb;
-    start_date timestamp with time zone;
-    end_date timestamp with time zone;
+    start_date timestamp WITHOUT time zone;
+    end_date timestamp WITHOUT time zone;
 BEGIN
     -- Получаем старые и новые данные
     old_data := to_jsonb(OLD) - 'start_date' - 'id_worker';
@@ -987,7 +987,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.client (
     phone character varying(32) NOT NULL,
     name character varying(255) NOT NULL,
-    last_contact_date timestamp with time zone NOT NULL,
+    last_contact_date timestamp without time zone NOT NULL,
     email character varying(255) NOT NULL,
     CONSTRAINT valid_email_format CHECK (((email)::text ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'::text)),
     CONSTRAINT valid_phone_format CHECK (((((phone)::text ~* '^[\+]?[0-9]+$'::text) AND (length((phone)::text) >= 11)) OR (((phone)::text ~* '^[0-9]+$'::text) AND (length((phone)::text) >= 10))))
@@ -1003,11 +1003,11 @@ ALTER TABLE public.client OWNER TO postgres;
 
 CREATE TABLE public.client_table (
     id_table integer NOT NULL,
-    order_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    order_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     id_worker integer,
     client_phone character varying(32) NOT NULL,
-    start_booking_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
-    end_booking_date timestamp with time zone NOT NULL
+    start_booking_date timestamp without time zone DEFAULT date_trunc('second'::text, now()),
+    end_booking_date timestamp without time zone NOT NULL
 );
 
 
@@ -1130,9 +1130,9 @@ ALTER SEQUENCE public.ingredient_id_seq OWNED BY public.ingredient.id;
 CREATE TABLE public.ingredient_storage (
     id integer NOT NULL,
     id_ingredient integer NOT NULL,
-    delivery_date timestamp with time zone NOT NULL,
+    delivery_date timestamp without time zone NOT NULL,
     id_request integer NOT NULL,
-    valid_until timestamp with time zone NOT NULL,
+    valid_until timestamp without time zone NOT NULL,
     weight double precision,
     quantity integer NOT NULL
 );
@@ -1187,8 +1187,8 @@ ALTER TABLE public.job_role OWNER TO postgres;
 CREATE TABLE public.order_directory (
     id integer NOT NULL,
     id_worker integer NOT NULL,
-    formation_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
-    issue_date timestamp with time zone DEFAULT date_trunc('second'::text, now()),
+    formation_date timestamp without time zone DEFAULT date_trunc('second'::text, now()),
+    issue_date timestamp without time zone DEFAULT date_trunc('second'::text, now()),
     status character varying(50) DEFAULT 'Рассматривается'::character varying NOT NULL
 );
 
@@ -1258,7 +1258,7 @@ CREATE TABLE public.requisition_list (
     id integer NOT NULL,
     id_worker integer NOT NULL,
     storage_name character varying(50) NOT NULL,
-    date timestamp with time zone NOT NULL,
+    date timestamp without time zone NOT NULL,
     status character varying(30) NOT NULL
 );
 
@@ -1374,8 +1374,8 @@ ALTER TABLE public.worker OWNER TO postgres;
 
 CREATE TABLE public.worker_history (
     id_worker integer NOT NULL,
-    start_date timestamp with time zone DEFAULT date_trunc('second'::text, now()) NOT NULL,
-    end_date timestamp with time zone NOT NULL,
+    start_date timestamp without time zone DEFAULT date_trunc('second'::text, now()) NOT NULL,
+    end_date timestamp without time zone NOT NULL,
     id_job_role character varying(50) NOT NULL,
     surname character varying(50) NOT NULL,
     name character varying(50) NOT NULL,
@@ -1478,11 +1478,11 @@ ALTER TABLE ONLY public.worker ALTER COLUMN id SET DEFAULT nextval('public.worke
 -- Data for Name: client; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513678', 'Максим', '2024-03-17 15:42:22+03', 'maks123@example.com');
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51+03', 'anatol@example.com');
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51+03', 'glebus@example.com');
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51+03', 'valya@example.com');
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51+03', 'konstantinus@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513678', 'Максим', '2024-03-17 15:42:22', 'maks123@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51', 'anatol@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51', 'glebus@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51', 'valya@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51', 'konstantinus@example.com');
 
 
 --
@@ -1491,10 +1491,20 @@ INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+7938
 -- Data for Name: client_table; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 10:00:00+03', 1, '+79389513678', '2024-03-23 10:00:00+03', '2024-03-23 12:00:00+03');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 12:00:00+03', 3, '+79848718618', '2024-03-23 13:00:00+03', '2024-03-23 15:00:00+03');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-17 14:00:00+03', 2, '+79330339678', '2024-03-23 17:00:00+03', '2024-03-23 19:00:00+03');
-INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (2, '2024-03-19 11:00:00+03', 4, '+79637259702', '2024-03-24 18:00:00+03', '2024-03-24 19:00:00+03');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 10:00:00', 1, '+79389513678', '2024-03-23 10:00:00', '2024-03-23 12:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-18 12:00:00', 3, '+79848718618', '2024-03-23 13:00:00', '2024-03-23 15:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-17 14:00:00', 2, '+79330339678', '2024-03-23 17:00:00', '2024-03-23 19:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (2, '2024-03-19 11:00:00', 4, '+79637259702', '2024-03-24 18:00:00', '2024-03-24 19:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-19 14:00:00', NULL, '+79389513658', '2024-04-24 10:00:00', '2024-04-24 14:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (1, '2024-03-21 09:00:00', NULL, '+79389513678', '2024-04-24 09:00:00', '2024-04-24 13:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 09:00:00', NULL, '+79389513678', '2024-04-23 11:00:00', '2024-04-23 12:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 10:00:00', NULL, '+79389513678', '2024-04-23 15:00:00', '2024-04-23 16:00:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 11:00:00', NULL, '+79389513678', '2024-04-23 20:31:00', '2024-04-23 21:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:00:00', NULL, '+79389513678', '2024-04-23 12:31:00', '2024-04-23 14:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 08:00:00', NULL, '+79389513678', '2024-03-23 11:31:00', '2024-03-23 12:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:01:00', NULL, '+79389513678', '2024-03-23 15:31:00', '2024-03-23 16:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:02:00', NULL, '+79389513678', '2024-03-23 20:31:00', '2024-03-23 21:31:00');
+INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, start_booking_date, end_booking_date) VALUES (3, '2024-03-21 12:03:00', NULL, '+79389513678', '2024-03-23 12:31:00', '2024-03-23 14:31:00');
 
 
 --
@@ -1790,11 +1800,11 @@ INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALU
 -- Data for Name: ingredient_storage; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (4, 54, '2024-03-28 14:12:48.84737+03', 7, '2024-04-20 14:12:48.84737+03', 2600, 3);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (3, 2, '2024-03-28 13:57:44.339475+03', 5, '2024-04-20 13:57:44.339475+03', 5800, 6);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (2, 1, '2024-03-28 13:50:04.458523+03', 3, '2024-04-20 13:50:04.458523+03', 16400, 9);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (5, 4, '2024-03-28 14:25:10.330282+03', 9, '2024-04-20 14:25:10.330282+03', 11000, 3);
-INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (6, 7, '2024-03-28 14:25:20.310606+03', 10, '2024-04-20 14:25:20.310606+03', 11800, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (4, 54, '2024-03-28 14:12:48.84737', 7, '2024-04-20 14:12:48.84737', 2600, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (3, 2, '2024-03-28 13:57:44.339475', 5, '2024-04-20 13:57:44.339475', 5800, 6);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (2, 1, '2024-03-28 13:50:04.458523', 3, '2024-04-20 13:50:04.458523', 16400, 9);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (5, 4, '2024-03-28 14:25:10.330282', 9, '2024-04-20 14:25:10.330282', 11000, 3);
+INSERT INTO public.ingredient_storage (id, id_ingredient, delivery_date, id_request, valid_until, weight, quantity) VALUES (6, 7, '2024-03-28 14:25:20.310606', 10, '2024-04-20 14:25:20.310606', 11800, 3);
 
 
 --
@@ -1815,16 +1825,17 @@ INSERT INTO public.job_role (name, min_salary, max_salary) VALUES ('Менедж
 -- Data for Name: order_directory; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (1, 2, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Ожидание');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (2, 5, '2024-03-17 11:00:00+03', '2024-03-17 12:00:00+03', 'Ожидание');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (3, 6, '2024-03-17 11:00:00+03', '2024-03-17 12:00:00+03', 'Отдано');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (4, 6, '2024-03-17 13:00:00+03', '2024-03-17 13:30:00+03', 'Отдано');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (8, 5, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Рассматривается');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (9, 5, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Рассматривается');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (10, 5, '2024-03-18 11:00:00+03', '2024-03-18 13:00:00+03', 'Рассматривается');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (11, 2, '2024-03-18 11:00:00+03', '2024-03-18 13:00:00+03', 'Ожидание');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (12, 2, '2024-03-17 10:00:00+03', '2024-03-17 12:00:00+03', 'Ожидание');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (13, 2, '2024-03-17 10:00:00+03', NULL, 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (1, 2, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (2, 5, '2024-03-17 11:00:00', '2024-03-17 12:00:00', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (3, 6, '2024-03-17 11:00:00', '2024-03-17 12:00:00', 'Отдано');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (4, 6, '2024-03-17 13:00:00', '2024-03-17 13:30:00', 'Отдано');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (8, 5, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (9, 5, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (10, 5, '2024-03-18 11:00:00', '2024-03-18 13:00:00', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (11, 2, '2024-03-18 11:00:00', '2024-03-18 13:00:00', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (12, 2, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (13, 2, '2024-03-17 10:00:00', NULL, 'Ожидание');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (15, 6, '2024-03-18 09:00:00', NULL, 'Ожидание');
 
 
 --
@@ -1857,6 +1868,9 @@ INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (12, 3, 3);
 INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (13, 1, 2);
 INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (13, 2, 1);
 INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (13, 3, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (15, 24, 5);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (15, 35, 3);
+INSERT INTO public.order_food (id_order, id_food, quantity) VALUES (15, 20, 4);
 
 
 --
@@ -1881,14 +1895,14 @@ INSERT INTO public.requisition (id, id_ingredient, weight, quantity) VALUES (10,
 -- Data for Name: requisition_list; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (3, 1, 'Рундук', '2024-03-21 13:50:04+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (4, 1, 'Рундук', '2024-03-21 13:57:12+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (5, 1, 'Рундук', '2024-03-21 13:57:44+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (6, 1, 'Рундук', '2024-03-21 13:57:53+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (7, 1, 'Рундук', '2024-03-21 14:12:48+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (8, 1, 'Рундук', '2024-03-21 14:24:51+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (9, 1, 'Рундук', '2024-03-21 14:25:10+03', 'Ожидание');
-INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (10, 1, 'Рундук', '2024-03-21 14:25:20+03', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (3, 1, 'Рундук', '2024-03-21 13:50:04', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (4, 1, 'Рундук', '2024-03-21 13:57:12', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (5, 1, 'Рундук', '2024-03-21 13:57:44', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (6, 1, 'Рундук', '2024-03-21 13:57:53', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (7, 1, 'Рундук', '2024-03-21 14:12:48', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (8, 1, 'Рундук', '2024-03-21 14:24:51', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (9, 1, 'Рундук', '2024-03-21 14:25:10', 'Ожидание');
+INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) VALUES (10, 1, 'Рундук', '2024-03-21 14:25:20', 'Ожидание');
 
 
 --
@@ -1950,12 +1964,12 @@ INSERT INTO public.worker (id, login, password, job_role, surname, first_name, p
 -- Data for Name: worker_history; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-03-21 13:18:49+03', '2024-03-21 13:18:49+03', 'Повар', 'Герасимов', 'Глеб', 'Константинович', 'gera@mail.ru', '+79707551380', 45000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-03-21 13:19:05+03', '2024-03-21 13:19:05+03', 'Повар', 'Иванова Виктория Артёмовна', 'Виктория', 'Артёмовна', 'ivanova@mail.ru', '+79718551380', 46000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (4, '2024-03-21 13:19:08+03', '2024-03-21 13:19:08+03', 'Менеджер', 'Пастухова', 'Александра', 'Максимовна', 'pastuxova@mail.ru', '+79718552580', 56000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (5, '2024-03-21 13:19:10+03', '2024-03-21 13:19:10+03', 'Официант', 'Попова', 'Дарья', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (6, '2024-03-21 13:19:13+03', '2024-03-21 13:19:13+03', 'Официант', 'Борисов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (1, '2024-03-21 13:11:27+03', '2024-03-21 13:11:27+03', 'Главный повар', 'Баженов', 'Данила', 'Филиппович', 'bajenov@mail.ru', '+79807551380', 56000, '{"new": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 56000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}, "old": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 55000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}}');
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-03-21 13:18:49', '2024-03-21 13:18:49', 'Повар', 'Герасимов', 'Глеб', 'Константинович', 'gera@mail.ru', '+79707551380', 45000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-03-21 13:19:05', '2024-03-21 13:19:05', 'Повар', 'Иванова Виктория Артёмовна', 'Виктория', 'Артёмовна', 'ivanova@mail.ru', '+79718551380', 46000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (4, '2024-03-21 13:19:08', '2024-03-21 13:19:08', 'Менеджер', 'Пастухова', 'Александра', 'Максимовна', 'pastuxova@mail.ru', '+79718552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (5, '2024-03-21 13:19:10', '2024-03-21 13:19:10', 'Официант', 'Попова', 'Дарья', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (6, '2024-03-21 13:19:13', '2024-03-21 13:19:13', 'Официант', 'Борисов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (1, '2024-03-21 13:11:27', '2024-03-21 13:11:27', 'Главный повар', 'Баженов', 'Данила', 'Филиппович', 'bajenov@mail.ru', '+79807551380', 56000, '{"new": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 56000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}, "old": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 55000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}}');
 
 
 --
@@ -1991,7 +2005,7 @@ SELECT pg_catalog.setval('public.ingredient_storage_id_seq', 6, true);
 -- Name: order_directory_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.order_directory_id_seq', 13, true);
+SELECT pg_catalog.setval('public.order_directory_id_seq', 15, true);
 
 
 --
@@ -2040,7 +2054,7 @@ ALTER TABLE ONLY public.client
 
 
 --
--- TOC entry 4793 (class 2606 OID 50504)
+-- TOC entry 4793 (class 2606 OID 75264)
 -- Name: client_table client_table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2166,7 +2180,7 @@ ALTER TABLE ONLY public."table"
 
 
 --
--- TOC entry 4783 (class 2606 OID 33985)
+-- TOC entry 4783 (class 2606 OID 75300)
 -- Name: worker_history worker_history_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2361,7 +2375,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-23 02:00:40
+-- Completed on 2024-03-23 19:33:38
 
 --
 -- PostgreSQL database dump complete

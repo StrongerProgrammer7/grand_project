@@ -10,15 +10,12 @@ urllib3.disable_warnings()
 
 
 class ApiConnect:
-
-
-    _instance = None # Атрибут для хранения экземпляра класса
+    _instance = None  # Атрибут для хранения экземпляра класса
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super().__new__(cls)
         return cls._instance
-
 
     def __init__(self, ssl_cert):
         # Проверяем, инициализирован ли экземпляр
@@ -74,6 +71,7 @@ class ApiConnect:
             print(f'post_data | {endpoint} | ', response.status_code)
             if response.status_code == 201:
                 return response.json()
+        print('None')
         return None
 
     def put_data(self, endpoint: str):
@@ -82,7 +80,9 @@ class ApiConnect:
             response = requests.put(url, verify=False)
 
             if response.status_code == 201:
+                print(f'put_data | {endpoint} | ', response.status_code)
                 return response.json()
+        print('None')
         return None
 
     def delete_data(self, endpoint: str):
@@ -91,5 +91,7 @@ class ApiConnect:
             response = requests.delete(url, verify=False)
 
             if response.status_code == 201:
+                print(f'del_data | {endpoint} | ', response.status_code)
                 return response.json()
+        print('None')
         return None

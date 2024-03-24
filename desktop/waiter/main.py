@@ -259,8 +259,10 @@ class MainWindow(QMainWindow):
         #
         # if self.curUser is not None:
         #     pass
+        # if username == "" and password == "":        
 
-        if username == "" and password == "":
+        if self.api.authentification("singIn",username,password):
+
 
             try:
                 self.api.connect_to_server()
@@ -464,7 +466,7 @@ class MainWindow(QMainWindow):
     def commit(self, table):
         data = {}
         if self.ui.lineEdit.text() == "":
-            return 
+            return
         worker_id = self.ui.lineEdit.text()
         food_ids = []
         quantities = []

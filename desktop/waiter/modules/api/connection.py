@@ -6,6 +6,8 @@ import requests
 import socketio
 from .secret_file import DOMEN
 
+import bcrypt
+
 urllib3.disable_warnings()
 
 
@@ -93,3 +95,17 @@ class ApiConnect:
             if response.status_code == 201:
                 return response.json()
         return None
+
+    def authentification (self, endpoint, login, password):
+        url = f'{self.api_url}/{endpoint}'
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        data = {
+            "login": login,
+            "password": hashed_password
+        }
+        response = requests.post(url, json=data, verify=False)
+        
+
+        if 200 <= response.status_code < 300:
+            return True

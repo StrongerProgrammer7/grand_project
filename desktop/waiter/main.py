@@ -3,6 +3,7 @@ import os
 import platform
 import threading
 import time
+import ssl
 
 import schedule
 from PySide6.QtWidgets import QMainWindow
@@ -37,8 +38,14 @@ class MainWindow(QMainWindow):
 
         # SET API WORK
         # ///////////////////////////////////////////////////////////////
-        self.api = ApiConnect()
-        self.api.sio.on('message', self.on_message)
+        # Путь к вашему SSL-сертификату
+        ssl_cert_path = './fullchain.pem'
+
+        # Создание контекста SSL
+        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_context.load_verify_locations(ssl_cert_path)
+
+        self.api = ApiConnect(ssl_cert=ssl_context)
 
         # Запуск обновления данных каждые 10 минут
         schedule.every(3).hours.do(self.update_json_files)
@@ -145,7 +152,7 @@ class MainWindow(QMainWindow):
         tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
-        self.fill_table_widget(self.ui.tableWidget)
+        # self.fill_table_widget(self.ui.tableWidget)
 
         # Сортировка таблиц
         self.column_sort_order = {}
@@ -254,16 +261,22 @@ class MainWindow(QMainWindow):
 
         if username == "" and password == "":
 
+            try:
+                self.api.connect_to_server()
+                self.api.sio.on('message', self.on_message)
+            except Exception as e:
+                print("Unable to connect to the server:", e)
+
             self.update_json_files()
             # Создаем и запускаем потоки для заполнения таблиц
-            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            order_thread.start()
-            table_booking_thread.start()
+            # order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            # table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            # order_thread.start()
+            # table_booking_thread.start()
 
             # Ожидаем завершения потоков
-            order_thread.join()
-            table_booking_thread.join()
+            # order_thread.join()
+            # table_booking_thread.join()
 
             self.new_window3.close()
             self.show()
@@ -456,6 +469,12 @@ class MainWindow(QMainWindow):
         # Загружаем данные из JSON файла
         with open(f"./jsons/{endpoint}.json", "r") as file:
             json_data = json.load(file)
+        # Загрузка данных меню
+        menu_data = {}
+        with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+            menu_json = json.load(menu_file)
+            for item in menu_json['data']:
+                menu_data[item['food_id']] = item['food_name']
 
         data = json_data['data'][0]['view_order_history'] if endpoint == 'get_order_history' else json_data['data']
 
@@ -463,13 +482,6 @@ class MainWindow(QMainWindow):
         tableWidget.setColumnCount(len(field_mapping))
 
         headers = list(field_mapping.keys())
-
-        # Загрузка данных меню
-        menu_data = {}
-        with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
-            menu_json = json.load(menu_file)
-            for item in menu_json['data']:
-                menu_data[item['food_id']] = item['food_name']
 
         for row_idx, row_data in enumerate(data):
             for col_idx, header in enumerate(headers):
@@ -527,7 +539,13 @@ class MainWindow(QMainWindow):
             "quantities": quantities,
             "formation_date": formation_date,
             "givig_date": giving_date,
-            "status": status
+            "status": status,
+            "path": "api/add_client_order",
+            "method": "POST",
+            "send": {
+                "name": "waiter",
+                "id": 1
+            }
         }
 
         # Преобразуем даты в формат JSON

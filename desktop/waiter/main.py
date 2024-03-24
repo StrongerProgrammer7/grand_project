@@ -144,13 +144,15 @@ class MainWindow(QMainWindow):
         # widgets.pushButton_8.clicked.connect(lambda: UIFunctions.open_new_window2(self))
 
         self.ui_dialog.addtransbtn.clicked.connect(self.update_second_table)
-        self.ui_dialog2.addtransbtn.clicked.connect(self.update_third_table)
 
-        tab1_column_widths = [80, 200, 200, 200, 200, 200]
-        UIFunctions.set_column_widths(self, widgets.tableWidget, tab1_column_widths)
+        tab1_column_widths = [80, 300, 150]
+        UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
 
-        tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
-        UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
+        tab2_column_widths = [80, 200, 200, 200, 200, 200]
+        UIFunctions.set_column_widths(self, widgets.tableWidget, tab2_column_widths)
+
+        tab3_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
+        UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab3_column_widths)
 
         # self.fill_table_widget(self.ui.tableWidget)
 
@@ -386,60 +388,6 @@ class MainWindow(QMainWindow):
             else:
                 pass
 
-    def update_third_table(self):
-        # combBox = self.ui_dialog2.comboBox.currentText()
-        # line1 = self.ui_dialog2.lineEdit.text()
-        # datetime1 = self.ui_dialog2.dateTimeEdit.text()
-        # datetime2 = self.ui_dialog2.dateTimeEdit_2.text()
-        line2 = self.ui_dialog2.lineEdit_2.text()
-        line3 = self.ui_dialog2.lineEdit_3.text()
-        # line4 = self.ui_dialog2.lineEdit_4.text()
-
-        # Создаем диалоговое окно для подтверждения
-        confirm_dialog = QMessageBox()
-        confirm_dialog.setIcon(QMessageBox.Question)
-        confirm_dialog.setText("Вы уверены, что хотите внести изменения в таблицу 'Столы'?")
-        confirm_dialog.setWindowTitle("Подтверждение")
-        confirm_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        # msg_box.button(QMessageBox.Yes).setText("Да")
-        # msg_box.button(QMessageBox.No).setText("Нет")
-        confirm_dialog.setDefaultButton(QMessageBox.No)
-
-        # Показываем диалоговое окно и ждем ответа пользователя
-        response = confirm_dialog.exec()
-
-        if response == QMessageBox.Yes:
-            # Получаем индекс выбранной строки
-            selected_row = self.ui.tableWidget_3.currentRow()
-
-            if selected_row >= 0:  # Проверяем, что строка действительно выбрана
-                # Устанавливаем значения в каждом столбце выбранной строки
-                self.ui.tableWidget_3.setItem(selected_row, 0,
-                                              QTableWidgetItem(str(selected_row + 1)))  # автоинкрементный id
-                # self.ui.tableWidget_3.setItem(selected_row, 1, QTableWidgetItem(combBox))
-                # self.ui.tableWidget_3.setItem(selected_row, 2, QTableWidgetItem(line1))
-                # self.ui.tableWidget_3.setItem(selected_row, 3, QTableWidgetItem(datetime1))
-                # self.ui.tableWidget_3.setItem(selected_row, 4, QTableWidgetItem(datetime2))
-                self.ui.tableWidget_3.setItem(selected_row, 5, QTableWidgetItem(line2))
-                self.ui.tableWidget_3.setItem(selected_row, 6, QTableWidgetItem(line3))
-                # self.ui.tableWidget_3.setItem(selected_row, 7, QTableWidgetItem(line4))
-
-                # TODO: Добавить валидацию
-                data = {
-                    "id_table": selected_row + 1,
-                    # "id_worker": line1,
-                    "phone_client": line2,
-                    # "order_time": datetime1,
-                    # "desired_booking_time": datetime2,
-                    "booking_interval": line3
-                }
-                print(data)
-
-            self.new_window2.close()
-        else:
-            # Если пользователь отменил действие, ничего не делаем
-            pass
-
     def fill_table_widget(self, tableWidget):
         if tableWidget.objectName() == 'tableWidget':
             field_mapping = {
@@ -514,7 +462,9 @@ class MainWindow(QMainWindow):
 
     def commit(self, table):
         data = {}
-        worker_id = 1  # Указываем нужное значение для worker_id
+        if self.ui.lineEdit.text() == "":
+            return 
+        worker_id = self.ui.lineEdit.text()
         food_ids = []
         quantities = []
         formation_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для formation_date
@@ -526,6 +476,13 @@ class MainWindow(QMainWindow):
             menu_json = json.load(menu_file)
             for item in menu_json['data']:
                 menu_data[item['food_name']] = item['food_id']
+
+        # Проверяем, что все строки таблицы заполнены
+        for row_index in range(table.rowCount()):
+            if (table.item(row_index, 1) is None or table.item(row_index, 2) is None or
+                    table.item(row_index, 1).text() == "" or table.item(row_index, 2).text() == ""):
+                print(f"Строка {row_index + 1} не полностью заполнена. Отправка заказа невозможна.")
+                return
 
         # Замена названий блюд на их идентификаторы
         for row_index in range(table.rowCount()):
@@ -554,6 +511,7 @@ class MainWindow(QMainWindow):
         # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
 
         self.api.send_message(json.dumps(json_data, ensure_ascii=False))
+        UIFunctions.clear_table(self.ui.tableWidget_2)
 
     def fill_table_with_menu(self, file_path):
         self.ui.tableWidget_2.clearContents()

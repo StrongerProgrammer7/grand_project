@@ -98,14 +98,14 @@ class ApiConnect:
 
     def authentification (self, endpoint, login, password):
         url = f'{self.api_url}/{endpoint}'
-        salt = bcrypt.gensalt()
+        salt = bcrypt.gensalt(10)
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         data = {
             "login": login,
             "password": hashed_password
         }
         response = requests.post(url, json=data, verify=False)
-        
+
 
         if 200 <= response.status_code < 300:
             return True

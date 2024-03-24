@@ -152,7 +152,6 @@ class MainWindow(QMainWindow):
         tab2_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab2_column_widths)
 
-        # self.fill_table_widget(self.ui.tableWidget)
 
         # Сортировка таблиц
         self.column_sort_order = {}
@@ -268,15 +267,16 @@ class MainWindow(QMainWindow):
                 print("Unable to connect to the server:", e)
 
             self.update_json_files()
+            self.fill_table_widget(self.ui.tableWidget)
             # Создаем и запускаем потоки для заполнения таблиц
-            # order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            # table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            # order_thread.start()
-            # table_booking_thread.start()
+            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            order_thread.start()
+            table_booking_thread.start()
 
             # Ожидаем завершения потоков
-            # order_thread.join()
-            # table_booking_thread.join()
+            order_thread.join()
+            table_booking_thread.join()
 
             self.new_window3.close()
             self.show()

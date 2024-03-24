@@ -10,13 +10,21 @@ urllib3.disable_warnings()
 
 
 class ApiConnect:
+    _instance = None  # Атрибут для хранения экземпляра класса
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self):
-        self.api_url = f'https://{DOMEN}/api'
-        self.sio = socketio.Client()
-        # self.sio = socketio.Client(ssl_verify=ssl_cert)
-        self.sio.on('connect', self.connect)
-        self.sio.on('disconnect', self.disconnect)
-        self.sio.on('message', self.on_message)
+        if not hasattr(self, 'api_url'):
+            self.api_url = f'https://{DOMEN}/api'
+            self.sio = socketio.Client()
+            # self.sio = socketio.Client(ssl_verify=ssl_cert)
+            self.sio.on('connect', self.connect)
+            self.sio.on('disconnect', self.disconnect)
+            self.sio.on('message', self.on_message)
 
     def connect_to_server(self):
         # Подключаемся к серверу
@@ -33,7 +41,7 @@ class ApiConnect:
         print('Message from server:', data)
 
     def send_initial_data(self):
-        auth = {"token": "0x0324234", "name": "waiter", "idWaiter": 1}
+        auth = {"token": "0x0324234", "name": "cook", "idCook": 1}
         self.sio.emit('auth', auth)
 
     # WEBSOCKET MOMENT
@@ -63,6 +71,7 @@ class ApiConnect:
             print(f'post_data | {endpoint} | ', response.status_code)
             if response.status_code == 201:
                 return response.json()
+        print('None')
         return None
 
     def put_data(self, endpoint: str):
@@ -72,6 +81,7 @@ class ApiConnect:
 
             if response.status_code == 201:
                 return response.json()
+        print('None')
         return None
 
     def delete_data(self, endpoint: str):
@@ -81,4 +91,5 @@ class ApiConnect:
 
             if response.status_code == 201:
                 return response.json()
+        print('None')
         return None

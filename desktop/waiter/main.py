@@ -77,19 +77,6 @@ class MainWindow(QMainWindow):
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
 
-        # EXTRA LEFT BOX
-        # def openCloseLeftBox():
-        #    UIFunctions.toggleLeftBox(self, True)
-
-        # widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        # widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
-
-        # EXTRA RIGHT BOX
-        # def openCloseRightBox():
-        #    UIFunctions.toggleRightBox(self, True)
-
-        # widgets.settingsTopBtn.clicked.connect(openCloseRightBox)
-
         # SHOW APP
         # ///////////////////////////////////////////////////////////////
         # self.show()
@@ -153,7 +140,6 @@ class MainWindow(QMainWindow):
 
         tab3_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab3_column_widths)
-
 
         # Сортировка таблиц
         self.column_sort_order = {}
@@ -271,7 +257,7 @@ class MainWindow(QMainWindow):
                 print("Unable to connect to the server:", e)
 
             self.update_json_files()
-            self.fill_table_widget(self.ui.tableWidget)
+            # self.fill_table_widget(self.ui.tableWidget)
 
             # Создаем и запускаем потоки для заполнения таблиц
             order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
@@ -408,7 +394,7 @@ class MainWindow(QMainWindow):
                 "№": "table_id",
                 "Официант": "worker_id",
                 "Дата заказа": "booking_date",
-                "Дата брони": "start_date",
+                "Дата брони": "start_booking_date",
                 "Номер телефона": "client_number",
                 "Интервал брони": "interval"
             }
@@ -420,6 +406,7 @@ class MainWindow(QMainWindow):
         # Загружаем данные из JSON файла
         with open(f"./jsons/{endpoint}.json", "r") as file:
             json_data = json.load(file)
+
         # Загрузка данных меню
         menu_data = {}
         with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
@@ -450,9 +437,12 @@ class MainWindow(QMainWindow):
                         item = QTableWidgetItem(str(row_data[key]))
                 elif endpoint == 'get_order_history':
                     if key in date_keys:
-                        date_obj = datetime.fromisoformat(row_data[key])
-                        formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
-                        item = QTableWidgetItem(formatted_date)
+                        if row_data[key] is not None:
+                            date_obj = datetime.fromisoformat(row_data[key])
+                            formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                            item = QTableWidgetItem(formatted_date)
+                        else:
+                            item = QTableWidgetItem('-')
                     elif key == 'dishes':
                         dishes_str = ', '.join(
                             [f'{menu_data[int(dish)]}: {qty}' for dish, qty in row_data[key].items()])

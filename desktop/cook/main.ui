@@ -1886,7 +1886,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                           <bool>false</bool>
                          </attribute>
                          <attribute name="verticalHeaderVisible">
-                          <bool>false</bool>
+                          <bool>true</bool>
                          </attribute>
                          <attribute name="verticalHeaderCascadingSectionResizes">
                           <bool>false</bool>

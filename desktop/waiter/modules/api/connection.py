@@ -19,8 +19,7 @@ class ApiConnect:
 
     def connect_to_server(self):
         # Подключаемся к серверу
-        self.sio.connect('http://localhost:8080',
-                         auth={"token": "0x0324234", "name": "waiter", "idWaiter": 1})
+        self.sio.connect(self.api_url, auth={"token": "0x0324234", "name": "waiter", "idWaiter": 1})
 
     def connect(self):
         print("Connected to the server")
@@ -35,10 +34,6 @@ class ApiConnect:
     def send_initial_data(self):
         auth = {"token": "0x0324234", "name": "waiter", "idWaiter": 1}
         self.sio.emit('auth', auth)
-
-    def connect_to_server(self):
-        self.sio.connect(self.api_url)
-        # self.sio.connect('http://localhost:8080')
 
     # WEBSOCKET MOMENT
     def send_message(self, data):

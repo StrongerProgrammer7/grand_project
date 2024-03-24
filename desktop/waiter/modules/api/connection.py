@@ -1,12 +1,13 @@
 import json
 import os
 
+import bcrypt
 import urllib3
 import requests
 import socketio
-from .secret_file import DOMEN
+from requests import HTTPError
 
-import bcrypt
+from .secret_file import DOMEN
 
 urllib3.disable_warnings()
 
@@ -54,60 +55,82 @@ class ApiConnect:
         self.sio.emit('message', data)
         print("Message sent:", message)
 
-    def get_data(self, endpoint: str):
+    def get_data(self, endpoint: str, serf):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
-            response = requests.get(url, verify=False)
-
-            if response.status_code == 201:
-                print(f'get_data | {endpoint} | ', response.status_code)
-                return response.json()
+            try:
+                response = requests.get(url, verify=serf)
+                response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
+                if response.status_code == 201:
+                    print(f'get_data | {endpoint} | ', response.status_code)
+                    return response.json()
+            except HTTPError as http_err:
+                print(f'HTTP error occurred: {http_err}')
+                print(f'Response content: {response.content}')  # Вывод данных ответа
+            except Exception as err:
+                print(f'Other error occurred: {err}')
         print('None')
         return None
 
-    def post_data(self, endpoint: str, data: json):
+    def post_data(self, endpoint: str, data: json, sert):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
-            response = requests.post(url, json=data, verify=False)
-
-            print(f'post_data | {endpoint} | ', response.status_code)
-            if response.status_code == 201:
-                return response.json()
+            try:
+                response = requests.post(url, json=data, verify=sert)
+                response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
+                if response.status_code == 201:
+                    print(f'post_data | {endpoint} | ', response.status_code)
+                    return response.json()
+            except HTTPError as http_err:
+                print(f'HTTP error occurred: {http_err}')
+                print(f'Response content: {response.content}')  # Вывод данных ответа
+            except Exception as err:
+                print(f'Other error occurred: {err}')
         print('None')
         return None
 
-    def put_data(self, endpoint: str):
+    def put_data(self, endpoint: str, sert):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
-            response = requests.put(url, verify=False)
-
-            if response.status_code == 201:
-                print(f'put_data | {endpoint} | ', response.status_code)
-                return response.json()
+            try:
+                response = requests.post(url, verify=sert)
+                response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
+                if response.status_code == 201:
+                    print(f'put_data | {endpoint} | ', response.status_code)
+                    return response.json()
+            except HTTPError as http_err:
+                print(f'HTTP error occurred: {http_err}')
+                print(f'Response content: {response.content}')  # Вывод данных ответа
+            except Exception as err:
+                print(f'Other error occurred: {err}')
         print('None')
         return None
 
-    def delete_data(self, endpoint: str):
+    def delete_data(self, endpoint: str, serf):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
-            response = requests.delete(url, verify=False)
-
-            if response.status_code == 201:
-                print(f'del_data | {endpoint} | ', response.status_code)
-                return response.json()
+            try:
+                response = requests.delete(url, verify=sert)
+                response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
+                if response.status_code == 201:
+                    print(f'del_data | {endpoint} | ', response.status_code)
+                    return response.json()
+            except HTTPError as http_err:
+                print(f'HTTP error occurred: {http_err}')
+                print(f'Response content: {response.content}')  # Вывод данных ответа
+            except Exception as err:
+                print(f'Other error occurred: {err}')
         print('None')
         return None
 
-    def authentification (self, endpoint, login, password):
-        url = f'{self.api_url}/{endpoint}'
-        salt = bcrypt.gensalt(10)
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        data = {
-            "login": login,
-            "password": hashed_password
-        }
-        response = requests.post(url, json=data, verify=False)
+    def auth(self, data, sert):
+        url = f'{self.api_url}/signIn'
 
+        response = requests.post(url, data=data, verify=sert)
 
-        if 200 <= response.status_code < 300:
-            return True
+        if response.status_code == 201:
+            response_data = response.json()  # Если сервер возвращает JSON, можно получить данные в виде словаря
+            print(f'post_data | singIn | ', response.status_code)
+            return (response_data)
+        else:
+            print('Ошибка при выполнении запроса:', response.status_code)

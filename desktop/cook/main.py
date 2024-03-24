@@ -1,6 +1,7 @@
 import sys
 import os
 import platform
+import json
 from datetime import datetime
 
 from PySide6.QtWidgets import QMainWindow
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow):
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
-        self.api = ApiConnect()
+        #self.api = ApiConnect()
 
 
         # APP NAME
@@ -56,6 +57,14 @@ class MainWindow(QMainWindow):
         # SHOW APP
         self.show()
 
+        self.insert_table()
+
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            for col in range(1, self.ui.tableWidget_2.columnCount()):
+                combo_box = self.ui.tableWidget_2.cellWidget(row, col)
+                if combo_box is not None:
+                    combo_box.currentIndexChanged.connect(self.check_and_remove_order)
+
         # SET CUSTOM THEME
         self.themeFile = "themes/py_dracula_dark.qss"
         widgets.settingsTopBtn.setStyleSheet("image: url(images/icons/moon.png)")
@@ -68,8 +77,6 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
         widgets.tableWidget_2.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
-        widgets.pushButton.clicked.connect(self.add_order)
-        widgets.pushButton_4.clicked.connect(self.add_row_with_combobox)
         widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
 
         self.order_count = 0
@@ -126,70 +133,67 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
-    def fill_table_widget(self, tableWidget):
+    def insert_table(self):
+        with open("order.json", "r", encoding="utf-8") as json_file:
+            orders_data = json.load(json_file)["data"]
+            # Заполнение таблицы данными из JSON
+            for order in orders_data:
+                row_index = self.ui.tableWidget_2.rowCount()
+                self.ui.tableWidget_2.insertRow(row_index)
 
-        data = [
-            (1, 2, 3, 4, 5, 6),
-            (7, 8, 9, 10, 11, 12),
-            (1, 2, 3, 4, 5, 6),
-        ]
+                # Создаем элементы для ячеек таблицы
+                id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
+                giving_date_item = QTableWidgetItem(order["giving_date"])
 
-        tableWidget.setRowCount(len(data))
-        tableWidget.setColumnCount(len(data[0]))
+                # Устанавливаем шрифт для элементов
+                font = QFont("Segoe UI", 14)
+                id_order_item.setFont(font)
+                giving_date_item.setFont(font)
 
-        for row_idx, row_data in enumerate(data):
-            for col_idx, cell_data in enumerate(row_data):
-                item = QTableWidgetItem(str(cell_data))
-                tableWidget.setItem(row_idx, col_idx, item)
+                # Устанавливаем элементы в таблицу
+                self.ui.tableWidget_2.setItem(row_index, 0, id_order_item)
+                self.ui.tableWidget_2.setItem(row_index, 1, giving_date_item)
 
-    def add_order(self):
-        current_row = self.ui.tableWidget_2.rowCount()
-        self.ui.tableWidget_2.insertRow(current_row)
+                # Получаем статус заказа
+                status = order.get("status", "")
 
-        # Получаем текущее время и форматируем его в строку
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+                # Добавляем строки для блюд и их количества
+                dishes = order.get("dishes", {})
 
-        # Создаем элементы для ячеек таблицы
-        order_item = QTableWidgetItem(f"Заказ № {self.order_count + 1}")
-        time_item = QTableWidgetItem(current_time)
+                for dish_id, quantity in dishes.items():
+                    dish_name = f"Блюдо {dish_id}, Количество {quantity}"
+                    dish_item = QTableWidgetItem(dish_name)
 
-        # Устанавливаем флаги, чтобы ячейки нельзя было редактировать
-        order_item.setFlags(order_item.flags() & ~Qt.ItemIsEditable)
-        time_item.setFlags(time_item.flags() & ~Qt.ItemIsEditable)
+                    # Создаем комбобокс и добавляем варианты из статуса
+                    combo_box = QComboBox()
+                    combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
 
-        # Устанавливаем элементы в таблицу
-        self.ui.tableWidget_2.setItem(current_row, 0, order_item)
-        self.ui.tableWidget_2.setItem(current_row, 1, time_item)
+                    # Если строка находится в первых пяти, разрешаем редактирование
+                    if row_index < 4:
+                        dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                        combo_box.setEnabled(True)
+                    else:
+                        combo_box.setEnabled(False)
 
-        # Устанавливаем шрифт для элементов
-        font = QFont("Segoe UI", 14)  # Настройте шрифт по вашему желанию
-        order_item.setFont(font)
-        time_item.setFont(font)
+                    row_index += 1
+                    self.ui.tableWidget_2.insertRow(row_index)
+                    self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
+                    self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
 
-        self.order_added = True
-        self.order_count += 1
+    def check_and_remove_order(self):
+        rows_to_delete = []
 
-    def add_row_with_combobox(self):
-        if self.order_added:
-            current_row = self.ui.tableWidget_2.rowCount()
-            self.ui.tableWidget_2.insertRow(current_row)
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            combo_box = self.ui.tableWidget_2.cellWidget(row, 1)  # Изменен индекс столбца на 1
+            if combo_box is not None:
+                if combo_box.currentText() != "Ожидание":
+                    rows_to_delete.append(row)
 
-            self.ui.tableWidget_2.setItem(current_row, 0, QTableWidgetItem(""))
-
-            # Создаем и добавляем комбобокс в ячейку выбора
-            combo_box = QComboBox()
-            combo_box.addItem("Ожидание")
-            combo_box.addItem("Готово")
-            combo_box.addItem("Отменено")
-            self.ui.tableWidget_2.setCellWidget(current_row, 1, combo_box)
-        else:
-            # Выводим предупреждение, что сначала нужно добавить заказ
-            QMessageBox.warning(self, "Предупреждение", "Сначала добавьте заказ")
-
-    # def insert_tab(self,table):
-    #     self.ui.tableWidget_2
-    #     self.add_order()
-    #     self.add_row_with_combobox()
+        # Удаление строк в обратном порядке, чтобы индексы не сдвигались
+        if len(rows_to_delete) == 3:
+            for row in reversed(rows_to_delete):
+                self.ui.tableWidget_2.removeRow(row)
+            self.ui.tableWidget_2.removeRow(row - 1)
 
 
 if __name__ == "__main__":

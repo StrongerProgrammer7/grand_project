@@ -240,13 +240,12 @@ class MainWindow(QMainWindow):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
+        # if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
 
-            try:
-                self.api.connect_to_server()
-                self.api.sio.on('message', self.on_message)
-            except Exception as e:
-                print("Unable to connect to the server:", e)
+        if password == '' and username == '':
+
+            self.api.connect_to_server()
+            self.api.sio.on('message', self.on_message)
 
             self.update_json_files()
             # self.fill_table_widget(self.ui.tableWidget)
@@ -289,7 +288,6 @@ class MainWindow(QMainWindow):
         self.column_sort_order[column_index] = new_sort_order
         table.sortItems(column_index, new_sort_order)
 
-    # TODO: Протестить on_message
     def on_message(self, data):
         self.update_table(data)
 
@@ -498,7 +496,11 @@ class MainWindow(QMainWindow):
                                                         "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
         # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
 
+        print("1:")
         self.api.send_message(json.dumps(json_data, ensure_ascii=False))
+        print("2:")
+        self.api.send_message(json_data)
+
         UIFunctions.clear_table(self.ui.tableWidget_2)
 
     def fill_table_with_menu(self, file_path):

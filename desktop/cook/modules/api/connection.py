@@ -24,14 +24,18 @@ class ApiConnect:
         # Проверяем, инициализирован ли экземпляр
         if not hasattr(self, 'api_url'):
             self.api_url = f'https://{DOMEN}/api'
-            self.sio = socketio.Client(ssl_verify=ssl_cert)
+            self.sio = socketio.Client(ssl_verify=False)
             self.sio.on('connect', self.connect)
             self.sio.on('disconnect', self.disconnect)
             self.sio.on('message', self.on_message)
 
     def connect_to_server(self):
         # Подключаемся к серверу
-        self.sio.connect(self.api_url, auth={"token": "0x0324234", "name": "waiter", "idWaiter": 1})
+        self.sio.connect(f'wss://{DOMEN}', auth={
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                     ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"
+                     ".iQC054bjNgi5sJnlp1LML9i9L-Q-A7MRqC44VUpgep0",
+            "name": "cook", "id": 1})
 
     def connect(self):
         print("Connected to the server")
@@ -44,7 +48,9 @@ class ApiConnect:
         print('Message from server:', data)
 
     def send_initial_data(self):
-        auth = {"token": "0x0324234", "name": "waiter", "idWaiter": 1}
+        auth = {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                         ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"
+                         ".iQC054bjNgi5sJnlp1LML9i9L-Q-A7MRqC44VUpgep0", "name": "cook", "id": 1}
         self.sio.emit('auth', auth)
 
     # WEBSOCKET MOMENT
@@ -106,7 +112,7 @@ class ApiConnect:
         print('None')
         return None
 
-    def delete_data(self, endpoint: str, serf):
+    def delete_data(self, endpoint: str, sert):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
             try:

@@ -15,6 +15,7 @@ os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100
 # SET AS GLOBAL WIDGETS
 widgets = None
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -28,8 +29,9 @@ class MainWindow(QMainWindow):
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
-        self.api = ApiConnect()
-
+        self.api = ApiConnect('./fullchain.pem')
+        # self.api.connect_to_server()
+        # self.api.sio.on('message', self.on_message)
 
         # APP NAME
         # title = "SOLIDSIGN - для официантов"
@@ -84,6 +86,19 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
+
+    def on_message(self, data):
+        self.update_table(data)
+
+    def update_table(self, data):
+        # Получаем order_id, новый статус и выбранную строку в таблице
+        order_id = data.get("order_id")
+        new_status = data.get("status")
+        selected_row = order_id - 1  # Индексация строк начинается с 0
+
+        if selected_row >= 0:
+            # Устанавливаем новый статус в таблице
+            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -143,6 +158,7 @@ class MainWindow(QMainWindow):
                 tableWidget.setItem(row_idx, col_idx, item)
 
     def add_order(self):
+        self.api.sio.disconnect()
         current_row = self.ui.tableWidget_2.rowCount()
         self.ui.tableWidget_2.insertRow(current_row)
 

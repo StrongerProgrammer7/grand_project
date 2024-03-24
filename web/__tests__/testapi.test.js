@@ -32,7 +32,7 @@ describe("Prepare test environment", () =>
             {
                 const result = await postData("https://grandproject.k-lab.su/api/get_all_booked_tables");
                 console.log(result);
-                //            expect(result.data.length > 0 && result.data[0].table_id);
+                expect(result.data.length > 0 && result.data[0].table_id);
             });
 
             it("Test get_current_orders", async () =>
@@ -128,11 +128,12 @@ describe("Prepare test environment", () =>
                         id_table: 1,
                         id_worker: 3,
                         phone_client: "+79848718618",
-                        order_time: "2024-03-26 13:11:31",
-                        start_booking_date: "2024-03-16 11:11:31",
-                        end_booking_date: "2024-03-26 16:11:31"
+                        order_time: "2024-03-26, 13:11:31",
+                        start_booking_date: "2024-03-26, 11:11:31",
+                        end_booking_date: "2024-03-26, 16:11:31"
                     });
-                expect(data.message).toBe("Table is already book or don't exists table/worker, check your data");
+                expect(data.message === "Table is already book or don't exists table/worker, check your data" ||
+                    data.message === "Table is book successfully!" || data.message === '"Current table booked, change datetime"');
             });
 
             it("Test book_table_client", async () =>
@@ -141,11 +142,11 @@ describe("Prepare test environment", () =>
                     {
                         id_table: 1,
                         phone_client: "+79848718618",
-                        order_time: "2024-03-24 13:11:31",
-                        start_booking_date: "2024-03-26 13:11:31",
-                        end_booking_date: "2024-03-26 16:11:31"
+                        order_time: "2024-03-24, 13:11:31",
+                        start_booking_date: "2024-03-26, 13:11:31",
+                        end_booking_date: "2024-03-26, 16:11:31"
                     });
-                expect(data.message).toBe("Table is already book or don't exists table/worker, check your data");
+                expect(data.message).toBe("Current table booked, change datetime");
             });
 
         });

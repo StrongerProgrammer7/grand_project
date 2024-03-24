@@ -270,6 +270,7 @@ class MainWindow(QMainWindow):
 
             self.update_json_files()
             self.fill_table_widget(self.ui.tableWidget)
+
             # Создаем и запускаем потоки для заполнения таблиц
             order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
             table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))

@@ -1,6 +1,8 @@
+import json
 import sys
 import os
 import platform
+import threading
 from datetime import datetime
 
 from PySide6.QtWidgets import QMainWindow
@@ -29,7 +31,15 @@ class MainWindow(QMainWindow):
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         self.api = ApiConnect()
+        try:
+            self.api.connect_to_server()
+            self.api.sio.on('message', self.on_message)
+        except Exception as e:
+            print("Unable to connect to the server:", e)
 
+        order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+        order_thread.start()
+        order_thread.join()
 
         # APP NAME
         # title = "SOLIDSIGN - для официантов"
@@ -126,21 +136,68 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
+    def on_message(self, data):
+        self.update_table(data)
+
+    def update_table(self, data):
+        # Получаем order_id, новый статус и выбранную строку в таблице
+        order_id = data.get("order_id")
+        new_status = data.get("status")
+        selected_row = order_id - 1  # Индексация строк начинается с 0
+
+        if selected_row >= 0:
+            # Устанавливаем новый статус в таблице
+            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
+
     def fill_table_widget(self, tableWidget):
+        if tableWidget.objectName() == 'tableWidget':
+            field_mapping = {
+                "№": "id_order",
+                "Официант": "id_worker",
+                "Дата выдачи": "giving_date",
+                "Дата формирования": "formation_date",
+                "Блюда": "dishes",
+                "Статус": "status"
+            }
+            endpoint = 'get_order_history'
+            date_keys = ['formation_date', 'giving_date']
 
-        data = [
-            (1, 2, 3, 4, 5, 6),
-            (7, 8, 9, 10, 11, 12),
-            (1, 2, 3, 4, 5, 6),
-        ]
+            # Загружаем данные из JSON файла
+            with open(f"./jsons/{endpoint}.json", "r") as file:
+                json_data = json.load(file)
+            # Загрузка данных меню
+            menu_data = {}
+            with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+                menu_json = json.load(menu_file)
+                for item in menu_json['data']:
+                    menu_data[item['food_id']] = item['food_name']
 
-        tableWidget.setRowCount(len(data))
-        tableWidget.setColumnCount(len(data[0]))
+            data = json_data['data'][0]['view_order_history']
 
-        for row_idx, row_data in enumerate(data):
-            for col_idx, cell_data in enumerate(row_data):
-                item = QTableWidgetItem(str(cell_data))
-                tableWidget.setItem(row_idx, col_idx, item)
+            tableWidget.setRowCount(len(data))
+            tableWidget.setColumnCount(len(field_mapping))
+
+            headers = list(field_mapping.keys())
+
+            for row_idx, row_data in enumerate(data):
+                for col_idx, header in enumerate(headers):
+                    key = field_mapping[header]
+                    if key == "":
+                        continue
+                    if endpoint == 'get_order_history':
+                        if key in date_keys:
+                            date_obj = datetime.fromisoformat(row_data[key])
+                            formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                            item = QTableWidgetItem(formatted_date)
+                        elif key == 'dishes':
+                            dishes_str = ', '.join(
+                                [f'{menu_data[int(dish)]}: {qty}' for dish, qty in row_data[key].items()])
+                            item = QTableWidgetItem(dishes_str)
+                        else:
+                            item = QTableWidgetItem(str(row_data[key]))
+                    else:
+                        continue
+                    tableWidget.setItem(row_idx, col_idx, item)
 
     def add_order(self):
         current_row = self.ui.tableWidget_2.rowCount()

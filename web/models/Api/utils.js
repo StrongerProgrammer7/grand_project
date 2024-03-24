@@ -1,7 +1,7 @@
 const db = require('../db');
 
-const workingHoursStart = 8; // Начало рабочего дня
-const workingHoursEnd = 23; // Конец рабочего дня
+const workingHoursStart = 8; // Начало рабочего днѝ
+const workingHoursEnd = 23; // Конец рабочего днѝ
 
 function getDate(datetime)
 {
@@ -10,15 +10,15 @@ function getDate(datetime)
 
 async function checkbooking(id_table, start_datetime, end_datetime)
 {
-    const date = getDate(start_datetime);
-
+    //const date = getDate(start_datetime);
+    const date = start_datetime.split(',')[0];
     const data = await db.query('SELECT * FROM get_time_for_booked_table_on_date($1,$2) ORDER BY start_booking_date ASC;', [id_table, date]);
     if (data.rows.length === 0)
         return true;
 
     const bookings = data.rows;
-    const start_hour = new Date(start_datetime).getHours();
-    const end_hour = new Date(end_datetime).getHours();
+    const start_hour = start_datetime.split(',')[1].split(':')[0];//new Date(start_datetime).getHours();
+    const end_hour = end_datetime.split(',')[1].split(':')[0];//new Date(end_datetime).getHours();
     console.log(start_hour, end_hour);
     for (let i = 0; i < bookings.length; i++)
     {
@@ -27,7 +27,7 @@ async function checkbooking(id_table, start_datetime, end_datetime)
         {
             const start = new Date(book.start_booking_date).getHours();
             const end = new Date(book.end_booking_date).getHours();
-
+            console.log(book.start_booking_date, book.end_booking_date);
             console.log(start, end);
             if ((start_hour > start && start_hour < end) || (end_hour > start && end_hour < end) || (start == start_hour && end_hour == end))
                 return false;
@@ -40,7 +40,6 @@ async function checkbooking(id_table, start_datetime, end_datetime)
     };
     return true;
 }
-
 async function isExistsClient(db, phone_client, requireClient = true)
 {
     const data = await db.query("SELECT * from client WHERE phone LIKE $1;", [phone_client]);
@@ -65,7 +64,7 @@ async function isExistsWorker(db, id_worker)
 
 function checkFormatDate(datetimestamp, simpleCheck = false)
 {
-    let reg = /^(2\d{3})-(0[1-9]|1[0-2])-([0|1|2][0-9]|3[0|1])T(0[0-9]|1[0-9]|2[0-4]):([0-6][0-9]):\d{2}.\d+Z$/gm;
+    let reg = /^(2\d{3})-(0[1-9]|1[0-2])-([0|1|2][0-9]|3[0|1]), (0[0-9]|1[0-9]|2[0-3]):([0-6][0-9]):\d{2}$/gm  ///^(2\d{3})-(0[1-9]|1[0-2])-([0|1|2][0-9]|3[0|1])T(0[0-9]|1[0-9]|2[0-4]):([0-6][0-9]):\d{2}.\d+Z$/gm;
     if (simpleCheck === true)
         reg = /^(2\d{3})-(0[1-9]|1[0-2])-([0|1|2][0-9]|3[0|1])$/gm;
 

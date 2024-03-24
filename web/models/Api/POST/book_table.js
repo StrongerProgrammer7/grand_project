@@ -23,10 +23,13 @@ const book_table = async (req, res, next) =>
         return next(ApiError.badRequest("Don't enought data!"));
 
     if (checkFormatDate(start_booking_date) === false || checkFormatDate(end_booking_date) === false)
-        return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31]T[00-24]:[00-60]:{2}.d+Z!"));
+        return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31], [00-24]:[00-60]:{2}!"));
     const start_day = workDay.workingHoursStart;
     const end_day = workDay.workingHoursEnd;
-    if ((new Date((start_booking_date).getHours() < start_day || start_booking_date).getHours() >= end_day) || (new Date(end_booking_date) > end_day || new Date(end_booking_date) <= start_day))
+
+    const start_book_hour = start_booking_date.split(',')[1].split(':')[0];
+    const end_book_hour = end_booking_date.split(',')[1].split(':')[0];
+    if ((start_book_hour < start_day || start_book_hour >= end_day) || (end_book_hour > end_day || end_book_hour <= start_day))
         return next(DataApi.notlucky("Check work restaurant and change booked!"));
 
     if (await isExistsClient(db, phone_client) === false)
@@ -44,8 +47,8 @@ const book_table = async (req, res, next) =>
         id_worker,
         phone_client,
         order_time,
-        new Date(start_booking_date).toLocaleString(),
-        new Date(end_booking_date).toLocaleString()
+        start_booking_date,
+        end_booking_date
     ])
         .then(() =>
         {

@@ -1,7 +1,7 @@
 // @ts-nocheck
 const https = require('https');
 const httpProxy = require('http-proxy');
-var apiProxy = httpProxy.createProxyServer();
+//var apiProxy = httpProxy.createProxyServer();
 
 const express = require('express');
 
@@ -121,19 +121,19 @@ const optionHTTPS_dev =
 }
 
 const HOST = "0.0.0.0";
-app.all("/api/*", function (req, res)
-{
-    apiProxy.web(req, res, { target: 'https://localhost:5000' });
-});
+// app.all("/api/*", function (req, res)
+// {
+//     apiProxy.web(req, res, { target: 'https://localhost:5000' });
+// });
 
 const httpsServer = https.createServer(process.env.NODE_ENV === 'development' ? optionHTTPS_dev : optionHTTPS, app);
 
-httpsServer.on('upgrade', function (req, socket, head)
-{
-    apiProxy.ws(req, socket, head, {
-        target: 'https://localhost:5000'
-    });
-});
+// httpsServer.on('upgrade', function (req, socket, head)
+// {
+//     apiProxy.ws(req, socket, head, {
+//         target: 'https://localhost:5000'
+//     });
+// });
 
 const startServer = async function ()
 {

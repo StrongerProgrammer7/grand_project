@@ -1,10 +1,9 @@
 // @ts-nocheck
-const supertest = require('supertest');
-const request = require("supertest");
-
 
 describe("Prepare test environment", () =>
 {
+
+
     describe("Connect and get data", () =>
     {
 

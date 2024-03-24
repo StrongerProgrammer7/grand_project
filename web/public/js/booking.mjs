@@ -5,20 +5,20 @@ function convertDateFormat(date)
 {
     // Получаем компоненты даты
     let year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1, так как месяцы в JavaScript начинаются с 0
+    let month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1, так как меѝѝцы в JavaScript начинаютѝѝ ѝ 0
     let day = date.getDate().toString().padStart(2, '0');
     let hours = date.getHours().toString().padStart(2, '0');
     let minutes = date.getMinutes().toString().padStart(2, '0');
     let seconds = date.getSeconds().toString().padStart(2, '0');
 
-    // Формируем новую строку с нужным форматом
+    // Формируем новую ѝтроку ѝ нужным форматом
     let newDateString = `${ year }-${ month }-${ day } ${ hours }:${ minutes }:${ seconds }`;
 
     return newDateString;
 }
 function formatDatefromIsoString(dateISOString)
 {
-    // Преобразовать строку в объект Date
+    // Преобразовать ѝтроку в объект Date
     let date = new Date(dateISOString);
 
     // Получить компоненты даты и времени
@@ -28,7 +28,7 @@ function formatDatefromIsoString(dateISOString)
     let hours = String(date.getHours() - UTC_MOSCOW).padStart(2, '0');
     let minutes = String(date.getMinutes()).padStart(2, '0');
 
-    // Сформировать строку в нужном формате
+    // Сформировать ѝтроку в нужном формате
     let formattedDate = `${ year }-${ month }-${ day } ${ hours }:${ minutes }`;
 
     return formattedDate;
@@ -47,15 +47,15 @@ function combineDateAndTime(dateString, timeString)
     // Разбиваем дату на компоненты
     let [year, month, day] = dateString.split('-');
 
-    // Разбиваем время на часы и минуты
+    // Разбиваем времѝ на чаѝы и минуты
     let [hours, minutes] = timeString.split(':');
 
     // Получаем текущую дату
     let currentDate = new Date();
 
-    // Устанавливаем полученные значения даты и времени
+    // Уѝтанавливаем полученные значениѝ даты и времени
     currentDate.setFullYear(year);
-    currentDate.setMonth(month - 1); // -1, так как месяцы в JavaScript начинаются с 0
+    currentDate.setMonth(month - 1); // -1, так как меѝѝцы в JavaScript начинаютѝѝ ѝ 0
     currentDate.setDate(day);
     currentDate.setHours(hours);
     currentDate.setMinutes(minutes);
@@ -63,13 +63,13 @@ function combineDateAndTime(dateString, timeString)
 
     // Получаем компоненты даты
     let yearResult = currentDate.getFullYear();
-    let monthResult = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // +1, так как месяцы в JavaScript начинаются с 0
+    let monthResult = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // +1, так как меѝѝцы в JavaScript начинаютѝѝ ѝ 0
     let dayResult = currentDate.getDate().toString().padStart(2, '0');
     let hoursResult = currentDate.getHours().toString().padStart(2, '0');
     let minutesResult = currentDate.getMinutes().toString().padStart(2, '0');
     let secondsResult = currentDate.getSeconds().toString().padStart(2, '0');
 
-    // Формируем новую строку с нужным форматом
+    // Формируем новую ѝтроку ѝ нужным форматом
     let newDateString = `${ yearResult }-${ monthResult }-${ dayResult } ${ hoursResult }:${ minutesResult }:${ secondsResult }`;
 
     return newDateString;
@@ -118,7 +118,7 @@ dateControl.onchange = async () =>
     let popup = document.querySelector('.popup');
     let blr = document.querySelector('.seats');
 
-    popup.innerHTML = '<h1>Выберите стол</h1>';
+    popup.innerHTML = '<h1>Выберите ѝтол</h1>';
     // popup.outerHTML ="";
 
     // tables.classList.remove('blured');
@@ -158,7 +158,7 @@ dateControl.onchange = async () =>
             {
                 let div = document.createElement('div');
                 div.className = 'booked';
-                div.innerHTML = 'Стол свободен';
+                div.innerHTML = 'Стол ѝвободен';
                 popup.appendChild(div);
             }
             else
@@ -169,7 +169,7 @@ dateControl.onchange = async () =>
                     div.className = 'booked';
 
                     const interval = get_interval(seats[i].list[j].start_booking_date, seats[i].list[j].end_booking_date);
-                    div.innerText = `${ convertDateFormat(new Date(seats[i].list[j].start_booking_date)) } на ${ interval } часа`;
+                    div.innerText = `${ convertDateFormat(new Date(seats[i].list[j].start_booking_date)) } на ${ interval } чаѝа`;
                     popup.appendChild(div);
                 }
             }
@@ -195,14 +195,14 @@ dateControl.onchange = async () =>
             }
 
             let h1 = document.createElement("h1");
-            h1.innerHTML = `Бронирование стола №${ i + 1 }`;
+            h1.innerHTML = `Бронирование ѝтола №${ i + 1 }`;
 
             let form = document.createElement('form');
             form.method = 'get';
             form.innerHTML = `
-            <input class="chosen" type="time" min="08:00" max="23:00" id="desired-time" name="desired-time" required placeholder="Время"/>
+            <input class="chosen" type="time" min="08:00" max="23:00" id="desired-time" name="desired-time" required placeholder="Времѝ"/>
             
-            <input class="chosen" type="number" min="1" max="24" id="interval" name="interval" required placeholder="Часы"/>
+            <input class="chosen" type="number" min="1" max="24" id="interval" name="interval" required placeholder="Чаѝы"/>
             
             <input class="chosen" type="email" id="email" name="email" required placeholder="Почта" value="example@mail.com"/>
             
@@ -230,8 +230,8 @@ dateControl.onchange = async () =>
                     "id_table": i + 1,
                     "phone_client": phone,
                     "order_time": orderTime,
-                    "start_booking_date": start_date,
-                    "end_booking_date": booked_date
+                    "start_booking_date": new Date(start_date).toLocaleString(),
+                    "end_booking_date": new Date(booked_date).toLocaleString()
                 };
 
                 response = await fetch('/api/book_table_client', {
@@ -254,14 +254,14 @@ dateControl.onchange = async () =>
                     setTimeout(() =>
                     {
                         popup.innerHTML = "";
-                        h1.innerHTML = `Успешно забронирован стол №${ i + 1 } ${ start_date.toLocaleDateString() } ${ start_date.toLocaleTimeString() } по ${ booked_date.toLocaleDateString() } ${ booked_date.toLocaleTimeString() }!`;
+                        h1.innerHTML = `Уѝпешно забронирован ѝтол №${ i + 1 } ${ start_date.toLocaleDateString() } ${ start_date.toLocaleTimeString() } по ${ booked_date.toLocaleDateString() } ${ booked_date.toLocaleTimeString() }!`;
                         popup.appendChild(h1);
                     }, 3000);
                 }
                 else
                 {
                     popup.innerHTML = "";
-                    h1.innerHTML = `Ошибка бронирования стола №${ i + 1 }`;
+                    h1.innerHTML = `Ошибка бронированиѝ ѝтола №${ i + 1 }`;
                     popup.appendChild(h1);
                 }
             };

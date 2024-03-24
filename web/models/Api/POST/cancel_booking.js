@@ -2,6 +2,7 @@ const ApiError = require("../../../HandleAPI/ApiError");
 const DataApi = require("../../../HandleAPI/DataApi");
 const errorHandler = require('../errorHandler');
 const db = require('../../db');
+const { checkFormatDate } = require("../utils");
 
 const cancel_booking = async (req, res, next) =>
 {
@@ -14,6 +15,9 @@ const cancel_booking = async (req, res, next) =>
         } = req.body;
     if (!(id_table && desired_booking_date))
         return next(ApiError.badRequest("Don't enought data!"));
+
+    if (checkFormatDate(desired_booking_date) === false)
+        return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31], [00-24]:[00-60]:{2}!"));
 
     db.query('CALL cancel_booking($1,$2)', [id_table, desired_booking_date])
         .then(() =>

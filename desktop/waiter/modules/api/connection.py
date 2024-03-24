@@ -10,12 +10,24 @@ urllib3.disable_warnings()
 
 
 class ApiConnect:
+
+
+    _instance = None # Атрибут для хранения экземпляра класса
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+
     def __init__(self, ssl_cert):
-        self.api_url = f'https://{DOMEN}/api'
-        self.sio = socketio.Client(ssl_verify=ssl_cert)
-        self.sio.on('connect', self.connect)
-        self.sio.on('disconnect', self.disconnect)
-        self.sio.on('message', self.on_message)
+        # Проверяем, инициализирован ли экземпляр
+        if not hasattr(self, 'api_url'):
+            self.api_url = f'https://{DOMEN}/api'
+            self.sio = socketio.Client(ssl_verify=ssl_cert)
+            self.sio.on('connect', self.connect)
+            self.sio.on('disconnect', self.disconnect)
+            self.sio.on('message', self.on_message)
 
     def connect_to_server(self):
         # Подключаемся к серверу

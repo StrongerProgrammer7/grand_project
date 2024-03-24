@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-23 19:33:37
+-- Started on 2024-03-24 16:24:14
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -24,7 +24,7 @@ DROP DATABASE IF EXISTS "Restaurant";
 -- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'ru_RU.utf8';
+CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'Russian_Russia.1251';
 
 
 ALTER DATABASE "Restaurant" OWNER TO postgres;
@@ -461,7 +461,7 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 75313)
+-- TOC entry 279 (class 1255 OID 75313)
 -- Name: get_booked_tables_on_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -499,7 +499,7 @@ $$;
 ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
 
 --
--- TOC entry 281 (class 1255 OID 75250)
+-- TOC entry 278 (class 1255 OID 83451)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -508,42 +508,27 @@ CREATE FUNCTION public.get_current_orders() RETURNS json
     AS $$
 DECLARE
     order_record RECORD;
-    order_data JSON;
-    dish_data JSON;
-	orders_array JSON[] := '{}';
-    result JSON := '[]'::JSON;
 BEGIN
-    FOR order_record IN
-        SELECT
-            od.id AS id_order,
-            od.id_worker,
-            json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
-            od.formation_date,
-            od.issue_date AS giving_date,
-            od.status
-        FROM
-            order_directory od
-        JOIN
-            order_food ofd ON od.id = ofd.id_order
-        WHERE
-            od.status <> 'Отдано' -- Фильтрация по текущему статусу заказа
-        GROUP BY
-            od.id
-    LOOP
-        dish_data := json_build_object(
-            'id_order', order_record.id_order,
-            'id_worker', order_record.id_worker,
-            'dishes', order_record.dishes,
-            'formation_date', order_record.formation_date,
-            'giving_date', order_record.giving_date,
-            'status', order_record.status
-        );
-        orders_array := array_append(orders_array, dish_data);
-    END LOOP;
-
-	result := json_agg(orders_array);
-
-    RETURN result;
+    RETURN (
+        SELECT json_agg(dish_data)
+        FROM (
+            SELECT
+                od.id AS id_order,
+                od.id_worker,
+                json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
+                od.formation_date,
+                od.issue_date AS giving_date,
+                od.status
+            FROM
+                order_directory od
+            LEFT JOIN
+                order_food ofd ON od.id = ofd.id_order
+            WHERE
+                od.status <> 'Отдано'
+            GROUP BY
+                od.id
+        ) AS dish_data
+    );
 END;
 $$;
 
@@ -567,6 +552,41 @@ $$;
 
 
 ALTER FUNCTION public.get_ingredients_info() OWNER TO postgres;
+
+--
+-- TOC entry 280 (class 1255 OID 83450)
+-- Name: get_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.view_order_history() RETURNS json
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    order_record RECORD;
+BEGIN
+    RETURN (
+        SELECT json_agg(dish_data)
+        FROM (
+            SELECT
+                od.id AS id_order,
+                od.id_worker,
+                json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
+                od.formation_date,
+                od.issue_date AS giving_date,
+                od.status
+            FROM
+                order_directory od
+            LEFT JOIN
+                order_food ofd ON od.id = ofd.id_order
+            GROUP BY
+                od.id
+        ) AS dish_data
+    );
+END;
+$$;
+
+
+ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
 -- TOC entry 238 (class 1255 OID 42264)
@@ -814,7 +834,7 @@ $$;
 ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN new_salary double precision, IN new_job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 75315)
+-- TOC entry 281 (class 1255 OID 75315)
 -- Name: view_all_booked_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -870,56 +890,6 @@ $$;
 
 
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
-
---
--- TOC entry 280 (class 1255 OID 75249)
--- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.view_order_history() RETURNS json
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    order_record RECORD;
-    order_data JSON;
-    dish_data JSON;
-	orders_array JSON[] := '{}';
-    result JSON := '[]'::JSON;
-BEGIN
-    FOR order_record IN
-        SELECT
-            od.id AS id_order,
-            od.id_worker,
-            json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
-            od.formation_date,
-            od.issue_date AS giving_date,
-            od.status
-        FROM
-            order_directory od
-        LEFT JOIN
-            order_food ofd ON od.id = ofd.id_order
-        GROUP BY
-            od.id
-    LOOP
-        dish_data := json_build_object(
-            'id_order', order_record.id_order,
-            'id_worker', order_record.id_worker,
-            'dishes', order_record.dishes,
-            'formation_date', order_record.formation_date,
-            'giving_date', order_record.giving_date,
-            'status', order_record.status
-        );
-        orders_array := array_append(orders_array, dish_data);
-    END LOOP;
-
-	result := json_agg(orders_array);
-
-    RETURN result;
-END;
-$$;
-
-
-ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
 -- TOC entry 277 (class 1255 OID 58844)
@@ -2375,7 +2345,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-23 19:33:38
+-- Completed on 2024-03-24 16:24:14
 
 --
 -- PostgreSQL database dump complete

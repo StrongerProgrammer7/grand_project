@@ -1,9 +1,13 @@
+import json
 import sys
 import os
 import platform
+import threading
 from datetime import datetime
+from modules.LoginWindow import Ui_Dialog3
 
 from PySide6.QtWidgets import QMainWindow
+from PySide6 import QtWidgets
 
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
@@ -30,6 +34,15 @@ class MainWindow(QMainWindow):
 
         self.api = ApiConnect()
 
+        try:
+            self.api.connect_to_server()
+            self.api.sio.on('message', self.on_message)
+        except Exception as e:
+            print("Unable to connect to the server:", e)
+
+        order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+        order_thread.start()
+        order_thread.join()
 
         # APP NAME
         # title = "SOLIDSIGN - для официантов"
@@ -48,13 +61,27 @@ class MainWindow(QMainWindow):
         widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # BUTTONS CLICK
+        # SHOW APP
+        self.new_window3 = QtWidgets.QDialog()
+        self.ui_dialog3 = Ui_Dialog3()
+        self.ui_dialog3.setupUi(self.new_window3)
+        self.new_window3.setFixedSize(self.new_window3.size())
+
+        self.ui_dialog3.checkBox.stateChanged.connect(self.change_password_visibility)
+        self.ui_dialog3.pushButton.clicked.connect(self.login)
 
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
 
-        # SHOW APP
-        self.show()
+
+        self.insert_table()
+
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            for col in range(1, self.ui.tableWidget_2.columnCount()):
+                combo_box = self.ui.tableWidget_2.cellWidget(row, col)
+                if combo_box is not None:
+                    combo_box.currentIndexChanged.connect(self.check_and_remove_order)
 
         # SET CUSTOM THEME
         self.themeFile = "themes/py_dracula_dark.qss"
@@ -68,8 +95,6 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
         widgets.tableWidget_2.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
-        widgets.pushButton.clicked.connect(self.add_order)
-        widgets.pushButton_4.clicked.connect(self.add_row_with_combobox)
         widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
 
         self.order_count = 0
@@ -126,73 +151,190 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
+    def on_message(self, data):
+        self.update_table(data)
+
+    def update_table(self, data):
+        # Получаем order_id, новый статус и выбранную строку в таблице
+        order_id = data.get("order_id")
+        new_status = data.get("status")
+        selected_row = order_id - 1  # Индексация строк начинается с 0
+
+        if selected_row >= 0:
+            # Устанавливаем новый статус в таблице
+            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
+
     def fill_table_widget(self, tableWidget):
+        if tableWidget.objectName() == 'tableWidget':
+            field_mapping = {
+                "№": "id_order",
+                "Официант": "id_worker",
+                "Дата выдачи": "giving_date",
+                "Дата формирования": "formation_date",
+                "Блюда": "dishes",
+                "Статус": "status"
+            }
+            endpoint = 'get_order_history'
+            date_keys = ['formation_date', 'giving_date']
 
-        data = [
-            (1, 2, 3, 4, 5, 6),
-            (7, 8, 9, 10, 11, 12),
-            (1, 2, 3, 4, 5, 6),
-        ]
+            # Загружаем данные из JSON файла
+            with open(f"./jsons/{endpoint}.json", "r") as file:
+                json_data = json.load(file)
+            # Загрузка данных меню
+            menu_data = {}
+            with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
+                menu_json = json.load(menu_file)
+                for item in menu_json['data']:
+                    menu_data[item['food_id']] = item['food_name']
 
-        tableWidget.setRowCount(len(data))
-        tableWidget.setColumnCount(len(data[0]))
+            data = json_data['data'][0]['view_order_history']
 
-        for row_idx, row_data in enumerate(data):
-            for col_idx, cell_data in enumerate(row_data):
-                item = QTableWidgetItem(str(cell_data))
-                tableWidget.setItem(row_idx, col_idx, item)
+            tableWidget.setRowCount(len(data))
+            tableWidget.setColumnCount(len(field_mapping))
 
-    def add_order(self):
-        current_row = self.ui.tableWidget_2.rowCount()
-        self.ui.tableWidget_2.insertRow(current_row)
+            headers = list(field_mapping.keys())
 
-        # Получаем текущее время и форматируем его в строку
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+            for row_idx, row_data in enumerate(data):
+                for col_idx, header in enumerate(headers):
+                    key = field_mapping[header]
+                    if key == "":
+                        continue
+                    if endpoint == 'get_order_history':
+                        if key in date_keys:
+                            date_obj = datetime.fromisoformat(row_data[key])
+                            formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                            item = QTableWidgetItem(formatted_date)
+                        elif key == 'dishes':
+                            dishes_str = ', '.join(
+                                [f'{menu_data[int(dish)]}: {qty}' for dish, qty in row_data[key].items()])
+                            item = QTableWidgetItem(dishes_str)
+                        else:
+                            item = QTableWidgetItem(str(row_data[key]))
+                    else:
+                        continue
+                    tableWidget.setItem(row_idx, col_idx, item)
 
-        # Создаем элементы для ячеек таблицы
-        order_item = QTableWidgetItem(f"Заказ № {self.order_count + 1}")
-        time_item = QTableWidgetItem(current_time)
+    def insert_table(self):
+        with open("order.json", "r", encoding="utf-8") as json_file:
+            orders_data = json.load(json_file)["data"]
+            # Заполнение таблицы данными из JSON
+            for order in orders_data:
+                row_index = self.ui.tableWidget_2.rowCount()
+                self.ui.tableWidget_2.insertRow(row_index)
 
-        # Устанавливаем флаги, чтобы ячейки нельзя было редактировать
-        order_item.setFlags(order_item.flags() & ~Qt.ItemIsEditable)
-        time_item.setFlags(time_item.flags() & ~Qt.ItemIsEditable)
+                # Создаем элементы для ячеек таблицы
+                id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
+                giving_date_item = QTableWidgetItem(order["giving_date"])
 
-        # Устанавливаем элементы в таблицу
-        self.ui.tableWidget_2.setItem(current_row, 0, order_item)
-        self.ui.tableWidget_2.setItem(current_row, 1, time_item)
+                # Устанавливаем шрифт для элементов
+                font = QFont("Segoe UI", 14)
+                id_order_item.setFont(font)
+                giving_date_item.setFont(font)
 
-        # Устанавливаем шрифт для элементов
-        font = QFont("Segoe UI", 14)  # Настройте шрифт по вашему желанию
-        order_item.setFont(font)
-        time_item.setFont(font)
+                # Устанавливаем элементы в таблицу
+                self.ui.tableWidget_2.setItem(row_index, 0, id_order_item)
+                self.ui.tableWidget_2.setItem(row_index, 1, giving_date_item)
 
-        self.order_added = True
-        self.order_count += 1
+                # Получаем статус заказа
+                status = order.get("status", "")
 
-    def add_row_with_combobox(self):
-        if self.order_added:
-            current_row = self.ui.tableWidget_2.rowCount()
-            self.ui.tableWidget_2.insertRow(current_row)
+                # Добавляем строки для блюд и их количества
+                dishes = order.get("dishes", {})
 
-            self.ui.tableWidget_2.setItem(current_row, 0, QTableWidgetItem(""))
+                for dish_id, quantity in dishes.items():
+                    dish_name = f"Блюдо {dish_id}, Количество {quantity}"
+                    dish_item = QTableWidgetItem(dish_name)
 
-            # Создаем и добавляем комбобокс в ячейку выбора
-            combo_box = QComboBox()
-            combo_box.addItem("Ожидание")
-            combo_box.addItem("Готово")
-            combo_box.addItem("Отменено")
-            self.ui.tableWidget_2.setCellWidget(current_row, 1, combo_box)
+                    # Создаем комбобокс и добавляем варианты из статуса
+                    combo_box = QComboBox()
+                    combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
+
+                    # Если строка находится в первых пяти, разрешаем редактирование
+                    if row_index < 4:
+                        dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                        combo_box.setEnabled(True)
+                    else:
+                        combo_box.setEnabled(False)
+
+                    row_index += 1
+                    self.ui.tableWidget_2.insertRow(row_index)
+                    self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
+                    self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
+
+    def check_and_remove_order(self):
+        rows_to_delete = []
+
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            combo_box = self.ui.tableWidget_2.cellWidget(row, 1)  # Изменен индекс столбца на 1
+            if combo_box is not None:
+                if combo_box.currentText() != "Ожидание":
+                    rows_to_delete.append(row)
+
+        # Удаление строк в обратном порядке, чтобы индексы не сдвигались
+        if len(rows_to_delete) == 3:
+            for row in reversed(rows_to_delete):
+                self.ui.tableWidget_2.removeRow(row)
+            self.ui.tableWidget_2.removeRow(row - 1)
+
+        row_index = self.ui.tableWidget_2.rowCount() - 1
+
+        # Перебираем строки таблицы для установки редактируемости и активности комбобокса
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            combo_box = self.ui.tableWidget_2.cellWidget(row, 1)
+            if combo_box is not None:
+                if row > 4:
+                    combo_box.setEnabled(False)  # Запрещаем редактирование комбобокса для первых пяти строк
+                else:
+                    combo_box.setEnabled(True)  # Разрешаем редактирование комбобокса для остальных строк
+
+    def login(self):
+        username = self.ui_dialog3.lineEdit.text()
+        password = self.ui_dialog3.lineEdit_2.text()
+
+        # self.curUser = User.authorization(username, password, self.api)
+        #
+        # if self.curUser is not None:
+        #     pass
+
+        if username == "" and password == "":
+
+            try:
+                self.api.connect_to_server()
+                self.api.sio.on('message', self.on_message)
+            except Exception as e:
+                print("Unable to connect to the server:", e)
+
+            self.update_json_files()
+            # self.fill_table_widget(self.ui.tableWidget)
+
+            # Создаем и запускаем потоки для заполнения таблиц
+            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            order_thread.start()
+            table_booking_thread.start()
+
+            # Ожидаем завершения потоков
+            order_thread.join()
+            table_booking_thread.join()
+
+            self.new_window3.close()
+            self.show()
         else:
-            # Выводим предупреждение, что сначала нужно добавить заказ
-            QMessageBox.warning(self, "Предупреждение", "Сначала добавьте заказ")
+            msg = QMessageBox()
+            msg.setWindowTitle("Ошибка входа")
+            msg.setText("Логин или пароль неверны.")
+            msg.setIcon(QMessageBox.Critical)
+            msg.exec()
 
-    # def insert_tab(self,table):
-    #     self.ui.tableWidget_2
-    #     self.add_order()
-    #     self.add_row_with_combobox()
+    def change_password_visibility(self):
+        if self.ui_dialog3.checkBox.isChecked():
+            self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Normal)
+        else:
+            self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Password)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
+    window.new_window3.show()
     sys.exit(app.exec())

@@ -49,9 +49,6 @@ class MainWindow(QMainWindow):
         # SET UI DEFINITIONS
         UIFunctions.uiDefinitions(self)
 
-        # QTableWidget PARAMETERS
-        widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
         # BUTTONS CLICK
         # SHOW APP
         self.new_window3 = QtWidgets.QDialog()
@@ -66,8 +63,16 @@ class MainWindow(QMainWindow):
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
 
+        self.file_watcher = QFileSystemWatcher()
+        self.file_watcher.fileChanged.connect(self.update_table)
 
-        self.insert_table()
+
+        # Начинаем отслеживать изменения в файле
+        self.file_path = "order.json"
+        self.file_watcher.addPath(self.file_path)
+
+        self.insert_table(self.ui.tableWidget_2)
+        self.insert_table(self.ui.tableWidget)
 
         for row in range(self.ui.tableWidget_2.rowCount()):
             for col in range(1, self.ui.tableWidget_2.columnCount()):
@@ -86,8 +91,9 @@ class MainWindow(QMainWindow):
         tab1_column_widths = [500, 300]
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
         widgets.tableWidget_2.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-
-        widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
+        tab2_column_widths = [500, 300]
+        UIFunctions.set_column_widths(self, widgets.tableWidget, tab2_column_widths)
+        widgets.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
         self.order_count = 0
         self.order_added = False
@@ -103,6 +109,7 @@ class MainWindow(QMainWindow):
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
         self.list_count = 0
+
 
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
@@ -216,56 +223,61 @@ class MainWindow(QMainWindow):
         for order in orders_data:
             count = len(order["dishes"])
             dishes_count_list.append(count)
-        print(dishes_count_list)
         return dishes_count_list
 
-    def insert_table(self):
-        with open("order.json", "r", encoding="utf-8") as json_file:
+    def insert_table(self, table):
+        with open(self.file_path, "r", encoding="utf-8") as json_file:
             orders_data = json.load(json_file)["data"]
             # Заполнение таблицы данными из JSON
             for order in orders_data:
-                row_index = self.ui.tableWidget_2.rowCount()
-                self.ui.tableWidget_2.insertRow(row_index)
+                self.insert_order_to_table(table, order)
 
-                # Создаем элементы для ячеек таблицы
-                id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
-                giving_date_item = QTableWidgetItem(order["giving_date"])
+    def insert_order_to_table(self, table, order):
+        row_index = table.rowCount()
+        table.insertRow(row_index)
 
-                # Устанавливаем шрифт для элементов
-                font = QFont("Segoe UI", 14)
-                id_order_item.setFont(font)
-                giving_date_item.setFont(font)
+        id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
+        giving_date = order["giving_date"]
+        formatted_giving_date = datetime.strptime(giving_date, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d %H:%M:%S")
+        giving_date_item = QTableWidgetItem(formatted_giving_date)
 
-                # Устанавливаем элементы в таблицу
-                self.ui.tableWidget_2.setItem(row_index, 0, id_order_item)
-                self.ui.tableWidget_2.setItem(row_index, 1, giving_date_item)
+        font = QFont("Segoe UI", 14)
+        id_order_item.setFont(font)
+        giving_date_item.setFont(font)
 
-                # Получаем статус заказа
-                status = order.get("status", "")
+        table.setItem(row_index, 0, id_order_item)
+        table.setItem(row_index, 1, giving_date_item)
 
-                # Добавляем строки для блюд и их количества
-                dishes = order.get("dishes", {})
+        status = order.get("status", "")
+        dishes = order.get("dishes", {})
 
-                for dish_id, quantity in dishes.items():
-                    dish_name = f"Блюдо {dish_id}, Количество {quantity}"
-                    dish_item = QTableWidgetItem(dish_name)
+        for dish_id, quantity in dishes.items():
+            dish_name = f"Блюдо {dish_id}, Количество {quantity}"
+            dish_item = QTableWidgetItem(dish_name)
 
-                    # Создаем комбобокс и добавляем варианты из статуса
-                    combo_box = QComboBox()
-                    combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
+            combo_box = QComboBox()
+            combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
 
-                    # Если строка находится в первых пяти, разрешаем редактирование
-                    if row_index < 4:
-                        dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
-                        combo_box.setEnabled(True)
-                    else:
-                        combo_box.setEnabled(False)
+            if table == self.ui.tableWidget_2:
+                if row_index < 4:
+                    dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                    combo_box.setEnabled(True)
+                else:
+                    combo_box.setEnabled(False)
+            else:
+                dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                combo_box.setEnabled(False)
+            row_index += 1
+            table.insertRow(row_index)
+            table.setItem(row_index, 0, dish_item)
+            table.setCellWidget(row_index, 1, combo_box)
 
-                    row_index += 1
-                    self.ui.tableWidget_2.insertRow(row_index)
-                    self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
-                    self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
-
+    def update_table(self):
+        # Очищаем таблицу перед обновлением
+        self.ui.tableWidget.clearContents()
+        self.ui.tableWidget.setRowCount(0)
+        # Заполняем таблицу заново
+        self.insert_table(self.ui.tableWidget)
 
     def check_and_remove_order(self):
         rows_to_delete = []
@@ -296,6 +308,7 @@ class MainWindow(QMainWindow):
                     combo_box.setEnabled(False)  # Запрещаем редактирование комбобокса для первых пяти строк
                 else:
                     combo_box.setEnabled(True)  # Разрешаем редактирование комбобокса для остальных строк
+
 
     def login(self):
         username = self.ui_dialog3.lineEdit.text()

@@ -18,7 +18,8 @@ const record_giving_time = async (req, res, next) =>
         return next(ApiError.badRequest("Don't enought data!"));
 
     if (checkFormatDate(giving_time) === false)
-        return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31]T[00-24]:[00-60]:{2}.d+Z!"));
+        return next(DataApi.notlucky("Date does not match the format 2{4}-[01-12]-[01-31], [00-24]:[00-60]:{2}!"));
+
     db.query('CALL record_giving_time($1,$2)', [
         id_order,
         giving_time

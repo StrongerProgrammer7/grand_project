@@ -50,7 +50,7 @@ const add_client_order = async (req, res, next) =>
                 err,
                 next
             )
-        })
+        });
 
 
 }

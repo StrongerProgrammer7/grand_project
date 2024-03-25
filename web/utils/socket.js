@@ -1,10 +1,9 @@
 // @ts-nocheck
-const socketIo = require('socket.io');
 const logger = require('../logger/logger');
 const https = require('https');
 const db = require("../models/db");
 const jwt = require("jsonwebtoken");
-
+const { Server } = require('socket.io');
 let connectedUsers = 0;
 
 const send_message = (clients, socketId, send, messageJson, error = null) =>
@@ -13,15 +12,21 @@ const send_message = (clients, socketId, send, messageJson, error = null) =>
     let client = null;
     const sender = clients[socketId];
     for (const clientId in clients)
+    {
         if (clientId !== socketId)
-            if (send.name === clients[clientId].name && send.id === clients[clientId].id)
+        {
+            client = clients[clientId];
+            if (client && send.name === client.name && send.id === client.id)
             {
-                client = clients[clientId];
+                client.socket.emit('message', messageJson);
                 break;
+            } else if (client && send.name === 'all_waiter' && client.name === 'waiter')
+            {
+                client.socket.emit('message', messageJson);
             }
-    if (client !== null)
-        client.socket.emit('message', messageJson);
-    if (error != null)
+        }
+    }
+    if (error !== null)
     {
         sender.socket.emit('message', messageJson);
     } else
@@ -29,13 +34,18 @@ const send_message = (clients, socketId, send, messageJson, error = null) =>
         const message = JSON.stringify({ "msg": "Success send" });
         sender.socket.emit('message', message);
     }
+
 }
 
 const isExistsClient = (clients, socketId, send) =>
 {
     for (const clientId in clients)
+    {
         if (clientId !== socketId && send.name === clients[clientId].name && send.id === clients[clientId].id)
             return true;
+        if (send.name === 'all_waiter' && clients[clientId].name === 'waiter')
+            return true;
+    }
     return false;
 }
 
@@ -84,10 +94,23 @@ const isExistsAccess = async (decoded) =>
         return false;
 }
 
+const decoeJWT = (token) =>
+{
+    try 
+    {
+        return jwt.verify(token, '5465454f6ad5s4f354as354f9))()(F)_Asf0a9sf09af0afi39%');
+    } catch (error) 
+    {
+        console.log(error);
+        return null;
+    }
+}
+
 
 const connectSoket = (httpsServer) =>
 {
-    const io = socketIo(httpsServer, { secure: true });
+    const io = new Server(httpsServer);
+    //const io = socketIo(httpsServer, { secure: true });
     const clients = {};
 
 
@@ -95,10 +118,18 @@ const connectSoket = (httpsServer) =>
     {
         logger.info(`User ${ socket.id } connected`);
         const token = socket.handshake.auth.token;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // console.log(token);
-        // разбор токена
-        // Если ок
+        const decoded = decoeJWT(token);
+        if (!decoded)
+        {
+            console.log(error);
+            const messageJson = JSON.stringify({ "message": "Incorrect jwt token" });
+            socket.emit('message', messageJson);
+            socket.disconnect(true);
+            return;
+        }
+
+        console.log(token);
+
         const isAccess = await isExistsAccess(decoded);
         if (isAccess === false)
         {
@@ -122,7 +153,7 @@ const connectSoket = (httpsServer) =>
             socket
         };
         //console.log(clients[socket.id])
-        // Обработчик события 'message' от клиента
+
         socket.on('message', async (msg) =>
         {
             logger.info('Message from client:', msg);
@@ -132,7 +163,7 @@ const connectSoket = (httpsServer) =>
 
             const options = {
                 hostname: process.env.HOST,
-                port: process.env.PORT,
+                port: process.env.PORT_SOCKET,
                 path: msg.path,
                 method: msg.method,
                 rejectUnauthorized: false,
@@ -141,13 +172,34 @@ const connectSoket = (httpsServer) =>
                     'Content-Length': JSON.stringify(msg).length
                 }
             };
-            //console.log(msg);
+            console.log(msg);
             if (isExistsClient(clients, socket.id, msg.send) === false)
             {
                 const messageJson = JSON.stringify({ "message": "Incorrect data, getter not exists!" });
                 clients[socket.id].socket.emit('message', messageJson);
                 return;
             }
+
+            // db.query('CALL add_client_order($1,$2,$3,$4,$5,$6)', [
+            //     msg.worker_id,
+            //     msg.food_ids,
+            //     msg.quantities,
+            //     msg.formation_date,
+            //     msg.givig_date,
+            //     msg.status])
+            //     .then((data) =>
+            //     {
+            //         console.log(data);
+            //         send_message(clients, socket.id, msg.send, msg)
+            //     })
+            //     .catch(error =>
+            //     {
+            //         console.log(error);
+            //         console.error('Error:', error);
+            //         const messageJson = JSON.stringify({ msg: "Internal error", error: error });
+            //         send_message(clients, socket.id, msg.send, messageJson, error)
+
+            //     });
             sendDataToDB(options, msg)
                 .then((data) =>
                 {
@@ -180,6 +232,7 @@ const connectSoket = (httpsServer) =>
             delete clients[socket.id];
         });
     });
+
 }
 
 module.exports = connectSoket;

@@ -32,7 +32,7 @@ const update_order = async (req, res, next) =>
         {
             errorHandler(
                 "Error with update order",
-                [],
+                ["42703"],
                 "Order is not exists, check your data",
                 "Internal error with update order!",
                 err,

@@ -5,7 +5,7 @@
 -- Dumped from database version 16.2
 -- Dumped by pg_dump version 16.2
 
--- Started on 2024-03-23 19:33:37
+-- Started on 2024-03-24 16:24:14
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -24,7 +24,7 @@ DROP DATABASE IF EXISTS "Restaurant";
 -- Name: Restaurant; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'ru_RU.utf8';
+CREATE DATABASE "Restaurant" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'ru_RU.UTF-8' LC_CTYPE = 'ru_RU.UTF-8';
 
 
 ALTER DATABASE "Restaurant" OWNER TO postgres;
@@ -73,32 +73,32 @@ DECLARE
     order_id INT;
     ingredient_row RECORD;
 BEGIN
-    -- Добавляем заказ в таблицу order_directory
+    -- Добавлѝем заказ в таблицу order_directory
     INSERT INTO order_directory (id_worker, formation_date, issue_date, status)
     VALUES (_worker_id, _formation_date, _issue_date, _status)
     RETURNING id INTO order_id;
 
-    -- Для каждого блюда в заказе
+    -- Длѝ каждого блюда в заказе
     FOR i IN 1..array_length(_food_ids, 1) LOOP
-        -- Проверяем существование блюда
+        -- Проверѝем ѝущеѝтвование блюда
         IF EXISTS (SELECT 1 FROM food WHERE id = _food_ids[i]) THEN
-            -- Добавляем запись о блюде в таблицу order_food
+            -- Добавлѝем запиѝь о блюде в таблицу order_food
             INSERT INTO order_food (id_order, id_food, quantity)
             VALUES (order_id, _food_ids[i], _quantities[i]);
 
-            -- Для каждого ингредиента в блюде
+            -- Длѝ каждого ингредиента в блюде
             FOR ingredient_row IN
                 SELECT fc.id_ingredient, fc.weight * _quantities[i] AS total_weight
                 FROM food_composition fc
                 WHERE fc.id_food = _food_ids[i]
             LOOP
-                -- Обновляем количество ингредиента в ingredient_storage
+                -- Обновлѝем количеѝтво ингредиента в ingredient_storage
                 UPDATE ingredient_storage
                 SET weight = weight - ingredient_row.total_weight
                 WHERE id_ingredient = ingredient_row.id_ingredient;
             END LOOP;
         ELSE
-            RAISE EXCEPTION 'Блюдо с ID % не найдено', _food_ids[i];
+            RAISE EXCEPTION 'Блюдо ѝ ID % не найдено', _food_ids[i];
         END IF;
     END LOOP;
 
@@ -147,7 +147,7 @@ BEGIN
 
 	-- Проверка, найден ли ингредиент
 	IF _ingredient_id IS NULL THEN
-		RAISE EXCEPTION 'Ингредиент с именем % не найден', _ingredient_name;
+		RAISE EXCEPTION 'Ингредиент ѝ именем % не найден', _ingredient_name;
 	END IF;
 
 	INSERT INTO food_composition
@@ -266,14 +266,14 @@ CREATE PROCEDURE public.add_worker(IN _login character varying, IN _password cha
 DECLARE
     worker_id INTEGER;
 BEGIN
-    -- Вставка записи в таблицу worker
+    -- Вѝтавка запиѝи в таблицу worker
     INSERT INTO worker
         (login, "password", job_role, surname, first_name, patronymic, email, phone, salary, job_rate)
     VALUES
         (_login, _password, _job_role, _surname, _first_name, _patronymic, _email, _phone, _salary, _job_rate)
     RETURNING id INTO worker_id;
 
-    -- Вставка записи в таблицу worker_history
+    -- Вѝтавка запиѝи в таблицу worker_history
     INSERT INTO worker_history
         (start_date, end_date, id_worker, id_job_role, surname, "name", patronymic, email, phone, salary)
     VALUES
@@ -293,17 +293,17 @@ CREATE PROCEDURE public.book_table(IN _id_table integer, IN _id_worker integer, 
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    -- Существует ли таблица
+    -- Сущеѝтвует ли таблица
     IF NOT EXISTS (SELECT 1 FROM public."table" WHERE id = _id_table) THEN
         RAISE EXCEPTION 'Table with id % does not exist', _id_table;
     END IF;
 
-    -- Существует ли рабочий
+    -- Сущеѝтвует ли рабочий
     IF NOT EXISTS (SELECT 1 FROM public.worker WHERE id = _id_worker) THEN
         RAISE EXCEPTION 'Worker with id % does not exist', _id_worker;
     END IF;
 
-    -- Существует ли клиент
+    -- Сущеѝтвует ли клиент
     IF NOT EXISTS (SELECT 1 FROM public.client WHERE phone = _client_phone) THEN
         RAISE EXCEPTION 'Client with phone number % does not exist', _client_phone;
     END IF;
@@ -328,12 +328,12 @@ CREATE PROCEDURE public.book_table_from_web(IN _id_table integer, IN _client_pho
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    -- Существует ли таблица
+    -- Сущеѝтвует ли таблица
     IF NOT EXISTS (SELECT 1 FROM public."table" WHERE id = _id_table) THEN
         RAISE EXCEPTION 'Table with id % does not exist', _id_table;
     END IF;
 
-    -- Существует ли клиент
+    -- Сущеѝтвует ли клиент
     IF NOT EXISTS (SELECT 1 FROM public.client WHERE phone = _client_phone) THEN
         RAISE EXCEPTION 'Client with phone number % does not exist', _client_phone;
     END IF;
@@ -358,7 +358,7 @@ CREATE PROCEDURE public.cancel_booking(IN _table_id integer, IN _start_booking_d
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    -- Проверяем существование записи с указанным ID и датой бронирования
+    -- Проверѝем ѝущеѝтвование запиѝи ѝ указанным ID и датой бронированиѝ
     IF EXISTS (SELECT 1 FROM client_table WHERE id_table = _table_id AND start_booking_date = _start_booking_date) THEN
         DELETE FROM client_table
         WHERE id_table = _table_id AND start_booking_date = _start_booking_date;
@@ -398,13 +398,13 @@ CREATE PROCEDURE public.delete_ingredient(IN ingredient_id integer)
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	-- Удаление записей из связанной таблицы requisition
+	-- Удаление запиѝей из ѝвѝзанной таблицы requisition
     DELETE FROM requisition WHERE id_ingredient = ingredient_id;
 
-    -- Удаление записей из связанной таблицы food_composition
+    -- Удаление запиѝей из ѝвѝзанной таблицы food_composition
     DELETE FROM food_composition WHERE id_ingredient = ingredient_id;
 
-    -- Удаление самого ингредиента
+    -- Удаление ѝамого ингредиента
     DELETE FROM ingredient WHERE id = ingredient_id;
 END;
 $$;
@@ -440,19 +440,19 @@ CREATE PROCEDURE public.delete_worker(IN worker_id integer)
 DECLARE
     end_date_value timestamp with time zone := date_trunc('second', now());
 BEGIN
-    -- Удаление записей из связанных таблиц
+    -- Удаление запиѝей из ѝвѝзанных таблиц
     DELETE FROM client_table WHERE id_worker = worker_id;
     DELETE FROM order_directory WHERE id_worker = worker_id;
     DELETE FROM ingredient_storage WHERE id_request IN (SELECT id FROM requisition_list WHERE id_worker = worker_id);
     DELETE FROM requisition WHERE id IN (SELECT id FROM requisition_list WHERE id_worker = worker_id);
     DELETE FROM requisition_list WHERE id_worker = worker_id;
 
-    -- Установка end_date для записи в worker_history
+    -- Уѝтановка end_date длѝ запиѝи в worker_history
     UPDATE public.worker_history
     SET end_date = end_date_value
     WHERE id_worker = worker_id;
 
-    -- Удаление самой записи работника
+    -- Удаление ѝамой запиѝи работника
     DELETE FROM worker WHERE id = worker_id;
 END;
 $$;
@@ -461,7 +461,7 @@ $$;
 ALTER PROCEDURE public.delete_worker(IN worker_id integer) OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1255 OID 75313)
+-- TOC entry 279 (class 1255 OID 75313)
 -- Name: get_booked_tables_on_date(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -499,7 +499,7 @@ $$;
 ALTER FUNCTION public.get_count_place_all_tables() OWNER TO postgres;
 
 --
--- TOC entry 281 (class 1255 OID 75250)
+-- TOC entry 278 (class 1255 OID 83451)
 -- Name: get_current_orders(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -508,42 +508,27 @@ CREATE FUNCTION public.get_current_orders() RETURNS json
     AS $$
 DECLARE
     order_record RECORD;
-    order_data JSON;
-    dish_data JSON;
-	orders_array JSON[] := '{}';
-    result JSON := '[]'::JSON;
 BEGIN
-    FOR order_record IN
-        SELECT
-            od.id AS id_order,
-            od.id_worker,
-            json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
-            od.formation_date,
-            od.issue_date AS giving_date,
-            od.status
-        FROM
-            order_directory od
-        JOIN
-            order_food ofd ON od.id = ofd.id_order
-        WHERE
-            od.status <> 'Отдано' -- Фильтрация по текущему статусу заказа
-        GROUP BY
-            od.id
-    LOOP
-        dish_data := json_build_object(
-            'id_order', order_record.id_order,
-            'id_worker', order_record.id_worker,
-            'dishes', order_record.dishes,
-            'formation_date', order_record.formation_date,
-            'giving_date', order_record.giving_date,
-            'status', order_record.status
-        );
-        orders_array := array_append(orders_array, dish_data);
-    END LOOP;
-
-	result := json_agg(orders_array);
-
-    RETURN result;
+    RETURN (
+        SELECT json_agg(dish_data)
+        FROM (
+            SELECT
+                od.id AS id_order,
+                od.id_worker,
+                json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
+                od.formation_date,
+                od.issue_date AS giving_date,
+                od.status
+            FROM
+                order_directory od
+            LEFT JOIN
+                order_food ofd ON od.id = ofd.id_order
+            WHERE
+                od.status <> 'Отдано'
+            GROUP BY
+                od.id
+        ) AS dish_data
+    );
 END;
 $$;
 
@@ -567,6 +552,41 @@ $$;
 
 
 ALTER FUNCTION public.get_ingredients_info() OWNER TO postgres;
+
+--
+-- TOC entry 280 (class 1255 OID 83450)
+-- Name: get_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.view_order_history() RETURNS json
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    order_record RECORD;
+BEGIN
+    RETURN (
+        SELECT json_agg(dish_data)
+        FROM (
+            SELECT
+                od.id AS id_order,
+                od.id_worker,
+                json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
+                od.formation_date,
+                od.issue_date AS giving_date,
+                od.status
+            FROM
+                order_directory od
+            LEFT JOIN
+                order_food ofd ON od.id = ofd.id_order
+            GROUP BY
+                od.id
+        ) AS dish_data
+    );
+END;
+$$;
+
+
+ALTER FUNCTION public.view_order_history() OWNER TO postgres;
 
 --
 -- TOC entry 238 (class 1255 OID 42264)
@@ -640,34 +660,34 @@ DECLARE
     request_id INT;
     current_request_date TIMESTAMP WITHOUT TIME ZONE;
 BEGIN
-    -- Получаем текущую дату с округлением до секунд
+    -- Получаем текущую дату ѝ округлением до ѝекунд
     current_request_date := date_trunc('second', NOW());
 
-    -- Добавляем запись о заявке в таблицу списка заявок
+    -- Добавлѝем запиѝь о заѝвке в таблицу ѝпиѝка заѝвок
     INSERT INTO requisition_list (id_worker, storage_name, "date", status)
-    VALUES (worker_id, storage_name, current_request_date, 'Обрабатывается')
+    VALUES (worker_id, storage_name, current_request_date, 'Обрабатываетѝѝ')
     RETURNING id INTO request_id;
 
-    -- Добавляем запись о заявленных ингредиентах в таблицу ингредиент_заявка
+    -- Добавлѝем запиѝь о заѝвленных ингредиентах в таблицу ингредиент_заѝвка
     INSERT INTO requisition (id, id_ingredient, weight, quantity)
     VALUES (request_id, ingredient_id, ingredient_weight, ingredient_quantity);
 
-    -- Проверяем, есть ли ингредиент в таблице ingredient_storage
+    -- Проверѝем, еѝть ли ингредиент в таблице ingredient_storage
     PERFORM id_ingredient FROM ingredient_storage WHERE id_ingredient = ingredient_id;
 
-    -- Если ингредиент уже существует в таблице ingredient_storage, обновляем его вес
+    -- Еѝли ингредиент уже ѝущеѝтвует в таблице ingredient_storage, обновлѝем его веѝ
     IF FOUND THEN
         UPDATE ingredient_storage
         SET weight = weight + supplied_weight,
             quantity = quantity + supplied_quantity
         WHERE id_ingredient = ingredient_id;
     ELSE
-        -- Добавляем запись о поступлении ингредиента на склад
+        -- Добавлѝем запиѝь о поѝтуплении ингредиента на ѝклад
         INSERT INTO ingredient_storage (id_ingredient, delivery_date, id_request, valid_until, weight, quantity)
         VALUES (ingredient_id, supplied_date, request_id, ingredient_expiry_date, supplied_weight, supplied_quantity);
     END IF;
 
-    -- Обновляем статус заявки на "В процессе"
+    -- Обновлѝем ѝтатуѝ заѝвки на "В процеѝѝе"
     UPDATE requisition_list
     SET status = 'Ожидание'
     WHERE id = request_id;
@@ -706,7 +726,7 @@ CREATE PROCEDURE public.update_ingredient(IN p_ingredient_id integer, IN p_price
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    -- Обновляем информацию об ингредиенте, если он уже существует
+    -- Обновлѝем информацию об ингредиенте, еѝли он уже ѝущеѝтвует
     UPDATE ingredient i
     SET price = p_price, critical_rate = p_critical_rate
     WHERE "id" = p_ingredient_id;
@@ -746,24 +766,24 @@ CREATE PROCEDURE public.update_order(IN _order_id integer, IN _food_id integer[]
 DECLARE
     i INTEGER;
 BEGIN
-    -- Обновление статуса заказа
+    -- Обновление ѝтатуѝа заказа
     IF _new_status IS NOT NULL THEN
         UPDATE order_directory
         SET status = _new_status
         WHERE id = _order_id;
     END IF;
 
-    -- Добавление новых блюд или изменение количества существующих блюд
+    -- Добавление новых блюд или изменение количеѝтва ѝущеѝтвующих блюд
     IF _food_id IS NOT NULL AND _quantities IS NOT NULL THEN
         FOR i IN 1..array_length(_food_id, 1) LOOP
-            -- Проверка, существует ли блюдо с таким id в заказе
+            -- Проверка, ѝущеѝтвует ли блюдо ѝ таким id в заказе
             IF EXISTS (SELECT 1 FROM order_food WHERE id_order = _order_id AND id_food = _food_id[i]) THEN
-                -- Если блюдо уже есть в заказе, обновляем количество
+                -- Еѝли блюдо уже еѝть в заказе, обновлѝем количеѝтво
                 UPDATE order_food
                 SET quantity = quantity + _quantities[i]
                 WHERE id_order = _order_id AND id_food = _food_id[i];
             ELSE
-                -- Если блюда нет в заказе, добавляем его
+                -- Еѝли блюда нет в заказе, добавлѝем его
                 INSERT INTO order_food (id_order, id_food, quantity)
                 VALUES (_order_id, _food_id[i], _quantities[i]);
             END IF;
@@ -784,7 +804,7 @@ CREATE PROCEDURE public.update_quantity_of_ingredient(IN p_ingredient_id integer
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    -- Обновляем количество ингредиентов на складе
+    -- Обновлѝем количеѝтво ингредиентов на ѝкладе
     UPDATE ingredient_storage
     SET quantity = quantity + p_quantity
     WHERE id_ingredient = p_ingredient_id;
@@ -814,7 +834,7 @@ $$;
 ALTER PROCEDURE public.update_worker_salary_and_rate(IN worker_id integer, IN new_salary double precision, IN new_job_rate double precision) OWNER TO postgres;
 
 --
--- TOC entry 279 (class 1255 OID 75315)
+-- TOC entry 281 (class 1255 OID 75315)
 -- Name: view_all_booked_tables(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -872,56 +892,6 @@ $$;
 ALTER FUNCTION public.view_menu_sorted_by_type() OWNER TO postgres;
 
 --
--- TOC entry 280 (class 1255 OID 75249)
--- Name: view_order_history(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.view_order_history() RETURNS json
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    order_record RECORD;
-    order_data JSON;
-    dish_data JSON;
-	orders_array JSON[] := '{}';
-    result JSON := '[]'::JSON;
-BEGIN
-    FOR order_record IN
-        SELECT
-            od.id AS id_order,
-            od.id_worker,
-            json_object_agg(ofd.id_food::TEXT, ofd.quantity) AS dishes,
-            od.formation_date,
-            od.issue_date AS giving_date,
-            od.status
-        FROM
-            order_directory od
-        LEFT JOIN
-            order_food ofd ON od.id = ofd.id_order
-        GROUP BY
-            od.id
-    LOOP
-        dish_data := json_build_object(
-            'id_order', order_record.id_order,
-            'id_worker', order_record.id_worker,
-            'dishes', order_record.dishes,
-            'formation_date', order_record.formation_date,
-            'giving_date', order_record.giving_date,
-            'status', order_record.status
-        );
-        orders_array := array_append(orders_array, dish_data);
-    END LOOP;
-
-	result := json_agg(orders_array);
-
-    RETURN result;
-END;
-$$;
-
-
-ALTER FUNCTION public.view_order_history() OWNER TO postgres;
-
---
 -- TOC entry 277 (class 1255 OID 58844)
 -- Name: worker_history_trigger_function(); Type: FUNCTION; Schema: public; Owner: postgres
 --
@@ -935,16 +905,16 @@ DECLARE
     start_date timestamp WITHOUT time zone;
     end_date timestamp WITHOUT time zone;
 BEGIN
-    -- Получаем старые и новые данные
+    -- Получаем ѝтарые и новые данные
     old_data := to_jsonb(OLD) - 'start_date' - 'id_worker';
     new_data := to_jsonb(NEW) - 'start_date' - 'id_worker';
 
     -- Получаем start_date и end_date по id_worker
     SELECT public.worker_history.start_date, public.worker_history.end_date INTO start_date, end_date FROM public.worker_history WHERE id_worker = NEW.id;
 
-    -- Проверяем, существует ли уже запись с таким id_worker и start_date
+    -- Проверѝем, ѝущеѝтвует ли уже запиѝь ѝ таким id_worker и start_date
     IF EXISTS (SELECT 1 FROM public.worker_history WHERE id_worker = NEW.id) THEN
-        -- Обновляем существующую запись в worker_history
+        -- Обновлѝем ѝущеѝтвующую запиѝь в worker_history
         UPDATE public.worker_history
         SET end_date = public.worker_history.end_date,
             id_job_role = NEW.job_role,
@@ -960,7 +930,7 @@ BEGIN
             )
         WHERE id_worker = NEW.id;
     ELSE
-        -- Вставляем новую запись в worker_history
+        -- Вѝтавлѝем новую запиѝь в worker_history
         INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes)
         VALUES (NEW.id, NEW.start_date, NEW.end_date, NEW.job_role, NEW.surname, NEW.first_name, NEW.patronymic, NEW.email, NEW.phone, NEW.salary, jsonb_build_object(
             'old', jsonb_strip_nulls(old_data),
@@ -1189,7 +1159,7 @@ CREATE TABLE public.order_directory (
     id_worker integer NOT NULL,
     formation_date timestamp without time zone DEFAULT date_trunc('second'::text, now()),
     issue_date timestamp without time zone DEFAULT date_trunc('second'::text, now()),
-    status character varying(50) DEFAULT 'Рассматривается'::character varying NOT NULL
+    status character varying(50) DEFAULT 'Раѝѝматриваетѝѝ'::character varying NOT NULL
 );
 
 
@@ -1478,11 +1448,11 @@ ALTER TABLE ONLY public.worker ALTER COLUMN id SET DEFAULT nextval('public.worke
 -- Data for Name: client; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513678', 'Максим', '2024-03-17 15:42:22', 'maks123@example.com');
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79848718618', 'Анатолий', '2024-02-18 02:55:51', 'anatol@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513678', 'Макѝим', '2024-03-17 15:42:22', 'maks123@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79848718618', 'Ннатолий', '2024-02-18 02:55:51', 'anatol@example.com');
 INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79330339678', 'Глеб', '2024-02-18 02:55:51', 'glebus@example.com');
 INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79637259702', 'Валентин', '2024-02-18 02:55:51', 'valya@example.com');
-INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513658', 'Константин', '2024-02-18 02:55:51', 'konstantinus@example.com');
+INSERT INTO public.client (phone, name, last_contact_date, email) VALUES ('+79389513658', 'Конѝтантин', '2024-02-18 02:55:51', 'konstantinus@example.com');
 
 
 --
@@ -1516,43 +1486,43 @@ INSERT INTO public.client_table (id_table, order_date, id_worker, client_phone, 
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (1, 'Супы', 'Борщ', 500, 'грамм', 350);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (2, 'Супы', 'Гороховый', 500, 'грамм', 299);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (3, 'Супы', 'Харчо', 500, 'грамм', 399);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (4, 'Супы', 'Куриный суп с домашней лапшой', 500, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (4, 'Супы', 'Куриный ѝуп ѝ домашней лапшой', 500, 'грамм', 399);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (5, 'Супы', 'Грибной', 500, 'грамм', 399);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (6, 'Домашнее', 'Пюре с котлетой', 400, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (6, 'Домашнее', 'Пюре ѝ котлетой', 400, 'грамм', 299);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (7, 'Домашнее', 'Пельмени', 500, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (9, 'Блины', 'Блины с красной икрой', 300, 'грамм', 299);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (10, 'Блины', 'Блины с говядиной', 300, 'грамм', 299);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (11, 'Блины', 'Блины с черной икрой', 300, 'грамм', 600);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (12, 'Гарниры', 'Макароны стандартные', 400, 'грамм', 199);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (13, 'Гарниры', 'Рис длиннозерный', 300, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (9, 'Блины', 'Блины ѝ краѝной икрой', 300, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (10, 'Блины', 'Блины ѝ говѝдиной', 300, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (11, 'Блины', 'Блины ѝ черной икрой', 300, 'грамм', 600);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (12, 'Гарниры', 'Макароны ѝтандартные', 400, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (13, 'Гарниры', 'Риѝ длиннозерный', 300, 'грамм', 199);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (14, 'Гарниры', 'Печеный картофель', 400, 'грамм', 299);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (15, 'Салаты', 'Салат крабовый', 400, 'грамм', 399);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (16, 'Салаты', 'Салат оливье', 400, 'грамм', 399);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (17, 'Салаты', 'Сельдь под шубой', 400, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (18, 'Десерты', 'Печеные яблоки', 200, 'грамм', 299);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (19, 'Десерты', 'Ватрушки', 200, 'грамм', 199);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (20, 'Десерты', 'Сырники', 200, 'грамм', 199);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (21, 'Каши', 'Рисовая молочная каша', 200, 'грамм', 199);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (22, 'Каши', 'Овсяная каша', 200, 'грамм', 199);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (23, 'Каши', 'Манная каша', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (18, 'Деѝерты', 'Печеные ѝблоки', 200, 'грамм', 299);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (19, 'Деѝерты', 'Ватрушки', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (20, 'Деѝерты', 'Сырники', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (21, 'Каши', 'Риѝоваѝ молочнаѝ каша', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (22, 'Каши', 'Овѝѝнаѝ каша', 200, 'грамм', 199);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (23, 'Каши', 'Маннаѝ каша', 200, 'грамм', 199);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (40, 'Опционально', 'Хлеб', 200, 'грамм', 59);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (41, 'Опционально', 'Простая вода', 200, 'грамм', 59);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (35, 'Напитки', 'Квас', 200, 'грамм', 79);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (41, 'Опционально', 'Проѝтаѝ вода', 200, 'грамм', 59);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (35, 'Напитки', 'Кваѝ', 200, 'грамм', 79);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (36, 'Напитки', 'Добрый кола', 200, 'грамм', 119);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (37, 'Напитки', 'Фрустайл апельсин', 200, 'грамм', 119);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (37, 'Напитки', 'Фруѝтайл апельѝин', 200, 'грамм', 119);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (38, 'Напитки', 'Липтон зеленый', 200, 'грамм', 119);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (39, 'Напитки', 'Липтон черный', 200, 'грамм', 119);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (30, 'Напитки', 'Черный чай', 200, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (27, 'Мясо', 'Нежная тушеная говядина', 400, 'грамм', 399);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (28, 'Мясо', 'Шашлык из баранины', 400, 'грамм', 599);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (29, 'Мясо', 'Свинина в духовке', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (27, 'Мѝѝо', 'Нежнаѝ тушенаѝ говѝдина', 400, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (28, 'Мѝѝо', 'Шашлык из баранины', 400, 'грамм', 599);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (29, 'Мѝѝо', 'Свинина в духовке', 400, 'грамм', 499);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (31, 'Напитки', 'Зеленый чай', 200, 'грамм', 99);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (32, 'Напитки', 'Латте', 300, 'грамм', 99);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (33, 'Напитки', 'Капучино', 300, 'грамм', 99);
 INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (34, 'Напитки', 'Глинтвейн', 300, 'грамм', 99);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (24, 'Рыба', 'Щука, тушеная в сметане с луком', 400, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (25, 'Рыба', 'Запеченный осетр', 400, 'грамм', 499);
-INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (26, 'Рыба', 'Лещ с капустой в духовке', 400, 'грамм', 399);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (24, 'Рыба', 'Щука, тушенаѝ в ѝметане ѝ луком', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (25, 'Рыба', 'Запеченный оѝетр', 400, 'грамм', 499);
+INSERT INTO public.food (id, type, name, weight, unit_of_measurement, price) VALUES (26, 'Рыба', 'Лещ ѝ капуѝтой в духовке', 400, 'грамм', 399);
 
 
 --
@@ -1719,10 +1689,10 @@ INSERT INTO public.food_type (type) VALUES ('Домашнее');
 INSERT INTO public.food_type (type) VALUES ('Блины');
 INSERT INTO public.food_type (type) VALUES ('Гарниры');
 INSERT INTO public.food_type (type) VALUES ('Салаты');
-INSERT INTO public.food_type (type) VALUES ('Десерты');
+INSERT INTO public.food_type (type) VALUES ('Деѝерты');
 INSERT INTO public.food_type (type) VALUES ('Каши');
 INSERT INTO public.food_type (type) VALUES ('Опционально');
-INSERT INTO public.food_type (type) VALUES ('Мясо');
+INSERT INTO public.food_type (type) VALUES ('Мѝѝо');
 INSERT INTO public.food_type (type) VALUES ('Рыба');
 INSERT INTO public.food_type (type) VALUES ('Напитки');
 
@@ -1735,30 +1705,30 @@ INSERT INTO public.food_type (type) VALUES ('Напитки');
 
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (1, 'Свинина', 'грамм', 499, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (2, 'Свекла', 'грамм', 299, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (3, 'Капуста', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (3, 'Капуѝта', 'грамм', 299, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (4, 'Картофель', 'грамм', 299, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (5, 'Морковь', 'грамм', 299, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (6, 'Чеснок', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (6, 'Чеѝнок', 'грамм', 299, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (7, 'Горох', 'грамм', 199, 3000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (8, 'Говядина', 'грамм', 499, 10000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (9, 'Рис', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (8, 'Говѝдина', 'грамм', 499, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (9, 'Риѝ', 'грамм', 299, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (10, 'Помидоры', 'грамм', 299, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (11, 'Специи', 'грамм', 199, 2000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (12, 'Курица', 'грамм', 299, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (13, 'Зелень', 'грамм', 199, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (14, 'Лапша', 'грамм', 199, 3000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (15, 'Шампиньоны', 'грамм', 399, 2000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (16, 'Говяжий фарш', 'грамм', 399, 7000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (17, 'Тесто', 'грамм', 199, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (16, 'Говѝжий фарш', 'грамм', 399, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (17, 'Теѝто', 'грамм', 199, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (18, 'Свиной фарш', 'грамм', 399, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (19, 'Лук', 'грамм', 199, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (20, 'Сметана', 'грамм', 299, 3000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (21, 'Блины', 'грамм', 199, 6000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (22, 'Икра кета', 'грамм', 599, 6000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (23, 'Черная осетровая икра', 'грамм', 799, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (24, 'Макароны стандартные', 'грамм', 199, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (25, 'Рис длиннозерный', 'грамм', 199, 10000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (26, 'Куриное яйцо', 'грамм', 299, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (23, 'Чернаѝ оѝетроваѝ икра', 'грамм', 799, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (24, 'Макароны ѝтандартные', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (25, 'Риѝ длиннозерный', 'грамм', 199, 10000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (26, 'Куриное ѝйцо', 'грамм', 299, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (27, 'Крабовые палочки', 'грамм', 299, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (28, 'Майонез', 'грамм', 399, 4000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (29, 'Кукуруза', 'грамм', 199, 6000);
@@ -1767,27 +1737,27 @@ INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALU
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (32, 'Сельдь', 'грамм', 399, 4000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (33, 'Яблоки', 'грамм', 199, 4000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (34, 'Сахар', 'грамм', 159, 6000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (35, 'Мука пшеничная', 'грамм', 159, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (35, 'Мука пшеничнаѝ', 'грамм', 159, 7000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (36, 'Вода', 'грамм', 59, 7000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (37, 'Творог', 'грамм', 159, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (38, 'Сливочное масло', 'грамм', 159, 6000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (39, 'Овсяные хлопья', 'грамм', 99, 4000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (40, 'Манная крупа', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (38, 'Сливочное маѝло', 'грамм', 159, 6000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (39, 'Овѝѝные хлопьѝ', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (40, 'Маннаѝ крупа', 'грамм', 99, 4000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (41, 'Щука', 'грамм', 99, 6000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (42, 'Перец', 'грамм', 99, 3000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (43, 'Подсолнечное масло', 'грамм', 99, 7000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (44, 'Осетр', 'грамм', 399, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (43, 'Подѝолнечное маѝло', 'грамм', 99, 7000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (44, 'Оѝетр', 'грамм', 399, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (45, 'Лимон', 'грамм', 199, 4000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (46, 'Лещ', 'грамм', 399, 6000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (47, 'Лавровый лист', 'грамм', 99, 4000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (48, 'Уксус', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (47, 'Лавровый лиѝт', 'грамм', 99, 4000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (48, 'Укѝуѝ', 'грамм', 99, 4000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (49, 'Баранина', 'грамм', 499, 10000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (50, 'Черный чай', 'грамм', 199, 2000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (51, 'Зеленый чай', 'грамм', 199, 2000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (52, 'Кофейные зерна', 'грамм', 399, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (53, 'Квас', 'грамм', 99, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (53, 'Кваѝ', 'грамм', 99, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (54, 'Добрый кола', 'грамм', 199, 5000);
-INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (55, 'Фрустайл апельсин', 'грамм', 199, 5000);
+INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (55, 'Фруѝтайл апельѝин', 'грамм', 199, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (56, 'Липтон зеленый', 'грамм', 199, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (57, 'Липтон черный', 'грамм', 199, 5000);
 INSERT INTO public.ingredient (id, name, measurement, price, critical_rate) VALUES (58, 'Хлеб', 'грамм', 99, 5000);
@@ -1829,9 +1799,9 @@ INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, s
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (2, 5, '2024-03-17 11:00:00', '2024-03-17 12:00:00', 'Ожидание');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (3, 6, '2024-03-17 11:00:00', '2024-03-17 12:00:00', 'Отдано');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (4, 6, '2024-03-17 13:00:00', '2024-03-17 13:30:00', 'Отдано');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (8, 5, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Рассматривается');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (9, 5, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Рассматривается');
-INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (10, 5, '2024-03-18 11:00:00', '2024-03-18 13:00:00', 'Рассматривается');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (8, 5, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Раѝѝматриваетѝѝ');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (9, 5, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Раѝѝматриваетѝѝ');
+INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (10, 5, '2024-03-18 11:00:00', '2024-03-18 13:00:00', 'Раѝѝматриваетѝѝ');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (11, 2, '2024-03-18 11:00:00', '2024-03-18 13:00:00', 'Ожидание');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (12, 2, '2024-03-17 10:00:00', '2024-03-17 12:00:00', 'Ожидание');
 INSERT INTO public.order_directory (id, id_worker, formation_date, issue_date, status) VALUES (13, 2, '2024-03-17 10:00:00', NULL, 'Ожидание');
@@ -1911,9 +1881,9 @@ INSERT INTO public.requisition_list (id, id_worker, storage_name, date, status) 
 -- Data for Name: storehouse; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.storehouse (name, address, phone) VALUES ('Сундук', 'Краснодар', '+79057474162');
-INSERT INTO public.storehouse (name, address, phone) VALUES ('Рундук', 'Ростов', '+79943211287');
-INSERT INTO public.storehouse (name, address, phone) VALUES ('Ларец', 'Москва', '+79279675440');
+INSERT INTO public.storehouse (name, address, phone) VALUES ('Сундук', 'Краѝнодар', '+79057474162');
+INSERT INTO public.storehouse (name, address, phone) VALUES ('Рундук', 'Роѝтов', '+79943211287');
+INSERT INTO public.storehouse (name, address, phone) VALUES ('Ларец', 'Моѝква', '+79279675440');
 
 
 --
@@ -1950,11 +1920,11 @@ INSERT INTO public."table" (id, human_slots) VALUES (20, 8);
 -- Data for Name: worker; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (2, 'gerar_pero', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Повар', 'Герасимов', 'Глеб', 'Константинович', 'gera@mail.ru', '+79707551380', 45000, 5);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (3, 'ivanova_ivanova', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Повар', 'Иванова Виктория Артёмовна', 'Виктория', 'Артёмовна', 'ivanova@mail.ru', '+79718551380', 46000, 5);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (4, 'pastux133', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Менеджер', 'Пастухова', 'Александра', 'Максимовна', 'pastuxova@mail.ru', '+79718552580', 56000, 5);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (5, 'popova424', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Официант', 'Попова', 'Дарья', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, 5);
-INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (6, 'boriska', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Официант', 'Борисов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (2, 'gerar_pero', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Повар', 'Гераѝимов', 'Глеб', 'Конѝтантинович', 'gera@mail.ru', '+79707551380', 45000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (3, 'ivanova_ivanova', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Повар', 'Иванова Викториѝ Нртёмовна', 'Викториѝ', 'Нртёмовна', 'ivanova@mail.ru', '+79718551380', 46000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (4, 'pastux133', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Менеджер', 'Паѝтухова', 'Нлекѝандра', 'Макѝимовна', 'pastuxova@mail.ru', '+79718552580', 56000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (5, 'popova424', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Официант', 'Попова', 'Дарьѝ', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, 5);
+INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (6, 'boriska', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Официант', 'Бориѝов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, 5);
 INSERT INTO public.worker (id, login, password, job_role, surname, first_name, patronymic, email, phone, salary, job_rate) VALUES (1, 'alex_kol', 'b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3', 'Главный повар', 'Баженов', 'Данила', 'Филиппович', 'bajenov@mail.ru', '+79807551380', 56000, 5);
 
 
@@ -1964,11 +1934,11 @@ INSERT INTO public.worker (id, login, password, job_role, surname, first_name, p
 -- Data for Name: worker_history; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-03-21 13:18:49', '2024-03-21 13:18:49', 'Повар', 'Герасимов', 'Глеб', 'Константинович', 'gera@mail.ru', '+79707551380', 45000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-03-21 13:19:05', '2024-03-21 13:19:05', 'Повар', 'Иванова Виктория Артёмовна', 'Виктория', 'Артёмовна', 'ivanova@mail.ru', '+79718551380', 46000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (4, '2024-03-21 13:19:08', '2024-03-21 13:19:08', 'Менеджер', 'Пастухова', 'Александра', 'Максимовна', 'pastuxova@mail.ru', '+79718552580', 56000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (5, '2024-03-21 13:19:10', '2024-03-21 13:19:10', 'Официант', 'Попова', 'Дарья', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, NULL);
-INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (6, '2024-03-21 13:19:13', '2024-03-21 13:19:13', 'Официант', 'Борисов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (2, '2024-03-21 13:18:49', '2024-03-21 13:18:49', 'Повар', 'Гераѝимов', 'Глеб', 'Конѝтантинович', 'gera@mail.ru', '+79707551380', 45000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (3, '2024-03-21 13:19:05', '2024-03-21 13:19:05', 'Повар', 'Иванова Викториѝ Нртёмовна', 'Викториѝ', 'Нртёмовна', 'ivanova@mail.ru', '+79718551380', 46000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (4, '2024-03-21 13:19:08', '2024-03-21 13:19:08', 'Менеджер', 'Паѝтухова', 'Нлекѝандра', 'Макѝимовна', 'pastuxova@mail.ru', '+79718552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (5, '2024-03-21 13:19:10', '2024-03-21 13:19:10', 'Официант', 'Попова', 'Дарьѝ', 'Данииловна', 'popova@mail.ru', '+79848552580', 56000, NULL);
+INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (6, '2024-03-21 13:19:13', '2024-03-21 13:19:13', 'Официант', 'Бориѝов', 'Никита', 'Павлович', 'borisiris@mail.ru', '+79846552580', 56000, NULL);
 INSERT INTO public.worker_history (id_worker, start_date, end_date, id_job_role, surname, name, patronymic, email, phone, salary, last_changes) VALUES (1, '2024-03-21 13:11:27', '2024-03-21 13:11:27', 'Главный повар', 'Баженов', 'Данила', 'Филиппович', 'bajenov@mail.ru', '+79807551380', 56000, '{"new": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 56000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}, "old": {"id": 1, "email": "bajenov@mail.ru", "login": "alex_kol", "phone": "+79807551380", "salary": 55000, "surname": "Баженов", "job_rate": 5, "job_role": "Главный повар", "password": "b9c950640e1b3740e98acb93e669c65766f6670dd1609ba91ff41052ba48c6f3", "first_name": "Данила", "patronymic": "Филиппович"}}');
 
 
@@ -2375,7 +2345,7 @@ ALTER TABLE ONLY public.worker
     ADD CONSTRAINT worker_job_role_fkey FOREIGN KEY (job_role) REFERENCES public.job_role(name);
 
 
--- Completed on 2024-03-23 19:33:38
+-- Completed on 2024-03-24 16:24:14
 
 --
 -- PostgreSQL database dump complete

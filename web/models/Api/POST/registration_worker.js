@@ -42,7 +42,7 @@ const registration_worker = async (req, res, next) =>
                 return next(ApiError.internal('Internal error with hash password'));
             }
 
-            db.query('CALL add_worker($1,$2,$3,$4,$5,$6,$7,$8, $9, $10,$11)', [
+            db.query('CALL add_worker($1,$2,$3,$4,$5,$6,$7,$8, $9, $10)', [
                 login,
                 hash,
                 job_role,

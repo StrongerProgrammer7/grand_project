@@ -28,15 +28,13 @@ const cancel_booking = async (req, res, next) =>
         {
             errorHandler(
                 "Error with cancel book table",
-                ["23505"],
-                "Table is not exists, check your data",
+                ["23505", "P0001"],
+                "Table or data is not exists, check your data",
                 "Internal error with cancel booking table!",
                 err,
                 next
             );
         });
-
-
 }
 
 module.exports = cancel_booking;

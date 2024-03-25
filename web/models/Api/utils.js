@@ -40,6 +40,7 @@ async function checkbooking(id_table, start_datetime, end_datetime)
     };
     return true;
 }
+
 async function isExistsClient(db, phone_client, requireClient = true)
 {
     const data = await db.query("SELECT * from client WHERE phone LIKE $1;", [phone_client]);

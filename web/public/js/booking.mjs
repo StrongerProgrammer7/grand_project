@@ -118,9 +118,12 @@ function parseRangeString(rangeString) {
 
     return result;
 }
+let width = window.innerWidth;
+
 function booking()
-{
-    let width = window.innerWidth;
+{   
+    console.log('gp')
+    width = window.innerWidth;
     if (width < 1391)
     {
         let booking = document.querySelector(".booking");
@@ -131,11 +134,17 @@ function booking()
         booking.style.height = scale * 880 + "px";
         // popup.style.top = parseInt(popup.style.top)*scale+"px";
     }
+    else {
+        let booking = document.querySelector(".booking");
+        booking.style.transform = `scale(1)`;
+        booking.style.height = 880 + "px";
+    }
 }
 
 
 
 booking();
+
 window.onresize = booking;
 
 /////////////////

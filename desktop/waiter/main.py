@@ -90,6 +90,14 @@ class MainWindow(QMainWindow):
 
         widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
+        # Начинаем отслеживать изменения в файле
+        self.file_watcher = QFileSystemWatcher()
+        self.file_watcher.fileChanged.connect(self.update_table)
+
+        self.file_path = "order.json"
+        self.file_watcher.addPath(self.file_path)
+        self.insert_table(self.ui.tableWidget)
+
         # DATETIME
         self.timer = QTimer(self)
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
@@ -122,8 +130,8 @@ class MainWindow(QMainWindow):
             lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
-        widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
-        widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
+        #widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
+        #widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
 
         # 3 ВКЛАДКА
         # widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
@@ -134,8 +142,9 @@ class MainWindow(QMainWindow):
         tab1_column_widths = [80, 300, 150]
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
 
-        tab2_column_widths = [80, 200, 200, 200, 200, 200]
+        tab2_column_widths = [500, 300]
         UIFunctions.set_column_widths(self, widgets.tableWidget, tab2_column_widths)
+        widgets.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
         tab3_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab3_column_widths)
@@ -247,14 +256,14 @@ class MainWindow(QMainWindow):
             # self.fill_table_widget(self.ui.tableWidget)
 
             # Создаем и запускаем потоки для заполнения таблиц
-            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            order_thread.start()
-            table_booking_thread.start()
+            #order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            #table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            #order_thread.start()
+            #table_booking_thread.start()
 
             # Ожидаем завершения потоков
-            order_thread.join()
-            table_booking_thread.join()
+            #order_thread.join()
+            #table_booking_thread.join()
 
             self.new_window3.close()
             self.show()
@@ -519,6 +528,59 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_2.setItem(row_index, 2, QTableWidgetItem())
                 self.ui.tableWidget_2.item(row_index, 2).setData(Qt.DisplayRole, food_id)
 
+    def insert_table(self, table):
+        with open(self.file_path, "r", encoding="utf-8") as json_file:
+            orders_data = json.load(json_file)["data"]
+            # Заполнение таблицы данными из JSON
+            for order in orders_data:
+                self.insert_order_to_table(table, order)
+
+    def insert_order_to_table(self, table, order):
+        row_index = table.rowCount()
+        table.insertRow(row_index)
+
+        id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
+        giving_date = order["giving_date"]
+        formatted_giving_date = datetime.strptime(giving_date, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d %H:%M:%S")
+        giving_date_item = QTableWidgetItem(formatted_giving_date)
+
+        font = QFont("Segoe UI", 14)
+        id_order_item.setFont(font)
+        giving_date_item.setFont(font)
+
+        table.setItem(row_index, 0, id_order_item)
+        table.setItem(row_index, 1, giving_date_item)
+
+        status = order.get("status", "")
+        dishes = order.get("dishes", {})
+
+        for dish_id, quantity in dishes.items():
+            dish_name = f"Блюдо {dish_id}, Количество {quantity}"
+            dish_item = QTableWidgetItem(dish_name)
+
+            combo_box = QComboBox()
+            combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
+
+            if table == self.ui.tableWidget_2:
+                if row_index < 4:
+                    dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                    combo_box.setEnabled(True)
+                else:
+                    combo_box.setEnabled(False)
+            else:
+                dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                combo_box.setEnabled(False)
+            row_index += 1
+            table.insertRow(row_index)
+            table.setItem(row_index, 0, dish_item)
+            table.setCellWidget(row_index, 1, combo_box)
+
+    def update_table(self):
+        # Очищаем таблицу перед обновлением
+        self.ui.tableWidget.clearContents()
+        self.ui.tableWidget.setRowCount(0)
+        # Заполняем таблицу заново
+        self.insert_table(self.ui.tableWidget)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

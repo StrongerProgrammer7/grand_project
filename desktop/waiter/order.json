@@ -36,17 +36,6 @@
       "formation_date": "2024-03-04T10:15:52.909Z",
       "giving_date": "2024-03-04T10:15:52.909Z",
       "status": "Готово"
-    },
-    {
-      "id_order": 4,
-      "id_worker": 1,
-      "dishes": {
-        "4": 2,
-        "123": 5
-      },
-      "formation_date": "2024-03-04T10:15:52.909Z",
-      "giving_date": "2024-03-04T10:15:52.909Z",
-      "status": "Готово"
     }
   ]
 }

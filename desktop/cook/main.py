@@ -59,8 +59,6 @@ class MainWindow(QMainWindow):
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
 
-        self.insert_table()
-
         for row in range(self.ui.tableWidget_2.rowCount()):
             for col in range(1, self.ui.tableWidget_2.columnCount()):
                 combo_box = self.ui.tableWidget_2.cellWidget(row, col)
@@ -79,7 +77,7 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
         widgets.tableWidget_2.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
-        #widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
+        # widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
 
         self.order_count = 0
         self.order_added = False
@@ -139,12 +137,40 @@ class MainWindow(QMainWindow):
 
     def on_message(self, data):
         self.insert_table(data)
+
+        data = self.api.get_data('get_current_orders')
+        if data:
+            with open(f"./jsons/get_current_orders.json", "w") as file:
+                json.dump(data, file)
+
+        # Загрузка данных из файла get_current_orders.json
+        with open('get_current_orders.json', 'r') as file:
+            current_orders = json.load(file)
+
+        # Проверка совпадений food_ids
+        found_order_id = None
+        for order in current_orders['data'][0]['get_current_orders']:
+            # Проверка совпадения food_ids
+            if set(data['food_ids']).intersection(order['dishes'].keys()):
+                found_order_id = order['id_order']
+                break  # Прерываем цикл после нахождения первого совпадения
+
+        # Если совпадение найдено, сохраняем id_order
+        if found_order_id:
+            print(f"Найден совпадение: id_order = {found_order_id}")
+            data = {
+                "id_order": found_order_id,
+                "status": "Готово"
+            }
+            self.api.post_data('get_current_orders', data)
+        else:
+            print("Совпадений не найдено.")
+
         for row in range(self.ui.tableWidget_2.rowCount()):
             for col in range(1, self.ui.tableWidget_2.columnCount()):
                 combo_box = self.ui.tableWidget_2.cellWidget(row, col)
                 if combo_box is not None:
                     combo_box.currentIndexChanged.connect(self.check_and_remove_order)
-
 
         # self.update_table(data)
 
@@ -291,7 +317,7 @@ class MainWindow(QMainWindow):
                     combo_box.setEnabled(True)  # Разрешаем редактирование комбобокса для остальных строк
 
     def update_json_files(self):
-        endpoints = ['get_order_history', 'get_menu_sorted_by_type']
+        endpoints = ['get_order_history', 'get_menu_sorted_by_type', 'get_current_orders']
 
         for endpoint in endpoints:
             data = self.api.get_data(endpoint)

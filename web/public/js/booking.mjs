@@ -122,7 +122,7 @@ let width = window.innerWidth;
 
 function booking()
 {   
-    console.log('gp')
+
     width = window.innerWidth;
     if (width < 1391)
     {

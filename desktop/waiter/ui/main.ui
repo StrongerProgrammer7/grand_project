@@ -849,7 +849,8 @@ Button */
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background-image: url(:/icons/images/icons/servicebell.png);</string>
+                   <string notr="true">background-image: url(:/icons/images/icons/servicebell.png);
+background-image: url(:/icons/images/icons/cil-align-center.png);</string>
                   </property>
                   <property name="text">
                    <string>Новый</string>

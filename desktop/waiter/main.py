@@ -503,6 +503,7 @@ class MainWindow(QMainWindow):
 
         UIFunctions.clear_table(self.ui.tableWidget_2)
 
+
     def fill_table_with_menu(self, file_path):
         self.ui.tableWidget_2.clearContents()
 

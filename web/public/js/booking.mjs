@@ -206,8 +206,10 @@ dateControl.onchange = async () =>
         seats[result.data[i].id - 1].list.push(result.data[i]);
     }
 
-    for (let i=0; i<num_result.data.length;i++) {
-        seats[num_result.data[i].id - 1].num=num_result.data[i].human_slots;
+    for (let i = 0; i < num_result.data.length; i++)
+    {
+        if (seats[num_result.data[i].id - 1] !== undefined)
+        {seats[num_result.data[i].id - 1].num = num_result.data[i].human_slots;}
     }
 
     for (let i=0; i<ft_result.data.length;i++) {

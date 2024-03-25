@@ -75,7 +75,8 @@ function combineDateAndTime(dateString, timeString)
     return newDateString;
 }
 
-function formatDate(inputDate) {
+function formatDate(inputDate)
+{
     // Разделение даты и времени
     var parts = inputDate.split(', ');
     var datePart = parts[0];
@@ -99,17 +100,21 @@ function formatDate(inputDate) {
     return formattedDate;
 }
 
-function parseRangeString(rangeString) {
+function parseRangeString(rangeString)
+{
     const ranges = rangeString.split(',');
     const result = [];
 
-    ranges.forEach(range => {
+    ranges.forEach(range =>
+    {
         const [startStr, endStr] = range.split('-');
-        if (startStr !== "null" && endStr !== "null") {
+        if (startStr !== "null" && endStr !== "null")
+        {
             const start = parseInt(startStr);
             const end = parseInt(endStr);
             const rangeArray = [];
-            for (let i = start; i <= end; i++) {
+            for (let i = start; i <= end; i++)
+            {
                 rangeArray.push(i);
             }
             result.push(rangeArray);
@@ -118,9 +123,12 @@ function parseRangeString(rangeString) {
 
     return result;
 }
+let width = window.innerWidth;
+
 function booking()
 {
-    let width = window.innerWidth;
+
+    width = window.innerWidth;
     if (width < 1391)
     {
         let booking = document.querySelector(".booking");
@@ -131,11 +139,18 @@ function booking()
         booking.style.height = scale * 880 + "px";
         // popup.style.top = parseInt(popup.style.top)*scale+"px";
     }
+    else
+    {
+        let booking = document.querySelector(".booking");
+        booking.style.transform = `scale(1)`;
+        booking.style.height = 880 + "px";
+    }
 }
 
 
 
 booking();
+
 window.onresize = booking;
 
 /////////////////
@@ -188,9 +203,9 @@ dateControl.onchange = async () =>
 
     let ft_req = {
         "date": `${ dateControl.value }`
-      };
+    };
 
-      let ft_response = await fetch('/api/get_free_time_all_booked_tables_by_date', {
+    let ft_response = await fetch('/api/get_free_time_all_booked_tables_by_date', {
         method: 'POST',
         headers: {
             'Content-Type': "application/json"
@@ -209,10 +224,11 @@ dateControl.onchange = async () =>
     for (let i = 0; i < num_result.data.length; i++)
     {
         if (seats[num_result.data[i].id - 1] !== undefined)
-        {seats[num_result.data[i].id - 1].num = num_result.data[i].human_slots;}
+        { seats[num_result.data[i].id - 1].num = num_result.data[i].human_slots; }
     }
 
-    for (let i=0; i<ft_result.data.length;i++) {
+    for (let i = 0; i < ft_result.data.length; i++)
+    {
         seats[ft_result.data[i].table_id - 1].freeTime = parseRangeString(ft_result.data[i].free_time);
     }
 
@@ -221,20 +237,21 @@ dateControl.onchange = async () =>
 
     for (let i = 0; i < seats.length; i++)
     {
-        if (seats[i].freeTime.length==1 && Array.isArray(seats[i].freeTime[0])) {
+        if (seats[i].freeTime.length == 1 && Array.isArray(seats[i].freeTime[0]))
+        {
             seats[i].children[0].setAttribute("stroke", 'red');
             seats[i].classList.remove('clickable');
             continue;
-        } 
+        }
 
         seats[i].onmouseover = () =>
-        {   
+        {
 
             popup.innerHTML = "";
 
             let places = document.createElement('div');
-            places.className='booked';
-            places.innerHTML = `Количество мест: ${seats[i].num}`;
+            places.className = 'booked';
+            places.innerHTML = `Количество мест: ${ seats[i].num }`;
             popup.appendChild(places);
 
             // if (seats[i].list.length == 0)
@@ -277,7 +294,7 @@ dateControl.onchange = async () =>
 
 
 
-                    div.innerText = `С ${seats[i].freeTime[j][0]} до ${seats[i].freeTime[j][seats[i].freeTime[j].length-1]} ч.`;
+                    div.innerText = `С ${ seats[i].freeTime[j][0] } до ${ seats[i].freeTime[j][seats[i].freeTime[j].length - 1] } ч.`;
                     popup.appendChild(div);
                 }
             }
@@ -305,7 +322,7 @@ dateControl.onchange = async () =>
             let h1 = document.createElement("h1");
             h1.innerHTML = `Бронирование стола №${ i + 1 }`;
 
-            
+
 
 
             let form = document.createElement('form');
@@ -322,8 +339,8 @@ dateControl.onchange = async () =>
             popup.appendChild(h1);
 
             let places = document.createElement('div');
-            places.className='booked';
-            places.innerHTML = `Количество мест: ${seats[i].num}`;
+            places.className = 'booked';
+            places.innerHTML = `Количество мест: ${ seats[i].num }`;
             popup.appendChild(places);
 
 
@@ -347,7 +364,7 @@ dateControl.onchange = async () =>
 
 
 
-                    div.innerText = `С ${seats[i].freeTime[j][0]} до ${seats[i].freeTime[j][seats[i].freeTime[j].length-1]} ч.`;
+                    div.innerText = `С ${ seats[i].freeTime[j][0] } до ${ seats[i].freeTime[j][seats[i].freeTime[j].length - 1] } ч.`;
                     popup.appendChild(div);
                 }
             }
@@ -375,7 +392,7 @@ dateControl.onchange = async () =>
                     "id_table": i + 1,
                     "phone_client": phone,
                     "order_time": formatDate(orderTime),
-                    "start_booking_date":formatDate(new Date(start_date).toLocaleString()),
+                    "start_booking_date": formatDate(new Date(start_date).toLocaleString()),
                     "end_booking_date": formatDate(new Date(booked_date).toLocaleString())
                 };
 
@@ -404,15 +421,15 @@ dateControl.onchange = async () =>
                     }, 3000);
                 }
                 else
-                {   
+                {
                     let reg_req = {
                         "phone": phone,
                         "name_client": name,
                         "last_contact_date": formatDate(orderTime),
                         "email": email
-                      };
-    
-    
+                    };
+
+
                     let reg_response = await fetch('/api/add_client', {
                         method: 'POST',
                         headers: {
@@ -420,12 +437,13 @@ dateControl.onchange = async () =>
                         },
                         body: JSON.stringify(reg_req)
                     });
-    
+
                     let reg_result = await reg_response.json();
                     console.log(reg_result);
-    
 
-                    if (reg_response.ok) {
+
+                    if (reg_response.ok)
+                    {
                         response = await fetch('/api/book_table_client', {
                             method: 'POST',
                             headers: {
@@ -433,7 +451,7 @@ dateControl.onchange = async () =>
                             },
                             body: JSON.stringify(req)
                         });
-        
+
                         result = await response.json();
 
                         if (response.ok)
@@ -448,7 +466,8 @@ dateControl.onchange = async () =>
                                 popup.appendChild(h1);
                             }, 3000);
                         }
-                        else {
+                        else
+                        {
                             popup.innerHTML = "";
                             h1.innerHTML = `Ошибка бронирования стола №${ i + 1 }`;
                             popup.appendChild(h1);
@@ -458,7 +477,8 @@ dateControl.onchange = async () =>
 
 
                     }
-                    else {
+                    else
+                    {
                         popup.innerHTML = "";
                         h1.innerHTML = `Ошибка бронирования стола №${ i + 1 }`;
                         popup.appendChild(h1);
@@ -478,7 +498,6 @@ dateControl.onchange = async () =>
 
 
 };
-
 
 
 

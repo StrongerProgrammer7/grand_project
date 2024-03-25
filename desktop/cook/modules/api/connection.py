@@ -29,7 +29,6 @@ class ApiConnect:
             self.sio = socketio.Client(ssl_verify=ssl_cert)
             self.sio.on('connect', self.connect)
             self.sio.on('disconnect', self.disconnect)
-            self.sio.on('message', self.on_message)
 
     # def connect_to_server(self):
     #     # Подключаемся к серверу
@@ -48,7 +47,6 @@ class ApiConnect:
 
     def on_message(self, data):
         print('Message from server:', data)
-
 
     # def send_initial_data(self):
     #     auth = {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"

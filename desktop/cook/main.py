@@ -34,15 +34,7 @@ class MainWindow(QMainWindow):
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         self.api = ApiConnect('./fullchain.pem')
-        # self.api.connect_to_server()
-        # self.api.sio.on('message', self.on_message)
-
-        # APP NAME
-        # title = "SOLIDSIGN - для официантов"
-        # description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
-        # APPLY TEXTS
-        # self.setWindowTitle(title)
-        # widgets.titleRightInfo.setText(description)
+        self.api.sio.on('message', self.on_message)
 
         # TOGGLE MENU
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
@@ -67,13 +59,7 @@ class MainWindow(QMainWindow):
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
 
-        self.insert_table()
-
-        for row in range(self.ui.tableWidget_2.rowCount()):
-            for col in range(1, self.ui.tableWidget_2.columnCount()):
-                combo_box = self.ui.tableWidget_2.cellWidget(row, col)
-                if combo_box is not None:
-                    combo_box.currentIndexChanged.connect(self.check_and_remove_order)
+        # self.insert_table()
 
         # SET CUSTOM THEME
         self.themeFile = "themes/py_dracula_dark.qss"
@@ -145,8 +131,23 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
-    def on_message(self, data):
-        self.update_table(data)
+    def on_message(self):
+        data = {'worker_id': '1',
+                'food_ids': [1, 5, 4],
+                'quantities': [1, 5, 4], 'formation_date': '2024-03-04, 10:11:31',
+                'giving_date': '2024-03-04, 10:11:31', 'status': 'Ожидание', 'path': 'api/add_client_order',
+                'method': 'POST',
+                'send': {'name': 'povar', 'id': 2}}
+
+        self.insert_table(data)
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            for col in range(1, self.ui.tableWidget_2.columnCount()):
+                combo_box = self.ui.tableWidget_2.cellWidget(row, col)
+                if combo_box is not None:
+                    combo_box.currentIndexChanged.connect(self.check_and_remove_order)
+
+
+        # self.update_table(data)
 
     def update_table(self, data):
         # Получаем order_id, новый статус и выбранную строку в таблице
@@ -195,9 +196,12 @@ class MainWindow(QMainWindow):
                         continue
                     if endpoint == 'get_order_history':
                         if key in date_keys:
-                            date_obj = datetime.fromisoformat(row_data[key])
-                            formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
-                            item = QTableWidgetItem(formatted_date)
+                            if row_data[key] is not None:
+                                date_obj = datetime.fromisoformat(row_data[key])
+                                formatted_date = date_obj.strftime("%d.%m.%Y %H:%M:%S")
+                                item = QTableWidgetItem(formatted_date)
+                            else:
+                                item = QTableWidgetItem('-')
                         elif key == 'dishes':
                             dishes_str = ', '.join(
                                 [f'{menu_data[int(dish)]}: {qty}' for dish, qty in row_data[key].items()])
@@ -209,7 +213,7 @@ class MainWindow(QMainWindow):
                     tableWidget.setItem(row_idx, col_idx, item)
 
     def dishes_count(self):
-        with open("order.json", "r", encoding="utf-8") as json_file:
+        with open("jsons/order.json", "r", encoding="utf-8") as json_file:
             orders_data = json.load(json_file)["data"]
 
         dishes_count_list = []
@@ -219,52 +223,44 @@ class MainWindow(QMainWindow):
         print(dishes_count_list)
         return dishes_count_list
 
-    def insert_table(self):
-        with open("order.json", "r", encoding="utf-8") as json_file:
-            orders_data = json.load(json_file)["data"]
-            # Заполнение таблицы данными из JSON
-            for order in orders_data:
-                row_index = self.ui.tableWidget_2.rowCount()
+    def insert_table(self, data):
+        orders_data = [data]  # Помещаем переданный словарь в список, чтобы сохранить структуру итерации
+
+        for order in orders_data:
+            row_index = self.ui.tableWidget_2.rowCount()
+            self.ui.tableWidget_2.insertRow(row_index)
+
+            id_order_item = QTableWidgetItem(
+                "Заказ № " + str(order["worker_id"]))  # worker_id используется как "id_order"
+            giving_date_item = QTableWidgetItem(order["giving_date"])
+
+            font = QFont("Segoe UI", 14)
+            id_order_item.setFont(font)
+            giving_date_item.setFont(font)
+
+            self.ui.tableWidget_2.setItem(row_index, 0, id_order_item)
+            self.ui.tableWidget_2.setItem(row_index, 1, giving_date_item)
+
+            status = order.get("status", "")
+            dishes = order.get("food_ids", {})  # Переименовываем 'dishes' в 'food_ids'
+
+            for dish_id, quantity in zip(order["food_ids"], order["quantities"]):
+                dish_name = f"Блюдо {dish_id}, Количество {quantity}"
+                dish_item = QTableWidgetItem(dish_name)
+
+                combo_box = QComboBox()
+                combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
+
+                if row_index < 4:
+                    dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                    combo_box.setEnabled(True)
+                else:
+                    combo_box.setEnabled(False)
+
+                row_index += 1
                 self.ui.tableWidget_2.insertRow(row_index)
-
-                # Создаем элементы для ячеек таблицы
-                id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
-                giving_date_item = QTableWidgetItem(order["giving_date"])
-
-                # Устанавливаем шрифт для элементов
-                font = QFont("Segoe UI", 14)
-                id_order_item.setFont(font)
-                giving_date_item.setFont(font)
-
-                # Устанавливаем элементы в таблицу
-                self.ui.tableWidget_2.setItem(row_index, 0, id_order_item)
-                self.ui.tableWidget_2.setItem(row_index, 1, giving_date_item)
-
-                # Получаем статус заказа
-                status = order.get("status", "")
-
-                # Добавляем строки для блюд и их количества
-                dishes = order.get("dishes", {})
-
-                for dish_id, quantity in dishes.items():
-                    dish_name = f"Блюдо {dish_id}, Количество {quantity}"
-                    dish_item = QTableWidgetItem(dish_name)
-
-                    # Создаем комбобокс и добавляем варианты из статуса
-                    combo_box = QComboBox()
-                    combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
-
-                    # Если строка находится в первых пяти, разрешаем редактирование
-                    if row_index < 4:
-                        dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
-                        combo_box.setEnabled(True)
-                    else:
-                        combo_box.setEnabled(False)
-
-                    row_index += 1
-                    self.ui.tableWidget_2.insertRow(row_index)
-                    self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
-                    self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
+                self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
+                self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
 
     def check_and_remove_order(self):
         rows_to_delete = []
@@ -295,30 +291,32 @@ class MainWindow(QMainWindow):
                 else:
                     combo_box.setEnabled(True)  # Разрешаем редактирование комбобокса для остальных строк
 
+    def update_json_files(self):
+        endpoints = ['get_order_history', 'get_menu_sorted_by_type']
+
+        for endpoint in endpoints:
+            data = self.api.get_data(endpoint)
+            if data:
+                with open(f"./jsons/{endpoint}.json", "w") as file:
+                    json.dump(data, file)
+
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
+        # cooker
+        # hashpassword
 
         if self.api.auth({'login': username, 'password': password}):
 
-            try:
-                self.api.connect_to_server()
-                self.api.sio.on('message', self.on_message)
-            except Exception as e:
-                print("Unable to connect to the server:", e)
-
-            # self.update_json_files()
-            # self.fill_table_widget(self.ui.tableWidget)
+            self.update_json_files()
 
             # Создаем и запускаем потоки для заполнения таблиц
-            # order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            # table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            # order_thread.start()
-            # table_booking_thread.start()
-
+            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            order_thread.start()
             # Ожидаем завершения потоков
-            # order_thread.join()
-            # table_booking_thread.join()
+            order_thread.join()
+
+            self.on_message()
 
             self.new_window3.close()
             self.show()

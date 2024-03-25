@@ -102,6 +102,8 @@ class MainWindow(QMainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
+        self.list_count = 0
+
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
     def buttonClick(self):
@@ -206,6 +208,17 @@ class MainWindow(QMainWindow):
                         continue
                     tableWidget.setItem(row_idx, col_idx, item)
 
+    def dishes_count(self):
+        with open("order.json", "r", encoding="utf-8") as json_file:
+            orders_data = json.load(json_file)["data"]
+
+        dishes_count_list = []
+        for order in orders_data:
+            count = len(order["dishes"])
+            dishes_count_list.append(count)
+        print(dishes_count_list)
+        return dishes_count_list
+
     def insert_table(self):
         with open("order.json", "r", encoding="utf-8") as json_file:
             orders_data = json.load(json_file)["data"]
@@ -253,6 +266,7 @@ class MainWindow(QMainWindow):
                     self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
                     self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
 
+
     def check_and_remove_order(self):
         rows_to_delete = []
 
@@ -263,10 +277,14 @@ class MainWindow(QMainWindow):
                     rows_to_delete.append(row)
 
         # Удаление строк в обратном порядке, чтобы индексы не сдвигались
-        if len(rows_to_delete) == 3:
+        dishes_count = self.dishes_count()
+        if len(rows_to_delete) == dishes_count[self.list_count]:
+            self.list_count += 1
+            print( self.list_count)
             for row in reversed(rows_to_delete):
                 self.ui.tableWidget_2.removeRow(row)
             self.ui.tableWidget_2.removeRow(row - 1)
+
 
         row_index = self.ui.tableWidget_2.rowCount() - 1
 
@@ -296,18 +314,18 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 print("Unable to connect to the server:", e)
 
-            self.update_json_files()
+            #self.update_json_files()
             # self.fill_table_widget(self.ui.tableWidget)
 
             # Создаем и запускаем потоки для заполнения таблиц
-            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            order_thread.start()
-            table_booking_thread.start()
+            #order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            #table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            #order_thread.start()
+            #table_booking_thread.start()
 
             # Ожидаем завершения потоков
-            order_thread.join()
-            table_booking_thread.join()
+            #order_thread.join()
+            #table_booking_thread.join()
 
             self.new_window3.close()
             self.show()

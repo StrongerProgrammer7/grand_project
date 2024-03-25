@@ -126,8 +126,7 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.utvrbtn.clicked.connect(
-            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(lambda: self.commit(widgets.tableWidget_2))
 
         # 2 ВКЛАДКА
         # widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -450,14 +449,11 @@ class MainWindow(QMainWindow):
                 tableWidget.setItem(row_idx, col_idx, item)
 
     def commit(self, table):
-        data = {}
-        if self.ui.lineEdit.text() == "":
-            return
         worker_id = self.ui.lineEdit.text()
         food_ids = []
         quantities = []
         formation_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для formation_date
-        giving_date = ""  # Указываем нужное значение для giving_date
+        giving_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для giving_date
         status = "Ожидание"  # Указываем нужное значение для status
 
         menu_data = {}
@@ -479,30 +475,30 @@ class MainWindow(QMainWindow):
             food_ids.append(menu_data.get(food_name, "Unknown"))
             quantities.append(int(table.item(row_index, 2).text()))
 
+        # Преобразование формата даты
+        formation_datetime = datetime.strptime(formation_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        formatted_formation_date = formation_datetime.strftime("%Y-%m-%d, %H:%M:%S")
+
+        # Преобразование формата даты для giving_date (если необходимо)
+        giving_datetime = datetime.strptime(giving_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        formatted_giving_date = giving_datetime.strftime("%Y-%m-%d, %H:%M:%S")
+
         json_data = {
             "worker_id": worker_id,
             "food_ids": food_ids,
             "quantities": quantities,
-            "formation_date": formation_date,
-            "givig_date": giving_date,
+            "formation_date": formatted_formation_date,
+            "giving_date": formatted_giving_date,
             "status": status,
             "path": "api/add_client_order",
             "method": "POST",
             "send": {
                 "name": "povar",
-                "id": 1
+                "id": 2
             }
         }
-
-        # Преобразуем даты в формат JSON
-        json_data["formation_date"] = datetime.strptime(json_data["formation_date"],
-                                                        "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
         # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
-        print(json_data)
-        print("1:")
-        self.api.send_message(json.dumps(json_data, ensure_ascii=False))
-        # print("2:")
-        # self.api.send_message(json_data)
+        self.api.send_message(json_data)
 
         UIFunctions.clear_table(self.ui.tableWidget_2)
 

@@ -58,9 +58,8 @@ class ApiConnect:
     # WEBSOCKET MOMENT
     def send_message(self, data):
         # Создаем JSON-сообщение
-        message = {"text": "Сообщение отправлено на сервер"}
         # Отправляем сообщение через сокет
-        print("Message sent:", message)
+        print("Message sent:", data)
         answer = self.sio.emit('message', data)
         print("Message come: ", answer)
 

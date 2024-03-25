@@ -285,11 +285,11 @@ class UIFunctions(MainWindow):
         msg_box.button(QMessageBox.No).setText("Нет")  # Замена текста кнопки "Нет"
 
         # Показываем сообщение и ждем ответа пользователя
-        response = msg_box.exec()
+        # response = msg_box.exec()
 
-        if response == QMessageBox.Yes:
-            self.ui.tableWidget_2.clearContents()
-            self.ui.tableWidget_2.setRowCount(0)
+        # if response == QMessageBox.Yes:
+        self.ui.tableWidget_2.clearContents()
+        self.ui.tableWidget_2.setRowCount(0)
 
 
     def delete_row_content(self, table):

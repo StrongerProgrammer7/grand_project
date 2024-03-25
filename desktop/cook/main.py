@@ -19,6 +19,7 @@ os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100
 # SET AS GLOBAL WIDGETS
 widgets = None
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -65,7 +66,6 @@ class MainWindow(QMainWindow):
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
-
 
         self.insert_table()
 
@@ -266,7 +266,6 @@ class MainWindow(QMainWindow):
                     self.ui.tableWidget_2.setItem(row_index, 0, dish_item)
                     self.ui.tableWidget_2.setCellWidget(row_index, 1, combo_box)
 
-
     def check_and_remove_order(self):
         rows_to_delete = []
 
@@ -280,11 +279,10 @@ class MainWindow(QMainWindow):
         dishes_count = self.dishes_count()
         if len(rows_to_delete) == dishes_count[self.list_count]:
             self.list_count += 1
-            print( self.list_count)
+            print(self.list_count)
             for row in reversed(rows_to_delete):
                 self.ui.tableWidget_2.removeRow(row)
             self.ui.tableWidget_2.removeRow(row - 1)
-
 
         row_index = self.ui.tableWidget_2.rowCount() - 1
 
@@ -301,12 +299,7 @@ class MainWindow(QMainWindow):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        # self.curUser = User.authorization(username, password, self.api)
-        #
-        # if self.curUser is not None:
-        #     pass
-
-        if username == "" and password == "":
+        if self.api.auth({'login': username, 'password': password}):
 
             try:
                 self.api.connect_to_server()
@@ -314,18 +307,18 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 print("Unable to connect to the server:", e)
 
-            #self.update_json_files()
+            # self.update_json_files()
             # self.fill_table_widget(self.ui.tableWidget)
 
             # Создаем и запускаем потоки для заполнения таблиц
-            #order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            #table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            #order_thread.start()
-            #table_booking_thread.start()
+            # order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            # table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
+            # order_thread.start()
+            # table_booking_thread.start()
 
             # Ожидаем завершения потоков
-            #order_thread.join()
-            #table_booking_thread.join()
+            # order_thread.join()
+            # table_booking_thread.join()
 
             self.new_window3.close()
             self.show()

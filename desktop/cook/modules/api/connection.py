@@ -49,6 +49,7 @@ class ApiConnect:
     def on_message(self, data):
         print('Message from server:', data)
 
+
     # def send_initial_data(self):
     #     auth = {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
     #                      ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"

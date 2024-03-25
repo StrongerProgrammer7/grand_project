@@ -5,7 +5,7 @@ import os
 from cx_Freeze import setup, Executable
 
 # ADD FILES
-files = ['icon.ico', 'OrderNum', 'themes/', 'jsons/']
+files = ['icon.ico', 'OrderNum', 'fullchain.pem', 'themes/', 'jsons/']
 base = "Win32GUI" if sys.platform == "win32" else None
 
 # TARGET
@@ -18,7 +18,7 @@ target = Executable(
 # SETUP CX FREEZE
 setup(
     name="SOLIDSIGN",
-    version="1.0",
+    version="1.1",
     description="Modern GUI for restaurant applications",
     author="49/1",
     options={'build_exe': {'include_files': files}},

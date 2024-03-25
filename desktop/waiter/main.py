@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
         self.themeFile = "themes/py_dracula_dark.qss"
         self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
         UIFunctions.theme(self, self.themeFile, True)
+
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
         # widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
@@ -117,11 +118,12 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.utvrbtn.clicked.connect(self.commit)  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(
+            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
-        widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
-        widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
+        #widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
+        #widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
 
         # 3 ВКЛАДКА
         # widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
@@ -229,7 +231,7 @@ class MainWindow(QMainWindow):
         endpoints = ['get_order_history', 'get_all_booked_tables', 'get_menu_sorted_by_type']
 
         for endpoint in endpoints:
-            data = self.api.get_data(endpoint, './fullchain.pem')
+            data = self.api.get_data(endpoint)
             if data:
                 with open(f"./jsons/{endpoint}.json", "w") as file:
                     json.dump(data, file)
@@ -238,15 +240,9 @@ class MainWindow(QMainWindow):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        # if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
-
-        if password == '' and username == '':
-
-            self.api.connect_to_server()
-            self.api.sio.on('message', self.on_message)
+        if self.api.auth({'login': username, 'password': password}):
 
             self.update_json_files()
-            # self.fill_table_widget(self.ui.tableWidget)
 
             # Создаем и запускаем потоки для заполнения таблиц
             order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
@@ -267,6 +263,7 @@ class MainWindow(QMainWindow):
             msg.setIcon(QMessageBox.Critical)
             msg.exec()
 
+
     def change_password_visibility(self):
         if self.ui_dialog3.checkBox.isChecked():
             self.ui_dialog3.lineEdit_2.setEchoMode(QLineEdit.Normal)
@@ -286,18 +283,18 @@ class MainWindow(QMainWindow):
         self.column_sort_order[column_index] = new_sort_order
         table.sortItems(column_index, new_sort_order)
 
-    def on_message(self, data):
-        self.update_table(data)
-
-    def update_table(self, data):
-        # Получаем order_id, новый статус и выбранную строку в таблице
-        order_id = data.get("order_id")
-        new_status = data.get("status")
-        selected_row = order_id - 1  # Индексация строк начинается с 0
-
-        if selected_row >= 0:
-            # Устанавливаем новый статус в таблице
-            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
+    # def on_message(self, data):
+    #     self.update_table(data)
+    #
+    # def update_table(self, data):
+    #     # Получаем order_id, новый статус и выбранную строку в таблице
+    #     order_id = data.get("order_id")
+    #     new_status = data.get("status")
+    #     selected_row = order_id - 1  # Индексация строк начинается с 0
+    #
+    #     if selected_row >= 0:
+    #         # Устанавливаем новый статус в таблице
+    #         self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
 
     def update_second_table(self):
         # line = self.ui_dialog.lineEdit.text()
@@ -362,7 +359,7 @@ class MainWindow(QMainWindow):
 
                 # Отправляем данные
                 # self.api.send_message(json.dumps(data, ensure_ascii=False))
-                self.api.post_data('update_order', data, './fullchain.pem')
+                self.api.post_data('update_order', data)
 
                 self.new_window.close()
             else:
@@ -444,14 +441,13 @@ class MainWindow(QMainWindow):
                     continue
                 tableWidget.setItem(row_idx, col_idx, item)
 
-    def commit(self):
-        if self.ui.lineEdit.text() == "":
-            return
-
+    def commit(self, table):
         worker_id = self.ui.lineEdit.text()
-        formation_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        giving_date = ""  # Установите необходимое значение для giving_date
-        status = "Ожидание"
+        food_ids = []
+        quantities = []
+        formation_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для formation_date
+        giving_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для giving_date
+        status = "Ожидание"  # Указываем нужное значение для status
 
         menu_data = {}
         with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
@@ -460,71 +456,46 @@ class MainWindow(QMainWindow):
                 menu_data[item['food_name']] = item['food_id']
 
         # Проверяем, что все строки таблицы заполнены
-        for row_index in range(self.ui.tableWidget_2.rowCount()):
-            for column_index in range(self.ui.tableWidget_2.columnCount()):
-                item = self.ui.tableWidget_2.item(row_index, column_index)
-                if item is None or item.text() == "":
-                    print(f"Строка {row_index + 1} не полностью заполнена. Отправка заказа невозможна.")
-                    return
+        for row_index in range(table.rowCount()):
+            if (table.item(row_index, 1) is None or table.item(row_index, 2) is None or
+                    table.item(row_index, 1).text() == "" or table.item(row_index, 2).text() == ""):
+                print(f"Строка {row_index + 1} не полностью заполнена. Отправка заказа невозможна.")
+                return
 
-        food_ids = []
-        quantities = []
         # Замена названий блюд на их идентификаторы
-        for row_index in range(self.ui.tableWidget_2.rowCount()):
-            food_name = self.ui.tableWidget_2.item(row_index, 1).text()
+        for row_index in range(table.rowCount()):
+            food_name = table.item(row_index, 1).text()
             food_ids.append(menu_data.get(food_name, "Unknown"))
-            quantities.append(int(self.ui.tableWidget_2.item(row_index, 2).text()))
+            quantities.append(int(table.item(row_index, 2).text()))
+
+        # Преобразование формата даты
+        formation_datetime = datetime.strptime(formation_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        formatted_formation_date = formation_datetime.strftime("%Y-%m-%d, %H:%M:%S")
+
+        # Преобразование формата даты для giving_date (если необходимо)
+        giving_datetime = datetime.strptime(giving_date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        formatted_giving_date = giving_datetime.strftime("%Y-%m-%d, %H:%M:%S")
 
         json_data = {
             "worker_id": worker_id,
             "food_ids": food_ids,
             "quantities": quantities,
-            "formation_date": formation_date,
-            "giving_date": giving_date,
+            "formation_date": formatted_formation_date,
+            "giving_date": formatted_giving_date,
             "status": status,
             "path": "api/add_client_order",
             "method": "POST",
             "send": {
-                "name": "waiter",
-                "id": 1
+                "name": "povar",
+                "id": 2
             }
         }
-
-        # Преобразуем даты в формат JSON
-        json_data["formation_date"] = datetime.strptime(json_data["formation_date"],
-                                                        "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
-        # json_data["giving_date"] = datetime.strptime(json_data["giving_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
-
-        print("1:")
-        self.api.send_message(json.dumps(json_data, ensure_ascii=False))
-        print("2:")
+        # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
         self.api.send_message(json_data)
 
-        # Подготовка данных для вставки в первую таблицу
-        data_for_first_table = []
-        for row_index in range(self.ui.tableWidget_2.rowCount()):
-            food_name = self.ui.tableWidget_2.item(row_index, 1).text()
-            quantity = self.ui.tableWidget_2.item(row_index, 2).text()
-            food_and_quantity = f"{food_name} ({quantity})"
-            data_for_first_table.append({
-                "№": row_index + 1,
-                "Официант": worker_id,
-                "Дата выдачи": giving_date,
-                "Дата формирования": formation_date,
-                "Блюда": food_and_quantity,
-                "Статус": status
-            })
+        UIFunctions.clear_table(self.ui.tableWidget_2)
 
-        # Очистка первой таблицы перед добавлением новых данных
-        self.ui.tableWidget.setRowCount(0)
 
-        # Вставка данных в первую таблицу
-        for row_data in data_for_first_table:
-            row_index = self.ui.tableWidget.rowCount()
-            self.ui.tableWidget.insertRow(row_index)
-            for column, value in enumerate(row_data.values()):
-                item = QTableWidgetItem(str(value))
-                self.ui.tableWidget.setItem(row_index, column, item)
     def fill_table_with_menu(self, file_path):
         self.ui.tableWidget_2.clearContents()
 

@@ -239,7 +239,8 @@ class MainWindow(QMainWindow):
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
-
+        self.new_window3.close()
+        self.show()
         if self.api.auth({'login': username, 'password': password}):
 
             self.update_json_files()
@@ -262,7 +263,6 @@ class MainWindow(QMainWindow):
             msg.setText("Логин или пароль неверны.")
             msg.setIcon(QMessageBox.Critical)
             msg.exec()
-
 
     def change_password_visibility(self):
         if self.ui_dialog3.checkBox.isChecked():
@@ -442,6 +442,7 @@ class MainWindow(QMainWindow):
                 tableWidget.setItem(row_idx, col_idx, item)
 
     def commit(self, table):
+        self.copy_table_data()
         worker_id = self.ui.lineEdit.text()
         food_ids = []
         quantities = []
@@ -495,6 +496,37 @@ class MainWindow(QMainWindow):
 
         UIFunctions.clear_table(self.ui.tableWidget_2)
 
+    def copy_table_data(self):
+        worker_id = self.ui.lineEdit.text()
+        giving_date = ""  # Установите необходимое значение для giving_date
+        formation_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        status = "Ожидание"
+
+        # Очищаем таблицу-приемник перед копированием данных
+        self.ui.tableWidget.clearContents()
+        self.ui.tableWidget.setRowCount(0)
+
+        # Копируем данные из таблицы-источника в таблицу-приемник
+        for row_index in range(self.ui.tableWidget_2.rowCount()):
+            food_item = self.ui.tableWidget_2.item(row_index, 1)
+            quantity_item = self.ui.tableWidget_2.item(row_index, 2)
+
+            if food_item is None or quantity_item is None:
+                continue
+
+            food_name = food_item.text()
+            quantity = quantity_item.text()
+            food_and_quantity = f"{food_name} ({quantity})"
+
+            row_position = self.ui.tableWidget.rowCount()
+            self.ui.tableWidget.insertRow(row_position)
+
+            self.ui.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(row_position + 1)))
+            self.ui.tableWidget.setItem(row_position, 1, QTableWidgetItem(worker_id))
+            self.ui.tableWidget.setItem(row_position, 2, QTableWidgetItem(giving_date))
+            self.ui.tableWidget.setItem(row_position, 3, QTableWidgetItem(formation_date))
+            self.ui.tableWidget.setItem(row_position, 4, QTableWidgetItem(food_and_quantity))
+            self.ui.tableWidget.setItem(row_position, 5, QTableWidgetItem(status))
 
     def fill_table_with_menu(self, file_path):
         self.ui.tableWidget_2.clearContents()

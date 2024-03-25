@@ -2235,13 +2235,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <set>QAbstractItemView::NoEditTriggers</set>
                             </property>
                             <attribute name="horizontalHeaderVisible">
-                             <bool>false</bool>
+                             <bool>true</bool>
                             </attribute>
                             <attribute name="horizontalHeaderCascadingSectionResizes">
                              <bool>true</bool>
                             </attribute>
                             <attribute name="horizontalHeaderStretchLastSection">
-                             <bool>false</bool>
+                             <bool>true</bool>
                             </attribute>
                             <attribute name="verticalHeaderVisible">
                              <bool>false</bool>
@@ -2257,6 +2257,26 @@ li.checked::marker { content: &quot;\2612&quot;; }
                             <column>
                              <property name="text">
                               <string>Официант</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Дата выдачи</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Дата формирования</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Блюда </string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Статус</string>
                              </property>
                             </column>
                            </widget>

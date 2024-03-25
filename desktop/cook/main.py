@@ -19,6 +19,7 @@ os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100
 # SET AS GLOBAL WIDGETS
 widgets = None
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -33,15 +34,6 @@ class MainWindow(QMainWindow):
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
         self.api = ApiConnect('./fullchain.pem')
-        # self.api.connect_to_server()
-        # self.api.sio.on('message', self.on_message)
-
-        # APP NAME
-        # title = "SOLIDSIGN - для официантов"
-        # description = "SOLIDSIGN APP - Theme with colors based on Dracula for Python."
-        # APPLY TEXTS
-        # self.setWindowTitle(title)
-        # widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
@@ -65,7 +57,6 @@ class MainWindow(QMainWindow):
 
         self.file_watcher = QFileSystemWatcher()
         self.file_watcher.fileChanged.connect(self.update_table)
-
 
         # Начинаем отслеживать изменения в файле
         self.file_path = "order.json"
@@ -110,7 +101,6 @@ class MainWindow(QMainWindow):
 
         self.list_count = 0
 
-
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
     def buttonClick(self):
@@ -144,7 +134,7 @@ class MainWindow(QMainWindow):
     # MOUSE CLICK EVENTS
     def mousePressEvent(self, event):
         # SET DRAG POS WINDOW
-        self.dragPos = event.globalPos()
+        # self.dragPos = event.globalPos()
 
         # PRINT MOUSE EVENTS
         if event.buttons() == Qt.LeftButton:
@@ -152,18 +142,27 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
-    def on_message(self, data):
-        self.update_table(data)
+    def update_json_files(self):
+        endpoints = ['get_order_history', 'get_menu_sorted_by_type']
 
-    def update_table(self, data):
-        # Получаем order_id, новый статус и выбранную строку в таблице
-        order_id = data.get("order_id")
-        new_status = data.get("status")
-        selected_row = order_id - 1  # Индексация строк начинается с 0
+        for endpoint in endpoints:
+            data = self.api.get_data(endpoint)
+            if data:
+                with open(f"./jsons/{endpoint}.json", "w") as file:
+                    json.dump(data, file)
 
-        if selected_row >= 0:
-            # Устанавливаем новый статус в таблице
-            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
+    # def on_message(self, data):
+    #     self.update_table(data)
+    #
+    # def update_table(self, data):
+    #     # Получаем order_id, новый статус и выбранную строку в таблице
+    #     order_id = data.get("order_id")
+    #     new_status = data.get("status")
+    #     selected_row = order_id - 1  # Индексация строк начинается с 0
+    #
+    #     if selected_row >= 0:
+    #         # Устанавливаем новый статус в таблице
+    #         self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
 
     def fill_table_widget(self, tableWidget):
         if tableWidget.objectName() == 'tableWidget':
@@ -292,11 +291,10 @@ class MainWindow(QMainWindow):
         dishes_count = self.dishes_count()
         if len(rows_to_delete) == dishes_count[self.list_count]:
             self.list_count += 1
-            print( self.list_count)
+            print(self.list_count)
             for row in reversed(rows_to_delete):
                 self.ui.tableWidget_2.removeRow(row)
             self.ui.tableWidget_2.removeRow(row - 1)
-
 
         row_index = self.ui.tableWidget_2.rowCount() - 1
 
@@ -309,36 +307,19 @@ class MainWindow(QMainWindow):
                 else:
                     combo_box.setEnabled(True)  # Разрешаем редактирование комбобокса для остальных строк
 
-
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        # self.curUser = User.authorization(username, password, self.api)
-        #
-        # if self.curUser is not None:
-        #     pass
+        if self.api.auth({'login': username, 'password': password}):
 
-        if username == "" and password == "":
-
-            try:
-                self.api.connect_to_server()
-                self.api.sio.on('message', self.on_message)
-            except Exception as e:
-                print("Unable to connect to the server:", e)
-
-            #self.update_json_files()
-            # self.fill_table_widget(self.ui.tableWidget)
+            self.update_json_files()
 
             # Создаем и запускаем потоки для заполнения таблиц
-            #order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-            #table_booking_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget_3,))
-            #order_thread.start()
-            #table_booking_thread.start()
-
+            order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
+            order_thread.start()
             # Ожидаем завершения потоков
-            #order_thread.join()
-            #table_booking_thread.join()
+            order_thread.join()
 
             self.new_window3.close()
             self.show()

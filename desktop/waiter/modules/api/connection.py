@@ -25,22 +25,23 @@ class ApiConnect:
         if not hasattr(self, 'api_url'):
             self.api_url = f'https://{DOMEN}/api'
             self.socket_io_url = f"ws://{DOMEN}:80"
+            self.ssl_cert_path = './fullchain.pem'
             self.sio = socketio.Client(ssl_verify=ssl_cert)
             self.sio.on('connect', self.connect)
             self.sio.on('disconnect', self.disconnect)
-            # self.sio.on('message', self.on_message)
+            self.sio.on('message', self.on_message)
 
-    def connect_to_server(self):
-        # Подключаемся к серверу
-        self.sio.connect(f'wss://{DOMEN}', auth={
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-                     ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"
-                     ".iQC054bjNgi5sJnlp1LML9i9L-Q-A7MRqC44VUpgep0",
-            "name": "waiter", "id": 1})
+    # def connect_to_server(self):
+    #     # Подключаемся к серверу
+    #     self.sio.connect(f'wss://{DOMEN}', auth={
+    #         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    #                  ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"
+    #                  ".iQC054bjNgi5sJnlp1LML9i9L-Q-A7MRqC44VUpgep0",
+    #         "name": "waiter", "id": 1})
 
     def connect(self):
         print("Connected to the server")
-        self.send_initial_data()
+        # self.send_initial_data()
 
     def disconnect(self):
         print("Disconnected from the server")
@@ -48,11 +49,11 @@ class ApiConnect:
     def on_message(self, data):
         print('Message from server:', data)
 
-    def send_initial_data(self):
-        auth = {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-                         ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"
-                         ".iQC054bjNgi5sJnlp1LML9i9L-Q-A7MRqC44VUpgep0", "name": "waiter", "id": 1}
-        self.sio.emit('auth', auth)
+    # def send_initial_data(self):
+    #     auth = {"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    #                      ".eyJpZCI6OSwibG9naW4iOiJsb2dpbiIsImlhdCI6MTcxMTMxNTI2MiwiZXhwIjoxNzExMzc1MjYyfQ"
+    #                      ".iQC054bjNgi5sJnlp1LML9i9L-Q-A7MRqC44VUpgep0", "name": "waiter", "id": 1}
+    #     self.sio.emit('auth', auth)
 
     # WEBSOCKET MOMENT
     def send_message(self, data):
@@ -63,11 +64,11 @@ class ApiConnect:
         answer = self.sio.emit('message', data)
         print("Message come: ", answer)
 
-    def get_data(self, endpoint: str, serf):
+    def get_data(self, endpoint: str):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
             try:
-                response = requests.get(url, verify=serf)
+                response = requests.get(url, verify=self.ssl_cert_path)
                 response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
                 if response.status_code == 201:
                     print(f'get_data | {endpoint} | ', response.status_code)
@@ -80,11 +81,11 @@ class ApiConnect:
         print('None')
         return None
 
-    def post_data(self, endpoint: str, data: json, sert):
+    def post_data(self, endpoint: str, data: json):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
             try:
-                response = requests.post(url, json=data, verify=sert)
+                response = requests.post(url, json=data, verify=self.ssl_cert_path)
                 response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
                 if response.status_code == 201:
                     print(f'post_data | {endpoint} | ', response.status_code)
@@ -97,11 +98,11 @@ class ApiConnect:
         print('None')
         return None
 
-    def put_data(self, endpoint: str, sert):
+    def put_data(self, endpoint: str):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
             try:
-                response = requests.post(url, verify=sert)
+                response = requests.post(url, verify=self.ssl_cert_path)
                 response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
                 if response.status_code == 201:
                     print(f'put_data | {endpoint} | ', response.status_code)
@@ -114,11 +115,11 @@ class ApiConnect:
         print('None')
         return None
 
-    def delete_data(self, endpoint: str, sert):
+    def delete_data(self, endpoint: str):
         if endpoint:
             url = f'{self.api_url}/{endpoint}'
             try:
-                response = requests.delete(url, verify=sert)
+                response = requests.delete(url, verify=self.ssl_cert_path)
                 response.raise_for_status()  # Вызовет исключение HTTPError для кодов статуса 4xx и 5xx
                 if response.status_code == 201:
                     print(f'del_data | {endpoint} | ', response.status_code)
@@ -131,10 +132,10 @@ class ApiConnect:
         print('None')
         return None
 
-    def auth(self, data, sert):
+    def auth(self, data):
         url = f'{self.api_url}/signIn'
 
-        response = requests.post(url, data=data, verify=sert)
+        response = requests.post(url, data=data, verify=self.ssl_cert_path)
 
         if response.status_code == 201:
             response_data = response.json()  # Если сервер возвращает JSON, можно получить данные в виде словаря

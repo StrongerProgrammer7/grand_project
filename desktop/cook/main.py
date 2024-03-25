@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
         widgets.tableWidget_2.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
-        widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
+        #widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
 
         self.order_count = 0
         self.order_added = False
@@ -298,6 +298,8 @@ class MainWindow(QMainWindow):
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
+        self.new_window3.close()
+        self.show()
 
         if self.api.auth({'login': username, 'password': password}):
 

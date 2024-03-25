@@ -90,6 +90,14 @@ class MainWindow(QMainWindow):
 
         widgets.settingsTopBtn.clicked.connect(lambda: UIFunctions.toggle_theme(self))
 
+        # Начинаем отслеживать изменения в файле
+        self.file_watcher = QFileSystemWatcher()
+        self.file_watcher.fileChanged.connect(self.update_table)
+
+        self.file_path = "order.json"
+        self.file_watcher.addPath(self.file_path)
+        self.insert_table(self.ui.tableWidget)
+
         # DATETIME
         self.timer = QTimer(self)
         self.timer.timeout.connect(lambda: UIFunctions.update_time(self))
@@ -122,8 +130,8 @@ class MainWindow(QMainWindow):
             lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
-        widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
-        widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
+        # widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
+        # widgets.pushButton_2.clicked.connect(lambda: UIFunctions.open_new_window(self))
 
         # 3 ВКЛАДКА
         # widgets.pushButton_9.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget_3))
@@ -134,8 +142,9 @@ class MainWindow(QMainWindow):
         tab1_column_widths = [80, 300, 150]
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
 
-        tab2_column_widths = [80, 200, 200, 200, 200, 200]
+        tab2_column_widths = [500, 300]
         UIFunctions.set_column_widths(self, widgets.tableWidget, tab2_column_widths)
+        widgets.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
         tab3_column_widths = [80, 200, 200, 200, 200, 200, 200, 200]
         UIFunctions.set_column_widths(self, widgets.tableWidget_3, tab3_column_widths)
@@ -231,7 +240,7 @@ class MainWindow(QMainWindow):
         endpoints = ['get_order_history', 'get_all_booked_tables', 'get_menu_sorted_by_type']
 
         for endpoint in endpoints:
-            data = self.api.get_data(endpoint, './fullchain.pem')
+            data = self.api.get_data(endpoint)
             if data:
                 with open(f"./jsons/{endpoint}.json", "w") as file:
                     json.dump(data, file)
@@ -240,15 +249,9 @@ class MainWindow(QMainWindow):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        # if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
-
-        if password == '' and username == '':
-
-            self.api.connect_to_server()
-            self.api.sio.on('message', self.on_message)
+        if self.api.auth({'login': username, 'password': password}):
 
             self.update_json_files()
-            # self.fill_table_widget(self.ui.tableWidget)
 
             # Создаем и запускаем потоки для заполнения таблиц
             order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
@@ -288,18 +291,18 @@ class MainWindow(QMainWindow):
         self.column_sort_order[column_index] = new_sort_order
         table.sortItems(column_index, new_sort_order)
 
-    def on_message(self, data):
-        self.update_table(data)
-
-    def update_table(self, data):
-        # Получаем order_id, новый статус и выбранную строку в таблице
-        order_id = data.get("order_id")
-        new_status = data.get("status")
-        selected_row = order_id - 1  # Индексация строк начинается с 0
-
-        if selected_row >= 0:
-            # Устанавливаем новый статус в таблице
-            self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
+    # def on_message(self, data):
+    #     self.update_table(data)
+    #
+    # def update_table(self, data):
+    #     # Получаем order_id, новый статус и выбранную строку в таблице
+    #     order_id = data.get("order_id")
+    #     new_status = data.get("status")
+    #     selected_row = order_id - 1  # Индексация строк начинается с 0
+    #
+    #     if selected_row >= 0:
+    #         # Устанавливаем новый статус в таблице
+    #         self.ui.tableWidget.setItem(selected_row, 5, QTableWidgetItem(new_status))
 
     def update_second_table(self):
         # line = self.ui_dialog.lineEdit.text()
@@ -364,7 +367,7 @@ class MainWindow(QMainWindow):
 
                 # Отправляем данные
                 # self.api.send_message(json.dumps(data, ensure_ascii=False))
-                self.api.post_data('update_order', data, './fullchain.pem')
+                self.api.post_data('update_order', data)
 
                 self.new_window.close()
             else:
@@ -486,7 +489,7 @@ class MainWindow(QMainWindow):
             "path": "api/add_client_order",
             "method": "POST",
             "send": {
-                "name": "waiter",
+                "name": "povar",
                 "id": 1
             }
         }
@@ -495,11 +498,11 @@ class MainWindow(QMainWindow):
         json_data["formation_date"] = datetime.strptime(json_data["formation_date"],
                                                         "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
         # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
-
+        print(json_data)
         print("1:")
         self.api.send_message(json.dumps(json_data, ensure_ascii=False))
-        print("2:")
-        self.api.send_message(json_data)
+        # print("2:")
+        # self.api.send_message(json_data)
 
         UIFunctions.clear_table(self.ui.tableWidget_2)
 
@@ -523,6 +526,60 @@ class MainWindow(QMainWindow):
                 self.ui.tableWidget_2.setItem(row_index, 1, QTableWidgetItem(food_name))
                 self.ui.tableWidget_2.setItem(row_index, 2, QTableWidgetItem())
                 self.ui.tableWidget_2.item(row_index, 2).setData(Qt.DisplayRole, food_id)
+
+    def insert_table(self, table):
+        with open(self.file_path, "r", encoding="utf-8") as json_file:
+            orders_data = json.load(json_file)["data"]
+            # Заполнение таблицы данными из JSON
+            for order in orders_data:
+                self.insert_order_to_table(table, order)
+
+    def insert_order_to_table(self, table, order):
+        row_index = table.rowCount()
+        table.insertRow(row_index)
+
+        id_order_item = QTableWidgetItem("Заказ № " + str(order["id_order"]))
+        giving_date = order["giving_date"]
+        formatted_giving_date = datetime.strptime(giving_date, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d %H:%M:%S")
+        giving_date_item = QTableWidgetItem(formatted_giving_date)
+
+        font = QFont("Segoe UI", 14)
+        id_order_item.setFont(font)
+        giving_date_item.setFont(font)
+
+        table.setItem(row_index, 0, id_order_item)
+        table.setItem(row_index, 1, giving_date_item)
+
+        status = order.get("status", "")
+        dishes = order.get("dishes", {})
+
+        for dish_id, quantity in dishes.items():
+            dish_name = f"Блюдо {dish_id}, Количество {quantity}"
+            dish_item = QTableWidgetItem(dish_name)
+
+            combo_box = QComboBox()
+            combo_box.addItems(["Ожидание", "Готово", "Отдано", "Отменено"])
+
+            if table == self.ui.tableWidget_2:
+                if row_index < 4:
+                    dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                    combo_box.setEnabled(True)
+                else:
+                    combo_box.setEnabled(False)
+            else:
+                dish_item.setFlags(dish_item.flags() | Qt.ItemIsEditable)
+                combo_box.setEnabled(False)
+            row_index += 1
+            table.insertRow(row_index)
+            table.setItem(row_index, 0, dish_item)
+            table.setCellWidget(row_index, 1, combo_box)
+
+    def update_table(self):
+        # Очищаем таблицу перед обновлением
+        self.ui.tableWidget.clearContents()
+        self.ui.tableWidget.setRowCount(0)
+        # Заполняем таблицу заново
+        self.insert_table(self.ui.tableWidget)
 
 
 if __name__ == "__main__":

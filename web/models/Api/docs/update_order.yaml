@@ -1,0 +1,40 @@
+"/api/update_order":
+  post:
+    tags:
+      - Order
+    summary: Update order by id
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              order_id:
+                type: integer
+              food_id:
+                type: array
+                items:
+                  type: integer
+              quantities:
+                type: array
+                items:
+                  type: integer
+              status:
+                type: string
+            required:
+              - order_id
+              - food_id
+              - status
+              - quantities
+            example:
+              orider_id: 7
+              food_id: [2]
+              quatities: [2]
+              status: "Готовится"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

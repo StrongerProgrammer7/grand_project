@@ -1,0 +1,56 @@
+"/api/add_order_ingredient":
+  post:
+    tags:
+      - Order
+    summary: Add order ingredient
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              worker_id:
+                type: integer
+              storage_name:
+                type: string
+              ingredient_id:
+                type: integer
+              ingredient_quantity:
+                type: integer
+              ingredient_weight:
+                type: double
+              ingredient_expiry_date:
+                type: Date
+              supplied_date:
+                type: Date
+              supplied_weight:
+                type: double
+              supplied_quantity:
+                type: integer
+            required:
+              - worker_id
+              - storage_name
+              - ingredient_id
+              - ingredient_quantity
+              - ingredient_weight
+              - ingredient_expiry_date
+              - supplied_date
+              - supplied_weight
+              - supplied_quantity
+          example:
+            worker_id: 1
+            storage_name: "storage_name"
+            ingredient_id: 1
+            ingredient_quantity: 1
+            ingredient_weight: 100.0
+            ingredient_expiry_date: "2024-03-30"
+            supplied_date: "2024-03-3"
+            supplied_weight: 100.0
+            supplied_quantity: 2
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

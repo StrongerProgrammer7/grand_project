@@ -1,0 +1,44 @@
+"/api/book_table":
+  post:
+    tags:
+      - Table
+    summary: Booking table
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_table:
+                type: integer
+              id_worker:
+                type: integer
+              phone_client:
+                type: string
+              order_time:
+                type: timestamp
+              start_booking_date:
+                type: timestamp
+              end_booking_date:
+                type: timestamp
+            required:
+              - id_table
+              - id_worker
+              - phone_client
+              - order_time
+              - start_booking_date
+              - end_booking_date
+          example:
+            id_table: 1
+            id_worker: 3
+            phone_client: "+79848718618"
+            order_time: "2024-03-24 13:11:31"
+            start_booking_date: "2024-03-26 13:11:31"
+            end_booking_date: "2024-03-26 16:11:31"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

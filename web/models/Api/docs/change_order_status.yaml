@@ -1,0 +1,28 @@
+"/api/change_order_status":
+  post:
+    tags:
+      - Order
+    summary: Change status of order
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_order:
+                type: integer
+              status:
+                type: string
+            required:
+              - id_order
+              - status
+          example:
+            id_order: 5
+            status: "Готовится"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

@@ -1,0 +1,28 @@
+"/api/cancel_booking":
+  post:
+    tags:
+      - Table
+    summary: Cancel book table by date
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_table:
+                type: integer
+              desired_booking_date:
+                type: Date
+            required:
+              - id_table
+              - desired_booking_date
+          example:
+            id_table: 5
+            desired_booking_date: "2023-12-04"
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

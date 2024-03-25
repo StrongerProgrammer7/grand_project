@@ -1,0 +1,60 @@
+"/api/get_food_composition":
+  post:
+    tags:
+      - Food
+    summary: Get list food composition
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              food_id:
+                type: integer
+            required:
+              - food_id
+          example:
+            food_id: 1
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/ReorderIngredients"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "ingredient_id": 2,
+                      "ingredient_name": "Огурцы",
+                      "ingredient_measurement": "кг",
+                      "ingredient_quantity": 300,
+                    },
+                  ]
+                message: Success!
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    FoodComposition:
+      type: array
+      items:
+        type: object
+        properties:
+          ingredient_id:
+            type: integer
+          ingredient_name:
+            type: string
+          ingredient_measurement:
+            type: string
+          ingredient_quantity:
+            type: integer

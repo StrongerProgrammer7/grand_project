@@ -1,0 +1,19 @@
+"/api/delete_ingredient/{id}":
+  delete:
+    tags:
+      - Food
+    summary: Delete ingredient by id
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the ingredient to delete
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

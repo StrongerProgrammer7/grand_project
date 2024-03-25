@@ -1,0 +1,19 @@
+"/api/delete_worker/{id}":
+  delete:
+    tags:
+      - Worker
+    summary: Delete worker by id
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Numeric ID of the worker to delete
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

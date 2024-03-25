@@ -1,0 +1,57 @@
+"/api/get_order_history":
+  get:
+    tags:
+      - Order
+    summary: Get list order history
+    responses:
+      "201":
+        description: Success!
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: "#/components/schemas/HistoryOrder"
+                message:
+                  type: string
+              example:
+                data:
+                  [
+                    {
+                      "id_order": 1,
+                      "id_worker": 2,
+                      "dishes": { "1": 2, "2": 7, "3": 5 },
+                      "formation_date": "2024-03-04T10:15:52.909Z",
+                      "giving_date": "2024-03-04T10:15:52.909Z",
+                      "status": "Готовится",
+                    },
+                  ]
+                message: Success!
+      "500":
+        $ref: "#/components/responses/500InternalError"
+
+components:
+  schemas:
+    HistoryOrder:
+      type: array
+      items:
+        type: object
+        properties:
+          id_order:
+            type: integer
+          id_worker:
+            type: string
+          dishes:
+            type: object
+            properties:
+              1:
+                type: integer
+              2:
+                type: integer
+          formation_date:
+            type: string
+          giving_date:
+            type: string
+          status:
+            type: status

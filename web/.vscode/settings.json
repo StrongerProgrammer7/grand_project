@@ -1,0 +1,9 @@
+{
+    "js/ts.implicitProjectConfig.checkJs": false,
+    "rest.api": {
+        "ssl": {
+            "cert": "../certificate/cert.pem",
+            "key": "../certificate/key.pem"
+        }
+    }
+}

@@ -1,0 +1,28 @@
+"/api/signIn":
+  post:
+    tags:
+      - Worker
+    summary: Sing in
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              login:
+                type: string
+              password:
+                type: string
+            required:
+              - login
+              - password
+          example:
+            login: login
+            password: pass123
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

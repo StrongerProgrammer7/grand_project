@@ -1,0 +1,7 @@
+node_modules/
+Dockerfile
+test.sql
+test.rest
+dev_env/pgdata
+dev_env/db
+dev_env/server

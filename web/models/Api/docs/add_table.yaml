@@ -1,0 +1,24 @@
+"/api/add_table":
+  post:
+    tags:
+      - Table
+    summary: Add table with count slots
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              human_slots:
+                type: integer
+            required:
+              - human_slots
+          example:
+            human_slots: 3
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

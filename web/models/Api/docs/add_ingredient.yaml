@@ -1,0 +1,50 @@
+"/api/add_ingredient":
+  post:
+    tags:
+      - Food
+    summary: Add/Update ingredient
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              measurement:
+                type: string
+              critical_rate:
+                type: integer
+              price:
+                type: double
+              update:
+                type: boolean
+              id:
+                tyep: integer
+            required:
+              - type
+              - measurement
+              - critical_rate
+              - price
+              - update
+          examples:
+            Add:
+              value:
+                name: Помидоры
+                measurement: кг
+                critical_rate: 5
+                price: 200
+                update: false
+            Update:
+              value:
+                id: 1
+                critical_rate: 5
+                price: 200
+                update: true
+    responses:
+      "201":
+        $ref: "#/components/responses/201Success"
+      "404":
+        $ref: "#/components/responses/404NotCorrectData"
+      "500":
+        $ref: "#/components/responses/500InternalError"

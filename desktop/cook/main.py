@@ -131,14 +131,7 @@ class MainWindow(QMainWindow):
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
 
-    def on_message(self):
-        data = {'worker_id': '1',
-                'food_ids': [1, 5, 4],
-                'quantities': [1, 5, 4], 'formation_date': '2024-03-04, 10:11:31',
-                'giving_date': '2024-03-04, 10:11:31', 'status': 'Ожидание', 'path': 'api/add_client_order',
-                'method': 'POST',
-                'send': {'name': 'povar', 'id': 2}}
-
+    def on_message(self, data):
         self.insert_table(data)
         for row in range(self.ui.tableWidget_2.rowCount()):
             for col in range(1, self.ui.tableWidget_2.columnCount()):
@@ -315,8 +308,6 @@ class MainWindow(QMainWindow):
             order_thread.start()
             # Ожидаем завершения потоков
             order_thread.join()
-
-            self.on_message()
 
             self.new_window3.close()
             self.show()

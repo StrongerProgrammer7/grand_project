@@ -39,11 +39,10 @@ class MainWindow(QMainWindow):
         # SET API WORK
         # ///////////////////////////////////////////////////////////////
         # Путь к вашему SSL-сертификату
-        ssl_cert_path = './fullchain.pem'
 
         # Создание контекста SSL
         ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ssl_context.load_verify_locations(ssl_cert_path)
+        ssl_context.load_verify_locations('./fullchain.pem')
 
         self.api = ApiConnect(ssl_cert=ssl_context)
 
@@ -232,7 +231,7 @@ class MainWindow(QMainWindow):
         endpoints = ['get_order_history', 'get_all_booked_tables', 'get_menu_sorted_by_type']
 
         for endpoint in endpoints:
-            data = self.api.get_data(endpoint)
+            data = self.api.get_data(endpoint, './fullchain.pem')
             if data:
                 with open(f"./jsons/{endpoint}.json", "w") as file:
                     json.dump(data, file)
@@ -241,18 +240,12 @@ class MainWindow(QMainWindow):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        # self.curUser = User.authorization(username, password, self.api)
-        #
-        # if self.curUser is not None:
-        #     pass
+        # if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
 
-        if username == "" and password == "":
+        if password == '' and username == '':
 
-            try:
-                self.api.connect_to_server()
-                self.api.sio.on('message', self.on_message)
-            except Exception as e:
-                print("Unable to connect to the server:", e)
+            self.api.connect_to_server()
+            self.api.sio.on('message', self.on_message)
 
             self.update_json_files()
             # self.fill_table_widget(self.ui.tableWidget)
@@ -295,7 +288,6 @@ class MainWindow(QMainWindow):
         self.column_sort_order[column_index] = new_sort_order
         table.sortItems(column_index, new_sort_order)
 
-    # TODO: Протестить on_message
     def on_message(self, data):
         self.update_table(data)
 
@@ -365,11 +357,14 @@ class MainWindow(QMainWindow):
                     "order_id": selected_row + 1,
                     "food_id": food_ids,
                     "quantities": quantities,
-                    "status": combBox
+                    "new_status": combBox
                 }
 
+                print(data)
+
                 # Отправляем данные
-                self.api.send_message(json.dumps(data, ensure_ascii=False))
+                # self.api.send_message(json.dumps(data, ensure_ascii=False))
+                self.api.post_data('update_order', data, './fullchain.pem')
 
                 self.new_window.close()
             else:
@@ -501,7 +496,11 @@ class MainWindow(QMainWindow):
                                                         "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
         # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
 
+        print("1:")
         self.api.send_message(json.dumps(json_data, ensure_ascii=False))
+        print("2:")
+        self.api.send_message(json_data)
+
         UIFunctions.clear_table(self.ui.tableWidget_2)
 
     def fill_table_with_menu(self, file_path):

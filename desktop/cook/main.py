@@ -32,17 +32,9 @@ class MainWindow(QMainWindow):
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
 
-        self.api = ApiConnect()
-
-        try:
-            self.api.connect_to_server()
-            self.api.sio.on('message', self.on_message)
-        except Exception as e:
-            print("Unable to connect to the server:", e)
-
-        order_thread = threading.Thread(target=self.fill_table_widget, args=(self.ui.tableWidget,))
-        order_thread.start()
-        order_thread.join()
+        self.api = ApiConnect('./fullchain.pem')
+        # self.api.connect_to_server()
+        # self.api.sio.on('message', self.on_message)
 
         # APP NAME
         # title = "SOLIDSIGN - для официантов"

@@ -5,7 +5,7 @@ import os
 from cx_Freeze import setup, Executable
 
 # ADD FILES
-files = ['icon.ico', 'OrderNum', 'fullchain.pem', 'themes/', 'jsons/']
+files = ['icon.ico', 'OrderNum', 'order.json', 'fullchain.pem', 'themes/', 'jsons/']
 base = "Win32GUI" if sys.platform == "win32" else None
 
 # TARGET

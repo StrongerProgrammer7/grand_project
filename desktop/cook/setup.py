@@ -18,7 +18,7 @@ target = Executable(
 # SETUP CX FREEZE
 setup(
     name="SOLIDSIGN",
-    version="1.0",
+    version="1.1",
     description="Modern GUI for restaurant applications",
     author="49/1",
     options={'build_exe': {'include_files': files}},

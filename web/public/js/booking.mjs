@@ -442,7 +442,7 @@ dateControl.onchange = async () =>
                             setTimeout(() =>
                             {
                                 popup.innerHTML = "";
-                                h1.innerHTML = `Успешно забронирован стол №${ i + 1 } ${ formatDatefromIsoString(start_date) } по ${ formatDatefromIsoString(booked_date) }!`;
+                                h1.innerHTML = `Успешно забронирован стол №${ i + 1 } ${ start_date.toLocaleDateString() } ${ start_date.toLocaleTimeString() } по ${ booked_date.toLocaleDateString() } ${ booked_date.toLocaleTimeString() }!`;
                                 popup.appendChild(h1);
                             }, 3000);
                         }

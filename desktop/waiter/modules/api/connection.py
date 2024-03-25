@@ -24,10 +24,11 @@ class ApiConnect:
         # Проверяем, инициализирован ли экземпляр
         if not hasattr(self, 'api_url'):
             self.api_url = f'https://{DOMEN}/api'
-            self.sio = socketio.Client(ssl_verify=False)
+            self.socket_io_url = f"ws://{DOMEN}:80"
+            self.sio = socketio.Client(ssl_verify=ssl_cert)
             self.sio.on('connect', self.connect)
             self.sio.on('disconnect', self.disconnect)
-            self.sio.on('message', self.on_message)
+            # self.sio.on('message', self.on_message)
 
     def connect_to_server(self):
         # Подключаемся к серверу
@@ -138,6 +139,13 @@ class ApiConnect:
         if response.status_code == 201:
             response_data = response.json()  # Если сервер возвращает JSON, можно получить данные в виде словаря
             print(f'post_data | singIn | ', response.status_code)
-            return (response_data)
+
+            # Извлечение токена из ответа
+            token = response_data['data']['token']
+            print(f"Токен: {token}")
+
+            self.sio.connect(self.socket_io_url, auth={"token": token, "name": "waiter", "id": 1})
+            return True
         else:
             print('Ошибка при выполнении запроса:', response.status_code)
+        return False

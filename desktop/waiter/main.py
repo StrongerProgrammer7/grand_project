@@ -240,11 +240,7 @@ class MainWindow(QMainWindow):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
 
-        # if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
-
-        if password == '' and username == '':
-
-            self.api.connect_to_server()
+        if self.api.auth({'login': username, 'password': password}, './fullchain.pem'):
             self.api.sio.on('message', self.on_message)
 
             self.update_json_files()

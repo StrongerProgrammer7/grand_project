@@ -245,7 +245,6 @@ class UIFunctions(MainWindow):
     def generate_new_row(self):
         row_index = self.ui.tableWidget_2.rowCount()
         self.ui.tableWidget_2.insertRow(row_index)
-
         # Вставка индекса в первую ячейку строки
         index_item = QTableWidgetItem(str(row_index + 1))
         index_item.setFlags(index_item.flags() & ~Qt.ItemIsEditable)

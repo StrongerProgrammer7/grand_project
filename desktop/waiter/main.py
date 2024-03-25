@@ -84,7 +84,6 @@ class MainWindow(QMainWindow):
         self.themeFile = "themes/py_dracula_dark.qss"
         self.ui.titleFrame.setStyleSheet("background-color: rgb(33, 37, 43); color: #f8f8f2; border-radius: 5px")
         UIFunctions.theme(self, self.themeFile, True)
-
         widgets.label.setStyleSheet("image: url(images/images/logo.png)")
         # widgets.toggleLeftBox.setStyleSheet("background-image: url(images/icons/moon.png)")
 
@@ -118,8 +117,7 @@ class MainWindow(QMainWindow):
         widgets.addrow_btn.clicked.connect(lambda: UIFunctions.generate_new_row(self))
         widgets.delrow_btn.clicked.connect(lambda: UIFunctions.delete_row(self))
         widgets.clearbtn.clicked.connect(lambda: UIFunctions.clear_table(self))
-        widgets.utvrbtn.clicked.connect(
-            lambda: UIFunctions.commit(self, widgets.tableWidget_2))  # Здесь могла быть ваша функция:)
+        widgets.utvrbtn.clicked.connect(self.commit)  # Здесь могла быть ваша функция:)
 
         # 2 ВКЛАДКА
         widgets.pushButton_3.clicked.connect(lambda: UIFunctions.delete_row_content(self, widgets.tableWidget))
@@ -446,16 +444,14 @@ class MainWindow(QMainWindow):
                     continue
                 tableWidget.setItem(row_idx, col_idx, item)
 
-    def commit(self, table):
-        data = {}
+    def commit(self):
         if self.ui.lineEdit.text() == "":
             return
+
         worker_id = self.ui.lineEdit.text()
-        food_ids = []
-        quantities = []
-        formation_date = "2024-03-04T10:11:31.718Z"  # Указываем нужное значение для formation_date
-        giving_date = ""  # Указываем нужное значение для giving_date
-        status = "Ожидание"  # Указываем нужное значение для status
+        formation_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        giving_date = ""  # Установите необходимое значение для giving_date
+        status = "Ожидание"
 
         menu_data = {}
         with open("./jsons/get_menu_sorted_by_type.json", "r") as menu_file:
@@ -464,24 +460,27 @@ class MainWindow(QMainWindow):
                 menu_data[item['food_name']] = item['food_id']
 
         # Проверяем, что все строки таблицы заполнены
-        for row_index in range(table.rowCount()):
-            if (table.item(row_index, 1) is None or table.item(row_index, 2) is None or
-                    table.item(row_index, 1).text() == "" or table.item(row_index, 2).text() == ""):
-                print(f"Строка {row_index + 1} не полностью заполнена. Отправка заказа невозможна.")
-                return
+        for row_index in range(self.ui.tableWidget_2.rowCount()):
+            for column_index in range(self.ui.tableWidget_2.columnCount()):
+                item = self.ui.tableWidget_2.item(row_index, column_index)
+                if item is None or item.text() == "":
+                    print(f"Строка {row_index + 1} не полностью заполнена. Отправка заказа невозможна.")
+                    return
 
+        food_ids = []
+        quantities = []
         # Замена названий блюд на их идентификаторы
-        for row_index in range(table.rowCount()):
-            food_name = table.item(row_index, 1).text()
+        for row_index in range(self.ui.tableWidget_2.rowCount()):
+            food_name = self.ui.tableWidget_2.item(row_index, 1).text()
             food_ids.append(menu_data.get(food_name, "Unknown"))
-            quantities.append(int(table.item(row_index, 2).text()))
+            quantities.append(int(self.ui.tableWidget_2.item(row_index, 2).text()))
 
         json_data = {
             "worker_id": worker_id,
             "food_ids": food_ids,
             "quantities": quantities,
             "formation_date": formation_date,
-            "givig_date": giving_date,
+            "giving_date": giving_date,
             "status": status,
             "path": "api/add_client_order",
             "method": "POST",
@@ -494,15 +493,38 @@ class MainWindow(QMainWindow):
         # Преобразуем даты в формат JSON
         json_data["formation_date"] = datetime.strptime(json_data["formation_date"],
                                                         "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
-        # json_data["givig_date"] = datetime.strptime(json_data["givig_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
+        # json_data["giving_date"] = datetime.strptime(json_data["giving_date"], "%Y-%m-%dT%H:%M:%S.%fZ").isoformat()
 
         print("1:")
         self.api.send_message(json.dumps(json_data, ensure_ascii=False))
         print("2:")
         self.api.send_message(json_data)
 
-        UIFunctions.clear_table(self.ui.tableWidget_2)
+        # Подготовка данных для вставки в первую таблицу
+        data_for_first_table = []
+        for row_index in range(self.ui.tableWidget_2.rowCount()):
+            food_name = self.ui.tableWidget_2.item(row_index, 1).text()
+            quantity = self.ui.tableWidget_2.item(row_index, 2).text()
+            food_and_quantity = f"{food_name} ({quantity})"
+            data_for_first_table.append({
+                "№": row_index + 1,
+                "Официант": worker_id,
+                "Дата выдачи": giving_date,
+                "Дата формирования": formation_date,
+                "Блюда": food_and_quantity,
+                "Статус": status
+            })
 
+        # Очистка первой таблицы перед добавлением новых данных
+        self.ui.tableWidget.setRowCount(0)
+
+        # Вставка данных в первую таблицу
+        for row_data in data_for_first_table:
+            row_index = self.ui.tableWidget.rowCount()
+            self.ui.tableWidget.insertRow(row_index)
+            for column, value in enumerate(row_data.values()):
+                item = QTableWidgetItem(str(value))
+                self.ui.tableWidget.setItem(row_index, column, item)
     def fill_table_with_menu(self, file_path):
         self.ui.tableWidget_2.clearContents()
 

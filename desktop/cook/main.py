@@ -59,7 +59,13 @@ class MainWindow(QMainWindow):
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
 
-        # self.insert_table()
+        self.insert_table()
+
+        for row in range(self.ui.tableWidget_2.rowCount()):
+            for col in range(1, self.ui.tableWidget_2.columnCount()):
+                combo_box = self.ui.tableWidget_2.cellWidget(row, col)
+                if combo_box is not None:
+                    combo_box.currentIndexChanged.connect(self.check_and_remove_order)
 
         # SET CUSTOM THEME
         self.themeFile = "themes/py_dracula_dark.qss"
@@ -73,7 +79,7 @@ class MainWindow(QMainWindow):
         UIFunctions.set_column_widths(self, widgets.tableWidget_2, tab1_column_widths)
         widgets.tableWidget_2.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
-        widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
+        #widgets.pushButton_6.clicked.connect(lambda: UIFunctions.clear_table(self))
 
         self.order_count = 0
         self.order_added = False
@@ -296,8 +302,6 @@ class MainWindow(QMainWindow):
     def login(self):
         username = self.ui_dialog3.lineEdit.text()
         password = self.ui_dialog3.lineEdit_2.text()
-        # cooker
-        # hashpassword
 
         if self.api.auth({'login': username, 'password': password}):
 
